@@ -91,12 +91,7 @@ function renderDonutChart(categoryData) {
             labels: categoryData.labels,
             datasets: [{
                 data: categoryData.data,
-                backgroundColor: [
-                    '#b7e7f7', // secondary-container (Transport/Biru)
-                    '#d7defa', // tertiary-container (Makan/Ungu)
-                    '#fef3c7', // Kuning (Belajar)
-                    '#e3e2e1'  // surface-variant (Lainnya/Abu)
-                ],
+                backgroundColor: ['#b7e7f7', '#d7defa', '#fef3c7', '#e3e2e1'],
                 borderWidth: 0,
                 hoverOffset: 5
             }]
@@ -104,15 +99,10 @@ function renderDonutChart(categoryData) {
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            cutout: '75%', // Ketebalan donat
+            cutout: '75%',
             plugins: {
                 legend: {
-                    position: 'bottom',
-                    labels: {
-                        usePointStyle: true,
-                        padding: 20,
-                        font: { size: 12 }
-                    }
+                    display: false // <--- INI PENTING: Menghilangkan legend ganda
                 },
                 tooltip: {
                     callbacks: {
@@ -134,14 +124,14 @@ function renderBarChart(trendData) {
                 {
                     label: 'Pemasukan',
                     data: trendData.pemasukan,
-                    backgroundColor: '#b5ead7', // primary-container (Hijau)
+                    backgroundColor: '#b5ead7',
                     borderRadius: 4,
                     barPercentage: 0.6
                 },
                 {
                     label: 'Pengeluaran',
                     data: trendData.pengeluaran,
-                    backgroundColor: '#ffdad6', // error-container (Merah muda)
+                    backgroundColor: '#ffdad6',
                     borderRadius: 4,
                     barPercentage: 0.6
                 }
@@ -152,18 +142,13 @@ function renderBarChart(trendData) {
             maintainAspectRatio: false,
             plugins: {
                 legend: {
-                    position: 'bottom',
-                    labels: {
-                        usePointStyle: true,
-                        padding: 20,
-                        font: { size: 12 }
-                    }
+                    display: false // <--- INI PENTING: Menghilangkan legend ganda
                 }
             },
             scales: {
                 y: {
                     beginAtZero: true,
-                    grid: { color: '#f4f3f2', drawBorder: false }, // surface-container-low
+                    grid: { color: '#f4f3f2', drawBorder: false },
                     ticks: {
                         callback: (value) => 'Rp ' + (value / 1000000) + ' Jt'
                     }

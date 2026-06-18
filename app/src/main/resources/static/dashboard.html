@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
@@ -94,6 +94,7 @@
             }
         }
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="css/component.css">
 </head>
 
@@ -158,7 +159,7 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
                 <div class="md:col-span-2 bg-surface-container-lowest rounded-[24px] p-stack-md ambient-shadow-sm card-outline flex flex-col justify-between relative overflow-hidden group">
                     <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                        <span class="material-symbols-outlined text-[120px] text-primary" data-icon="savings">savings</span>
+                        <span class="material-symbols-outlined text-[120px] text-primary">savings</span>
                     </div>
                     <div>
                         <h3 class="font-label-md text-label-md text-on-surface-variant mb-2">Total Saldo</h3>
@@ -232,24 +233,14 @@
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-gutter">
+                
                 <div class="bg-surface-container-lowest rounded-[24px] p-stack-md ambient-shadow-sm card-outline flex flex-col">
                     <h3 class="text-on-surface text-[20px] font-semibold mb-6">Kategori Pengeluaran</h3>
-                    <div class="flex-1 flex items-center justify-center relative p-4">
-                        <div class="bg-surface-container-lowest rounded-[24px] p-stack-md ambient-shadow-sm card-outline flex flex-col">
-                            <h3 class="text-on-surface text-[20px] font-semibold mb-6">Kategori Pengeluaran</h3>
-                            <div class="flex-1 relative min-h-[250px] flex items-center justify-center">
-                                <canvas id="kategoriChart"></canvas>
-                            </div>
-                        </div>
-                        <div class="bg-surface-container-lowest rounded-[24px] p-stack-md ambient-shadow-sm card-outline flex flex-col">
-                            <h3 class="text-on-surface text-[20px] font-semibold mb-6">Pemasukan vs Pengeluaran</h3>
-                            <div class="flex-1 relative min-h-[250px] w-full">
-                                <canvas id="trenChart"></canvas>
-                            </div>
-                        </div>
-                        <div class="absolute inset-0 flex flex-col items-center justify-center">
+                    <div class="flex-1 relative min-h-[250px] flex items-center justify-center">
+                        <canvas id="kategoriChart"></canvas>
+                        <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
                             <span class="text-[12px] text-on-surface-variant">Total</span>
-                            <span id="totalPengeluaran" class="text-[20px] font-bold text-on-surface">Rp 850k</span>
+                            <span id="totalPengeluaranTengah" class="text-[20px] font-bold text-on-surface">Rp 850k</span>
                         </div>
                     </div>
                     <div class="mt-6 flex flex-wrap gap-4 justify-center">
@@ -261,40 +252,12 @@
 
                 <div class="bg-surface-container-lowest rounded-[24px] p-stack-md ambient-shadow-sm card-outline flex flex-col">
                     <h3 class="text-on-surface text-[20px] font-semibold mb-6">Pemasukan vs Pengeluaran</h3>
-                    <div class="flex-1 flex items-end gap-8 justify-center pt-8 border-b border-surface-variant pb-2 relative">
-                        <div class="absolute w-full border-t border-surface-variant/50 bottom-1/4"></div>
-                        <div class="absolute w-full border-t border-surface-variant/50 bottom-2/4"></div>
-                        <div class="absolute w-full border-t border-surface-variant/50 bottom-3/4"></div>
-                        
-                        <div class="flex flex-col items-center gap-2 z-10">
-                            <div class="flex items-end gap-1 h-40">
-                                <div class="w-6 bg-primary-container rounded-t-sm bar-grow" style="height: 80%;"></div>
-                                <div class="w-6 bg-error-container rounded-t-sm bar-grow" style="animation-delay: 0.2s; height: 40%;"></div>
-                            </div>
-                            <span class="text-[12px] text-on-surface-variant">Sep</span>
-                        </div>
-                        <div class="flex flex-col items-center gap-2 z-10">
-                            <div class="flex items-end gap-1 h-40">
-                                <div class="w-6 bg-primary-container rounded-t-sm bar-grow" style="animation-delay: 0.1s; height: 90%;"></div>
-                                <div class="w-6 bg-error-container rounded-t-sm bar-grow" style="animation-delay: 0.3s; height: 50%;"></div>
-                            </div>
-                            <span class="text-[12px] text-on-surface-variant">Okt</span>
-                        </div>
-                        <div class="flex flex-col items-center gap-2 z-10">
-                            <div class="flex items-end gap-1 h-40">
-                                <div class="w-6 bg-primary rounded-t-sm bar-grow" style="animation-delay: 0.2s; height: 100%;"></div>
-                                <div class="w-6 bg-error rounded-t-sm bar-grow" style="animation-delay: 0.4s; height: 30%;"></div>
-                            </div>
-                            <span class="text-[12px] font-bold text-on-surface">Nov</span>
-                        </div>
-                    </div>
-                    <div class="mt-4 flex gap-6 justify-center">
-                        <div class="flex items-center gap-2"><div class="w-3 h-3 rounded-sm bg-primary"></div><span class="text-[12px] text-on-surface-variant">Pemasukan</span></div>
-                        <div class="flex items-center gap-2"><div class="w-3 h-3 rounded-sm bg-error"></div><span class="text-[12px] text-on-surface-variant">Pengeluaran</span></div>
+                    <div class="flex-1 relative min-h-[250px] w-full">
+                        <canvas id="trenChart"></canvas>
                     </div>
                 </div>
-            </div>
 
+            </div>
             <div class="bg-surface-container-lowest rounded-[24px] ambient-shadow-sm card-outline overflow-hidden">
                 <div class="p-6 pb-4 border-b border-surface-container-highest flex justify-between items-center flex-wrap gap-4">
                     <h3 class="text-on-surface text-[16px] font-semibold">Riwayat Transaksi Terakhir</h3>
