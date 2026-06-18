@@ -6,10 +6,19 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
+
+    // Query untuk menghitung total pemasukan dikurangi total pengeluaran langsung di database
+    @Query("""
+        SELECT COALESCE(SUM(CASE WHEN t.type = 'INCOME' THEN t.amount ELSE -t.amount END), 0)
+        FROM Transaction t
+        WHERE t.userId = :userId
+    """)
+    BigDecimal getRealtimeBalance(@Param("userId") String userId);
 
     List<Transaction> findByUserId(String userId);
 

@@ -30,25 +30,8 @@ public class ExpenseService {
         categoryRepository.findByNameIgnoreCaseAndType(request.getCategory(), "EXPENSE")
                 .orElseThrow(() -> new IllegalArgumentException("Kategori '" + request.getCategory() + "' tidak valid untuk pengeluaran"));
 
-        // ==================== BARU: PROSES HITUNG SALDO RIIL ====================
-        // A. Tarik semua data transaksi si user dari database
-        List<Transaction> userTransactions = transactionRepository.findByUserId(request.getUserId());
-
-        BigDecimal totalIncome = BigDecimal.ZERO;
-        BigDecimal totalExpense = BigDecimal.ZERO;
-
-        // B. Looping untuk menghitung total pemasukan & pengeluaran asli dia
-        for (Transaction t : userTransactions) {
-            if ("INCOME".equalsIgnoreCase(t.getType())) {
-                totalIncome = totalIncome.add(t.getAmount());
-            } else if ("EXPENSE".equalsIgnoreCase(t.getType())) {
-                totalExpense = totalExpense.add(t.getAmount());
-            }
-        }
-
-        // C. Saldo riil adalah hasil pengurangan total tersebut
-        BigDecimal currentBalance = totalIncome.subtract(totalExpense);
-        // ========================================================================
+        // OPTIMASI: Mengambil saldo langsung via agregasi database untuk menghindari OutOfMemory (OOM) pada skala data besar
+        BigDecimal currentBalance = transactionRepository.getRealtimeBalance(request.getUserId());
 
         // 3. Pengecekan Batas Saldo Minus
         if (currentBalance.compareTo(request.getAmount()) < 0 && !request.isForceSave()) {
