@@ -73,6 +73,14 @@ public class ExpenseService {
             throw new IllegalArgumentException("Nominal pengeluaran harus lebih besar dari 0");
         }
 
+        categoryRepository.findByNameIgnoreCaseAndType(request.getCategory(), "EXPENSE")
+                .orElseThrow(() -> new IllegalArgumentException("Kategori '" + request.getCategory() + "' tidak valid untuk pengeluaran"));
+
+        BigDecimal currentBalance = transactionRepository.getRealtimeBalance(userId);
+        if (currentBalance.compareTo(request.getAmount()) < 0 && !request.isForceSave()) {
+            throw new IllegalStateException("WARNING_INSUFFICIENT_BALANCE");
+        }
+
         t.setAmount(request.getAmount());
         t.setCategory(request.getCategory());
         t.setDescription(request.getDescription());
