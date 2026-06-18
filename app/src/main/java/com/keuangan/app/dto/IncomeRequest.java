@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public class IncomeRequest {
-    private String userId;
     private BigDecimal amount;
     private String category;
     private String description;
@@ -14,9 +13,6 @@ public class IncomeRequest {
     public IncomeRequest() {}
 
     // Getter dan Setter
-    public String getUserId() { return userId; }
-    public void setUserId(String userId) { this.userId = userId; }
-
     public BigDecimal getAmount() { return amount; }
     public void setAmount(BigDecimal amount) { this.amount = amount; }
 

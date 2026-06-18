@@ -17,7 +17,7 @@ import java.util.List;
 @RestController
 @CrossOrigin(origins = "*")
 public class ReportController {
-     private final ReportService reportService;
+    private final ReportService reportService;
 
     public ReportController(ReportService reportService) {
         this.reportService = reportService;
