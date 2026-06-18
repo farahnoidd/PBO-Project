@@ -19,9 +19,9 @@ public class ReportService {
         this.transactionRepository = transactionRepository;
     }
 
-    public DashboardResponseDTO getDashboardSummary() {
+    public DashboardResponseDTO getDashboardSummary(String userId) {
 
-        List<Transaction> transactions = transactionRepository.findAll();
+        List<Transaction> transactions = transactionRepository.findByUserId(userId);
 
         BigDecimal totalIncome = BigDecimal.ZERO;
         BigDecimal totalExpense = BigDecimal.ZERO;
@@ -45,9 +45,9 @@ public class ReportService {
                 saldo
         );
     }
-    public List<MonthlyChartDTO> getMonthlyChart(Integer year) {
+    public List<MonthlyChartDTO> getMonthlyChart(String userId, Integer year) {
 
-    List<Object[]> results = transactionRepository.getMonthlySummary(year);
+    List<Object[]> results = transactionRepository.getMonthlySummary(userId, year);
 
     List<MonthlyChartDTO> charts = new ArrayList<>();
 
@@ -80,9 +80,9 @@ public class ReportService {
      return charts;
     }
 
-    public List<YearlyChartDTO> getYearlyChart() {
+    public List<YearlyChartDTO> getYearlyChart(String userId) {
 
-    List<Object[]> results = transactionRepository.getYearlySummary();
+    List<Object[]> results = transactionRepository.getYearlySummary(userId);
 
     List<YearlyChartDTO> charts = new ArrayList<>();
 

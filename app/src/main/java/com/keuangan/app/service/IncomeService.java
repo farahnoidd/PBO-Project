@@ -14,10 +14,10 @@ import java.math.BigDecimal;
 public class IncomeService {
 
     @Autowired
-    private TransactionRepository transactionRepository; // Menggunakan repo bersama
+    private TransactionRepository transactionRepository;
 
     @Autowired
-    private CategoryRepository categoryRepository;       // Menggunakan repo bersama
+    private CategoryRepository categoryRepository;
 
     public String saveIncome(IncomeRequest request) {
         // 1. Validasi Angka
@@ -32,7 +32,7 @@ public class IncomeService {
         // 3. Mapping ke Entity Transaction
         Transaction t = new Transaction();
         t.setUserId(request.getUserId());
-        t.setType("INCOME"); // Kunci pembeda dengan modul pengeluaranmu
+        t.setType("INCOME");
         t.setCategory(request.getCategory());
         t.setAmount(request.getAmount());
         t.setDescription(request.getDescription());

@@ -30,8 +30,27 @@ public class ExpenseService {
         categoryRepository.findByNameIgnoreCaseAndType(request.getCategory(), "EXPENSE")
                 .orElseThrow(() -> new IllegalArgumentException("Kategori '" + request.getCategory() + "' tidak valid untuk pengeluaran"));
 
-        // 3. Simulasi Cek Batas Saldo (Skenario Alternatif Use Case 006)
-        BigDecimal currentBalance = new BigDecimal("150000"); // Contoh limit saldo tiruan
+        // ==================== BARU: PROSES HITUNG SALDO RIIL ====================
+        // A. Tarik semua data transaksi si user dari database
+        List<Transaction> userTransactions = transactionRepository.findByUserId(request.getUserId());
+
+        BigDecimal totalIncome = BigDecimal.ZERO;
+        BigDecimal totalExpense = BigDecimal.ZERO;
+
+        // B. Looping untuk menghitung total pemasukan & pengeluaran asli dia
+        for (Transaction t : userTransactions) {
+            if ("INCOME".equalsIgnoreCase(t.getType())) {
+                totalIncome = totalIncome.add(t.getAmount());
+            } else if ("EXPENSE".equalsIgnoreCase(t.getType())) {
+                totalExpense = totalExpense.add(t.getAmount());
+            }
+        }
+
+        // C. Saldo riil adalah hasil pengurangan total tersebut
+        BigDecimal currentBalance = totalIncome.subtract(totalExpense);
+        // ========================================================================
+
+        // 3. Pengecekan Batas Saldo Minus
         if (currentBalance.compareTo(request.getAmount()) < 0 && !request.isForceSave()) {
             throw new IllegalStateException("WARNING_INSUFFICIENT_BALANCE");
         }

@@ -11,7 +11,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/incomes")
-@CrossOrigin(origins = "*")    // Agar bisa ditembak oleh tim Frontend
+@CrossOrigin(origins = "*")
 public class IncomeController {
 
     @Autowired
