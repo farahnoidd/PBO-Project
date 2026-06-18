@@ -1,0 +1,298 @@
+/**
+ * api.js
+ * Mahasiswa 12 – FE Integrasi API & Core PWA
+ *
+ * Semua komunikasi ke backend Spring Boot dilakukan dari sini.
+ * Tidak ada fetch() di file HTML/JS lain — cukup import fungsi ini.
+ *
+ * Konvensi:
+ *  - Setiap fungsi mengembalikan Promise<data> (sudah di-parse JSON).
+ *  - Jika respons gagal (status ≥ 400), fungsi melempar Error dengan
+ *    pesan dari backend (field "message" atau teks status HTTP).
+ *  - Token JWT disimpan di sessionStorage["jwt_token"].
+ */
+
+// ─── Konfigurasi ────────────────────────────────────────────────────────────
+
+const BASE_URL = "/api"; // sesuaikan jika backend jalan di port berbeda
+
+// ─── Helper internal ─────────────────────────────────────────────────────────
+
+/**
+ * Mengambil token JWT yang tersimpan.
+ * @returns {string|null}
+ */
+function getToken() {
+  return sessionStorage.getItem("jwt_token");
+}
+
+/**
+ * Menyimpan token JWT setelah login berhasil.
+ * @param {string} token
+ */
+function saveToken(token) {
+  sessionStorage.setItem("jwt_token", token);
+}
+
+/**
+ * Menghapus token JWT (logout).
+ */
+function clearToken() {
+  sessionStorage.removeItem("jwt_token");
+}
+
+/**
+ * Membangun headers standar.
+ * @param {boolean} withAuth - sertakan Authorization header?
+ * @returns {HeadersInit}
+ */
+function buildHeaders(withAuth = true) {
+  const headers = { "Content-Type": "application/json" };
+  if (withAuth) {
+    const token = getToken();
+    if (token) headers["Authorization"] = `Bearer ${token}`;
+  }
+  return headers;
+}
+
+/**
+ * Wrapper fetch yang menangani error secara seragam.
+ * @param {string} endpoint  - path relatif, misal "/auth/login"
+ * @param {RequestInit} options
+ * @returns {Promise<any>}   - parsed JSON body
+ */
+async function request(endpoint, options = {}) {
+  const url = `${BASE_URL}${endpoint}`;
+  const response = await fetch(url, options);
+
+  // Coba parse body sebagai JSON (mungkin ada pesan error dari Spring)
+  let body = null;
+  const contentType = response.headers.get("Content-Type") || "";
+  if (contentType.includes("application/json")) {
+    body = await response.json();
+  }
+
+  if (!response.ok) {
+    // Spring Boot sering mengembalikan { message: "..." } pada error
+    const message =
+      (body && (body.message || body.error)) ||
+      `HTTP ${response.status}: ${response.statusText}`;
+    throw new Error(message);
+  }
+
+  return body;
+}
+
+// ─── AUTH ─────────────────────────────────────────────────────────────────────
+
+/**
+ * Login pengguna.
+ * Backend mengembalikan: { token: "...", role: "USER"|"ADMIN" }
+ *
+ * @param {string} username
+ * @param {string} password
+ * @returns {Promise<{ token: string, role: string }>}
+ */
+export async function login(username, password) {
+  const data = await request("/auth/login", {
+    method: "POST",
+    headers: buildHeaders(false),
+    body: JSON.stringify({ username, password }),
+  });
+  saveToken(data.token);
+  return data;
+}
+
+/**
+ * Logout — hapus token lokal.
+ * (Backend stateless JWT tidak perlu hit endpoint khusus.)
+ */
+export function logout() {
+  clearToken();
+  window.location.href = "/index.html";
+}
+
+/**
+ * Registrasi akun baru (status default: belum tervalidasi).
+ *
+ * @param {{ username, password, email, namaLengkap }} payload
+ * @returns {Promise<any>}
+ */
+export async function register(payload) {
+  return request("/auth/register", {
+    method: "POST",
+    headers: buildHeaders(false),
+    body: JSON.stringify(payload),
+  });
+}
+
+// ─── USER / PROFIL ────────────────────────────────────────────────────────────
+
+/**
+ * Mendapatkan data profil pengguna yang sedang login.
+ * @returns {Promise<{ id, username, email, namaLengkap, role, tervalidasi }>}
+ */
+export async function getProfil() {
+  return request("/user/profil", {
+    method: "GET",
+    headers: buildHeaders(),
+  });
+}
+
+/**
+ * [ADMIN] Mendapatkan daftar seluruh user yang belum tervalidasi.
+ * @returns {Promise<Array>}
+ */
+export async function getUserBelumValidasi() {
+  return request("/admin/users/pending", {
+    method: "GET",
+    headers: buildHeaders(),
+  });
+}
+
+/**
+ * [ADMIN] Memvalidasi akun user berdasarkan ID.
+ * @param {number|string} userId
+ * @returns {Promise<any>}
+ */
+export async function validasiUser(userId) {
+  return request(`/admin/users/${userId}/validasi`, {
+    method: "PATCH",
+    headers: buildHeaders(),
+  });
+}
+
+// ─── PEMASUKAN ────────────────────────────────────────────────────────────────
+
+/**
+ * Mencatat transaksi pemasukan baru.
+ *
+ * @param {{ nominal: number, keterangan: string, kategori: string, tanggal: string }} payload
+ *   kategori harus sesuai enum IncomeCategory di backend
+ *   (contoh: "GAJI", "FREELANCE", "INVESTASI", "BONUS", "LAINNYA")
+ * @returns {Promise<any>}
+ */
+export async function tambahPemasukan(payload) {
+  return request("/transaksi/pemasukan", {
+    method: "POST",
+    headers: buildHeaders(),
+    body: JSON.stringify(payload),
+  });
+}
+
+/**
+ * Mendapatkan riwayat pemasukan milik pengguna yang login.
+ * @param {{ bulan?: number, tahun?: number }} filter - opsional
+ * @returns {Promise<Array>}
+ */
+export async function getRiwayatPemasukan(filter = {}) {
+  const params = new URLSearchParams();
+  if (filter.bulan) params.append("bulan", filter.bulan);
+  if (filter.tahun) params.append("tahun", filter.tahun);
+  const query = params.toString() ? `?${params}` : "";
+  return request(`/transaksi/pemasukan${query}`, {
+    method: "GET",
+    headers: buildHeaders(),
+  });
+}
+
+// ─── PENGELUARAN ──────────────────────────────────────────────────────────────
+
+/**
+ * Mencatat transaksi pengeluaran baru.
+ *
+ * @param {{ nominal: number, keterangan: string, kategori: string, tanggal: string }} payload
+ *   kategori harus sesuai enum ExpenseCategory di backend
+ *   (contoh: "MAKANAN", "TRANSPORTASI", "KESEHATAN", "HIBURAN", "TAGIHAN", "LAINNYA")
+ * @returns {Promise<any>}
+ */
+export async function tambahPengeluaran(payload) {
+  return request("/transaksi/pengeluaran", {
+    method: "POST",
+    headers: buildHeaders(),
+    body: JSON.stringify(payload),
+  });
+}
+
+/**
+ * Mendapatkan riwayat pengeluaran milik pengguna yang login.
+ * @param {{ bulan?: number, tahun?: number }} filter - opsional
+ * @returns {Promise<Array>}
+ */
+export async function getRiwayatPengeluaran(filter = {}) {
+  const params = new URLSearchParams();
+  if (filter.bulan) params.append("bulan", filter.bulan);
+  if (filter.tahun) params.append("tahun", filter.tahun);
+  const query = params.toString() ? `?${params}` : "";
+  return request(`/transaksi/pengeluaran${query}`, {
+    method: "GET",
+    headers: buildHeaders(),
+  });
+}
+
+// ─── LAPORAN & DASHBOARD ──────────────────────────────────────────────────────
+
+/**
+ * Mendapatkan ringkasan saldo & statistik untuk Dashboard.
+ * Backend (Mahasiswa 8) mengembalikan:
+ * {
+ *   totalSaldo: number,
+ *   totalPemasukan: number,
+ *   totalPengeluaran: number,
+ *   grafikBulanan: [{ bulan: string, pemasukan: number, pengeluaran: number }],
+ *   grafikKategori: [{ kategori: string, jumlah: number }]
+ * }
+ *
+ * @returns {Promise<object>}
+ */
+export async function getDashboardData() {
+  return request("/laporan/dashboard", {
+    method: "GET",
+    headers: buildHeaders(),
+  });
+}
+
+/**
+ * Mendapatkan laporan bulanan lengkap.
+ * @param {number} bulan  - 1–12
+ * @param {number} tahun  - misal 2025
+ * @returns {Promise<object>}
+ */
+export async function getLaporanBulanan(bulan, tahun) {
+  return request(`/laporan/bulanan?bulan=${bulan}&tahun=${tahun}`, {
+    method: "GET",
+    headers: buildHeaders(),
+  });
+}
+
+/**
+ * Mendapatkan laporan tahunan.
+ * @param {number} tahun
+ * @returns {Promise<object>}
+ */
+export async function getLaporanTahunan(tahun) {
+  return request(`/laporan/tahunan?tahun=${tahun}`, {
+    method: "GET",
+    headers: buildHeaders(),
+  });
+}
+
+// ─── Utilitas ekspor ─────────────────────────────────────────────────────────
+
+/**
+ * Cek apakah sesi user masih aktif (token ada di storage).
+ * @returns {boolean}
+ */
+export function isLoggedIn() {
+  return !!getToken();
+}
+
+/**
+ * Guard sederhana — panggil di awal setiap halaman yang butuh login.
+ * Redirect ke login jika belum autentikasi.
+ */
+export function requireAuth() {
+  if (!isLoggedIn()) {
+    window.location.href = "/index.html";
+  }
+}
