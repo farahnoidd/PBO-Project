@@ -54,18 +54,27 @@ public class ExpenseController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> handleEditExpense(@PathVariable Long id, @RequestBody ExpenseRequest updatedData) {
+    public ResponseEntity<?> handleEditExpense(
+        @PathVariable Long id, 
+        @RequestBody ExpenseRequest updatedData,
+        Authentication authentication) {
+
         try {
-            return ResponseEntity.ok(expenseService.updateExpense(id, updatedData));
+            String userId = authentication.getName();
+            return ResponseEntity.ok(expenseService.updateExpense(id, updatedData, userId));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> handleDeleteExpense(@PathVariable Long id) {
+    public ResponseEntity<?> handleDeleteExpense(
+        @PathVariable Long id,
+        Authentication authentication) {
+
         try {
-            expenseService.deleteExpense(id);
+            String userId = authentication.getName();
+            expenseService.deleteExpense(id, userId);
             return ResponseEntity.ok("Data transaksi berhasil dihapus");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
