@@ -174,7 +174,7 @@ function setupActionButtons() {
             alert('Fitur ekspor PDF akan segera terhubung dengan Backend API!');
             
             // Opsional: Untuk sementara bisa memanggil dialog print bawaan browser
-            // window.print();
+            window.print();
         });
     }
 }

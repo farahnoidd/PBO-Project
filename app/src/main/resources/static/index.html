@@ -1,38 +1,144 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-    <title>FinanceBuddy Login</title>
-    <link rel="stylesheet" href="style.css">
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Login - FinanceBuddy</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary-fixed-variant": "#1c4f41",
+                        "surface-container-high": "#e9e8e7",
+                        "tertiary-fixed-dim": "#bfc6e1",
+                        "on-background": "#1a1c1c",
+                        "on-primary-container": "#396b5c",
+                        "outline": "#707975",
+                        "on-error-container": "#93000a",
+                        "outline-variant": "#c0c9c4",
+                        "surface-container-highest": "#e3e2e1",
+                        "on-primary": "#ffffff",
+                        "surface": "#faf9f8",
+                        "surface-dim": "#dadad9",
+                        "inverse-on-surface": "#f1f0f0",
+                        "primary-fixed-dim": "#9dd1bf",
+                        "surface-tint": "#366758",
+                        "on-surface-variant": "#404945",
+                        "on-secondary-fixed-variant": "#1a4d5a",
+                        "on-tertiary-fixed-variant": "#3f465d",
+                        "primary": "#366758",
+                        "error": "#ba1a1a",
+                        "on-tertiary-container": "#5a617a",
+                        "inverse-primary": "#9dd1bf",
+                        "secondary-fixed-dim": "#9ecede",
+                        "tertiary-container": "#d7defa",
+                        "on-secondary": "#ffffff",
+                        "on-surface": "#1a1c1c",
+                        "on-secondary-fixed": "#001f27",
+                        "surface-variant": "#e3e2e1",
+                        "surface-container": "#eeeeed",
+                        "surface-bright": "#faf9f8",
+                        "tertiary-fixed": "#dbe2fe",
+                        "tertiary": "#565e76",
+                        "on-tertiary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "on-tertiary-fixed": "#131b2f",
+                        "primary-container": "#b5ead7",
+                        "inverse-surface": "#2f3130",
+                        "secondary": "#356572",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed": "#baeafa",
+                        "on-primary-fixed": "#002018",
+                        "surface-container-low": "#f4f3f2",
+                        "secondary-container": "#b7e7f7",
+                        "error-container": "#ffdad6",
+                        "primary-fixed": "#b9eedb",
+                        "on-secondary-container": "#3a6977",
+                        "background": "#faf9f8"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Plus Jakarta Sans", "sans-serif"],
+                        "body-md": ["Inter", "sans-serif"],
+                        "label-sm": ["Inter", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .ambient-shadow-sm {
+            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.04);
+        }
+        .card-outline {
+            border: 1px solid #F0F0F0;
+        }
+    </style>
 </head>
-<body>
+<body class="bg-background text-on-background font-body-md antialiased selection:bg-primary-container selection:text-on-primary-container min-h-screen flex items-center justify-center p-4">
 
-<div class="login-wrapper">
+    <div class="w-full max-w-[400px] bg-surface-container-lowest rounded-[24px] p-8 ambient-shadow-sm card-outline flex flex-col items-center">
+        
+        <div class="w-16 h-16 rounded-xl bg-primary-container flex items-center justify-center mb-4">
+            <span class="material-symbols-outlined text-4xl" style="color: rgb(45, 90, 76); font-variation-settings: 'FILL' 1;">account_balance_wallet</span>
+        </div>
+        
+        <h1 class="font-headline-md text-[28px] font-bold text-primary tracking-tight leading-none mb-1 text-center">FinanceBuddy</h1>
+        <p class="font-body-md text-[14px] text-on-surface-variant mb-8 text-center">Student Edition</p>
 
-    <div class="login-box">
-
-        <h2>FinanceBuddy</h2>
-
-        <form>
-
-            <div class="form-group">
-                <label>Email</label>
-                <input type="email" class="form-control">
+        <form id="loginForm" class="w-full flex flex-col gap-5">
+            
+            <div class="flex flex-col gap-1.5">
+                <label for="email" class="font-body-md text-[14px] font-medium text-on-surface">Email Mahasiswa</label>
+                <div class="relative flex items-center">
+                    <span class="material-symbols-outlined absolute left-3 text-on-surface-variant text-[20px]">mail</span>
+                    <input type="email" id="email" name="email" placeholder="contoh@student.edu" required
+                        class="w-full pl-10 pr-4 py-3 bg-surface rounded-xl border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-[14px] text-on-surface placeholder:text-outline">
+                </div>
             </div>
 
-            <div class="form-group">
-                <label>Password</label>
-                <input type="password" class="form-control">
+            <div class="flex flex-col gap-1.5">
+                <label for="password" class="font-body-md text-[14px] font-medium text-on-surface">Kata Sandi</label>
+                <div class="relative flex items-center">
+                    <span class="material-symbols-outlined absolute left-3 text-on-surface-variant text-[20px]">lock</span>
+                    <input type="password" id="password" name="password" placeholder="Masukkan kata sandi" required
+                        class="w-full pl-10 pr-10 py-3 bg-surface rounded-xl border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-[14px] text-on-surface placeholder:text-outline">
+                    <button type="button" id="togglePassword" class="absolute right-3 text-on-surface-variant hover:text-primary transition-colors flex items-center justify-center">
+                        <span class="material-symbols-outlined text-[20px]">visibility_off</span>
+                    </button>
+                </div>
             </div>
 
-            <button class="btn btn-primary">
-                Login
+            <div class="flex items-center justify-between mt-1 mb-2">
+                <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="checkbox" class="w-4 h-4 rounded text-primary border-outline-variant focus:ring-primary focus:ring-offset-background">
+                    <span class="font-body-md text-[13px] text-on-surface-variant">Ingat saya</span>
+                </label>
+                <a href="#" class="font-body-md text-[13px] font-medium text-primary hover:text-on-primary-fixed-variant transition-colors">Lupa sandi?</a>
+            </div>
+
+            <button type="submit" class="w-full flex items-center justify-center gap-2 px-6 py-3.5 bg-primary text-on-primary rounded-full text-[15px] font-semibold hover:bg-on-primary-fixed-variant transition-colors duration-200 shadow-sm hover:shadow-md">
+                Masuk ke Dashboard
+                <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
             </button>
-
         </form>
 
+        <p class="font-body-md text-[14px] text-on-surface-variant mt-8 text-center">
+            Belum punya akun? 
+            <a href="#" class="font-semibold text-primary hover:text-on-primary-fixed-variant transition-colors">Daftar sekarang</a>
+        </p>
     </div>
 
-</div>
-
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
 </body>
 </html>
