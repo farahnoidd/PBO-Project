@@ -14,7 +14,8 @@ public class DataInitializer implements CommandLineRunner {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public DataInitializer(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public DataInitializer(UserRepository userRepository,
+                           PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
@@ -28,15 +29,15 @@ public class DataInitializer implements CommandLineRunner {
 
             admin.setUsername("admin");
             admin.setEmail("admin@financebuddy.com");
-           admin.setPassword(passwordEncoder.encode("admin123")); 
-            
+            admin.setPassword(passwordEncoder.encode("admin123"));
             admin.setNamaLengkap("Administrator");
 
             admin.setRole(UserRole.ADMIN);
             admin.setStatus(UserStatus.TERVALIDASI);
 
             userRepository.save(admin);
-            System.out.println("Akun admin berhasil diinisialisasi dengan password BCrypt!");
+
+            System.out.println("Admin default berhasil dibuat.");
         }
     }
-        }  
+}
