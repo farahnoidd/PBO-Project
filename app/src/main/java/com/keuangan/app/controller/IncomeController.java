@@ -4,6 +4,7 @@ import com.keuangan.app.dto.IncomeRequest;
 import com.keuangan.app.service.IncomeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication; // Wajib di-import
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -18,10 +19,18 @@ public class IncomeController {
     private IncomeService incomeService;
 
     @PostMapping
-    public ResponseEntity<Map<String, String>> createIncome(@RequestBody IncomeRequest request) {
+    public ResponseEntity<Map<String, String>> createIncome(
+            Authentication authentication, 
+            @RequestBody IncomeRequest request) { // PERBAIKAN: Sekarang request JSON-nya udah ketangkap
+        
         Map<String, String> response = new HashMap<>();
         try {
-            String result = incomeService.saveIncome(request);
+            // PERBAIKAN: Ambil userId asli dari token JWT secara aman
+            String userId = authentication.getName(); 
+            
+            // Oper data request DAN userId ke service
+            String result = incomeService.saveIncome(request, userId);
+            
             response.put("status", "Success");
             response.put("message", result);
             return ResponseEntity.ok(response);

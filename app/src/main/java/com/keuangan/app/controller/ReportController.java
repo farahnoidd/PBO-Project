@@ -6,6 +6,7 @@ import com.keuangan.app.dto.response.YearlyChartDTO;
 import com.keuangan.app.service.ReportService;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,19 +24,26 @@ public class ReportController {
     }
 
     @GetMapping("/api/report/dashboard")
-    public DashboardResponseDTO getDashboard(@RequestParam String userId) {
-        return reportService.getDashboardSummary(userId);
+    public ResponseEntity<DashboardResponseDTO> getDashboard(Authentication authentication) {
+        String userId = authentication.getName(); 
+        
+        DashboardResponseDTO summary = reportService.getDashboardSummary(userId);
+        return ResponseEntity.ok(summary);
     }
+
     @GetMapping("/api/report/monthly-chart")
     public ResponseEntity<List<MonthlyChartDTO>> getMonthlyChart(
-            @RequestParam String userId,
+            Authentication authentication,
             @RequestParam Integer year) {
 
+        String userId = authentication.getName();
         List<MonthlyChartDTO> monthlyData = reportService.getMonthlyChart(userId, year);
         return ResponseEntity.ok(monthlyData);
     }
+
     @GetMapping("/api/report/yearly-chart")
-    public ResponseEntity<List<YearlyChartDTO>> getYearlyChart(@RequestParam String userId) {
+    public ResponseEntity<List<YearlyChartDTO>> getYearlyChart(Authentication authentication) {
+        String userId = authentication.getName();
         List<YearlyChartDTO> yearlyData = reportService.getYearlyChart(userId);
         return ResponseEntity.ok(yearlyData);
     }               

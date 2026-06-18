@@ -20,7 +20,7 @@ public class ExpenseService {
     @Autowired
     private CategoryRepository categoryRepository;
 
-    public String createExpense(ExpenseRequest request) {
+    public String createExpense(ExpenseRequest request, String userId) {
         // 1. Validasi Aturan Angka
         if (request.getAmount() == null || request.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Nominal pengeluaran harus lebih besar dari 0");
@@ -31,7 +31,11 @@ public class ExpenseService {
                 .orElseThrow(() -> new IllegalArgumentException("Kategori '" + request.getCategory() + "' tidak valid untuk pengeluaran"));
 
         // OPTIMASI: Mengambil saldo langsung via agregasi database untuk menghindari OutOfMemory (OOM) pada skala data besar
-        BigDecimal currentBalance = transactionRepository.getRealtimeBalance(request.getUserId());
+        BigDecimal currentBalance = transactionRepository.getRealtimeBalance(userId);
+
+        if (currentBalance == null) {
+            currentBalance = BigDecimal.ZERO;
+        }
 
         // 3. Pengecekan Batas Saldo Minus
         if (currentBalance.compareTo(request.getAmount()) < 0 && !request.isForceSave()) {
@@ -40,7 +44,7 @@ public class ExpenseService {
 
         // 4. Eksekusi Simpan
         Transaction t = new Transaction();
-        t.setUserId(request.getUserId());
+        t.setUserId(userId);
         t.setType("EXPENSE");
         t.setCategory(request.getCategory());
         t.setAmount(request.getAmount());
@@ -77,7 +81,7 @@ public class ExpenseService {
     }
 
     @Transactional(readOnly = true)
-    public List<Transaction> getAllTransactions() {
-        return transactionRepository.findAll();
+    public List<Transaction> getAllTransactions(String userId) {
+        return transactionRepository.findByUserId(userId);
     }
 }

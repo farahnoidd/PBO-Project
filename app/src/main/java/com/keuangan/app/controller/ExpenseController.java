@@ -3,10 +3,13 @@ package com.keuangan.app.controller;
 import com.keuangan.app.dto.ExpenseRequest;
 import com.keuangan.app.model.Transaction;
 import com.keuangan.app.service.ExpenseService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,15 +23,17 @@ public class ExpenseController {
     private ExpenseService expenseService;
 
     @GetMapping
-    public ResponseEntity<List<Transaction>> getTransactions() {
-        return ResponseEntity.ok(expenseService.getAllTransactions());
+    public ResponseEntity<List<Transaction>> getTransactions(Authentication authentication) {
+        String userId = authentication.getName();
+        return ResponseEntity.ok(expenseService.getAllTransactions(userId));
     }
 
     @PostMapping
-    public ResponseEntity<Map<String, String>> handleAddExpense(@RequestBody ExpenseRequest incomingData) {
+    public ResponseEntity<Map<String, String>> handleAddExpense(Authentication authentication, @RequestBody ExpenseRequest incomingData) {
         Map<String, String> response = new HashMap<>();
         try {
-            String result = expenseService.createExpense(incomingData);
+            String userId = authentication.getName();
+            String result = expenseService.createExpense(incomingData, userId);
             response.put("status", "Success");
             response.put("message", result);
             return ResponseEntity.ok(response);

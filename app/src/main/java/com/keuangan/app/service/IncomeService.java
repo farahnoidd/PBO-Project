@@ -19,7 +19,7 @@ public class IncomeService {
     @Autowired
     private CategoryRepository categoryRepository;
 
-    public String saveIncome(IncomeRequest request) {
+    public String saveIncome(IncomeRequest request, String userId) {
         // 1. Validasi Angka
         if (request.getAmount() == null || request.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Nominal pemasukan harus lebih besar dari 0");
@@ -31,7 +31,7 @@ public class IncomeService {
 
         // 3. Mapping ke Entity Transaction
         Transaction t = new Transaction();
-        t.setUserId(request.getUserId());
+        t.setUserId(userId);
         t.setType("INCOME");
         t.setCategory(request.getCategory());
         t.setAmount(request.getAmount());
