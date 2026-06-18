@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <title>Detail Pengeluaran - FinanceBuddy</title>
+    <title>Pengeluaran - FinanceBuddy</title>
     <link href="https://fonts.googleapis.com" rel="preconnect">
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -119,13 +119,13 @@
                     <span class="material-symbols-outlined" data-icon="account_balance_wallet">account_balance_wallet</span>
                     <span class="font-medium text-[16px]">Pemasukan</span>
                 </a>
-                <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-colors duration-200" href="#">
-                    <span class="material-symbols-outlined" data-icon="payments">payments</span>
-                    <span class="font-medium text-[16px]">Pengeluaran</span>
-                </a>
                 <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-primary font-bold border-r-4 border-primary bg-primary-container/20 transition-transform scale-95 group" href="#">
                     <span class="material-symbols-outlined" data-icon="assessment" style="font-variation-settings: 'FILL' 1;">assessment</span>
-                    <span class="font-bold text-[16px]">Laporan</span>
+                    <span class="font-bold text-[16px]">Pengeluaran</span>
+                </a>
+                <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-colors duration-200" href="#">
+                    <span class="material-symbols-outlined" data-icon="payments">payments</span>
+                    <span class="font-medium text-[16px]">Laporan</span>
                 </a>
                 <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-colors duration-200" href="#">
                     <span class="material-symbols-outlined" data-icon="person">person</span>
@@ -148,12 +148,55 @@
                     <button class="md:hidden text-on-surface hover:text-primary transition-colors flex items-center justify-center w-10 h-10 rounded-full bg-surface-container-low">
                         <span class="material-symbols-outlined">menu</span>
                     </button>
-                    <h2 class="text-on-surface text-[24px] tracking-[-0.01em] font-semibold">Laporan Tahunan</h2>
+                    <h2 class="text-on-surface text-[24px] tracking-[-0.01em] font-semibold">Detail Pengeluaran</h2>
                 </div>
                 <img alt="Student Profile Avatar" class="w-10 h-10 rounded-full object-cover border-2 border-primary-container" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBJBhzrAMZhrpuleFpNA9x6ZwDNVQlNIvTP_dZsy7Nlj_-aMWVs6_wcJl1JK04PlNaLb7BFjDPUvrrkXvEkBMT724I_QuWkNQAXPKukHhTESOS4TEUUCMf7YAgpkT3hntjFS2dy0BbRtG4Jj9lornW17lN19mktT99kO4VGl2Z0N4gQaFcTtl8uuYQmnrC9yzAPAZoliAtKSH8wEjroGXzs14V_Clk9WolporOxj8lw3pBFSYcMLo_WrqDVOW40bYs4GIiP2qCMJJFP">
             </header>
 
             <div class="p-container-margin flex flex-col gap-stack-md pb-24">
+                <div class="bg-error-container/10 rounded-[24px] p-stack-md ambient-shadow-sm card-outline border-error-container/30 mb-4">
+                    <h3 class="text-on-surface font-headline-md font-semibold mb-4 flex items-center gap-2">
+                        <span class="material-symbols-outlined text-error">remove_circle</span> Catat Pengeluaran Baru
+                    </h3>
+                    <form id="formTransaksi" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
+                        <div class="flex flex-col gap-1.5 lg:col-span-1">
+                            <label class="font-label-sm text-on-surface-variant">Nominal (Rp)</label>
+                            <input type="number" id="nominal" placeholder="0" class="w-full px-4 py-2.5 bg-surface border border-outline-variant rounded-xl font-body-md focus:ring-2 focus:ring-error/20 focus:border-error outline-none" required>
+                        </div>
+                        <div class="flex flex-col gap-1.5 lg:col-span-1">
+                            <label class="font-label-sm text-on-surface-variant">Kategori</label>
+                            <select id="kategori" class="w-full px-4 py-2.5 bg-surface border border-outline-variant rounded-xl font-body-md focus:ring-2 focus:ring-error/20 focus:border-error outline-none" required>
+                                <option value="" disabled selected>Pilih...</option>
+                                <option value="MAKANAN">Makanan</option>
+                                <option value="TRANSPORTASI">Transportasi</option>
+                                <option value="BELAJAR">Belajar / Kuliah</option>
+                                <option value="HIBURAN">Hiburan</option>
+                                <option value="TAGIHAN">Tagihan</option>
+                                <option value="LAINNYA">Lainnya</option>
+                            </select>
+                        </div>
+                        <div class="flex flex-col gap-1.5 lg:col-span-1">
+                            <label class="font-label-sm text-on-surface-variant">Sumber Dana</label>
+                            <select id="akun" class="w-full px-4 py-2.5 bg-surface border border-outline-variant rounded-xl font-body-md focus:ring-2 focus:ring-error/20 focus:border-error outline-none" required>
+                                <option value="BCA">BCA</option>
+                                <option value="MANDIRI">Mandiri</option>
+                                <option value="GOPAY">GoPay</option>
+                                <option value="DANA">Dana</option>
+                                <option value="CASH">Cash (Tunai)</option>
+                            </select>
+                        </div>
+                        <div class="flex flex-col gap-1.5 lg:col-span-1">
+                            <label class="font-label-sm text-on-surface-variant">Keterangan</label>
+                            <input type="text" id="deskripsi" placeholder="Contoh: Makan siang" class="w-full px-4 py-2.5 bg-surface border border-outline-variant rounded-xl font-body-md focus:ring-2 focus:ring-error/20 focus:border-error outline-none" required>
+                        </div>
+                        <div class="lg:col-span-1">
+                            <button type="submit" class="w-full flex items-center justify-center gap-2 px-6 py-2.5 bg-error text-white rounded-xl font-semibold hover:bg-on-error-container transition-colors shadow-sm hover:shadow-md">
+                                Simpan
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
                     <div class="bg-surface-container-lowest rounded-[24px] p-stack-md ambient-shadow-sm card-outline flex flex-col justify-start min-h-[140px]">
                         <h3 class="font-label-md text-label-md text-on-surface-variant">Total Pengeluaran Bulan Ini</h3>
@@ -327,6 +370,7 @@
             </div>
         </main>
     </div>
-    <script src="js/transaksi.js"></script>
+    <script type="module" src="js/transaksi.js"></script>
+    <script src="js/pwa.js" defer></script>
 </body>
 </html>

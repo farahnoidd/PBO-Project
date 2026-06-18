@@ -4,53 +4,71 @@
  * Fungsi: Mengelola UI Laporan Tahunan, merender Chart.js, dan fitur integrasi PDF.
  */
 
+import { getLaporanTahunan, requireAuth } from './api.js';
+
+requireAuth();
+
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Setup default styling untuk semua grafik
     setupChartDefaults();
-
-    // 2. Ambil data laporan dan render grafik
-    fetchLaporanData();
-
-    // 3. Aktifkan tombol-tombol interaktif
+    const currentYear = new Date().getFullYear();
+    fetchLaporanData(currentYear);
     setupActionButtons();
 });
 
-/**
- * Mengatur font dan warna dasar Chart.js agar selaras dengan Tailwind
- */
 function setupChartDefaults() {
     Chart.defaults.font.family = 'Inter, sans-serif';
-    Chart.defaults.color = '#707975'; // Warna outline variant
+    Chart.defaults.color = '#707975'; 
 }
 
-/**
- * Simulasi pengambilan data dari API Backend (Spring Boot)
- */
-function fetchLaporanData() {
-    /* * MOCK DATA JSON
-     * Struktur ini mengantisipasi DTO buatan Mahasiswa 8 (YearlyChartDTO & CategoryBreakdownDTO)
-     */
-    const mockData = {
-        yearlyTrend: {
-            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des'],
-            pemasukan: [5000000, 5200000, 5000000, 6000000, 5500000, 5000000, 5800000, 5000000, 6200000, 5000000, 5500000, 5800000],
-            pengeluaran: [4000000, 3800000, 4200000, 3500000, 4000000, 3900000, 4100000, 3800000, 4500000, 5200000, 3800000, 3700000]
-        },
-        expenseDistribution: {
-            labels: ['Makanan', 'Transport', 'Belajar', 'Hiburan', 'Lainnya'],
-            data: [30, 20, 15, 25, 10],
-            colors: ['#b7e7f7', '#d7defa', '#b5ead7', '#ffdad6', '#e3e2e1']
-        }
-    };
+async function fetchLaporanData(tahun) {
+    try {
+        const apiResponse = await getLaporanTahunan(tahun);
 
-    // Panggil fungsi render grafik setelah data "diambil"
-    renderYearlyBarChart(mockData.yearlyTrend);
-    renderExpensePieChart(mockData.expenseDistribution);
+        const yearlyTrend = {
+            labels: apiResponse.grafikBulanan ? apiResponse.grafikBulanan.map(item => item.bulan) : ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des'],
+            pemasukan: apiResponse.grafikBulanan ? apiResponse.grafikBulanan.map(item => item.pemasukan) : [],
+            pengeluaran: apiResponse.grafikBulanan ? apiResponse.grafikBulanan.map(item => item.pengeluaran) : []
+        };
+
+        const expenseDistribution = {
+            labels: apiResponse.grafikKategori ? apiResponse.grafikKategori.map(item => item.kategori) : [],
+            data: apiResponse.grafikKategori ? apiResponse.grafikKategori.map(item => item.jumlah) : [],
+            colors: ['#b7e7f7', '#d7defa', '#b5ead7', '#ffdad6', '#e3e2e1'] 
+        };
+
+        renderYearlyBarChart(yearlyTrend);
+        renderExpensePieChart(expenseDistribution);
+        updateSummaryText(apiResponse);
+
+    } catch (error) {
+        console.error("Gagal mengambil data laporan:", error);
+        alert("Gagal memuat data laporan dari server. Pastikan backend sudah berjalan.");
+    }
 }
 
-/**
- * Merender grafik batang (Bar Chart) Pemasukan vs Pengeluaran
- */
+function updateSummaryText(data) {
+    const formatRp = (angka) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(angka);
+    
+    // Update Kotak Ringkasan Atas
+    if(document.getElementById('totalPemasukanTahunan')) document.getElementById('totalPemasukanTahunan').innerText = formatRp(data.totalPemasukan || 0);
+    if(document.getElementById('totalPengeluaranTahunan')) document.getElementById('totalPengeluaranTahunan').innerText = formatRp(data.totalPengeluaran || 0);
+    if(document.getElementById('tabunganBersih')) document.getElementById('tabunganBersih').innerText = formatRp((data.totalPemasukan || 0) - (data.totalPengeluaran || 0));
+
+    // Update Ringkasan Statistik (Opsional, tergantung ketersediaan di API Backend)
+    // Jika backend mengirimkan data statistik ekstra, kita tangkap di sini:
+    if(document.getElementById('statBulanTertinggi') && data.bulanPengeluaranTertinggi) {
+        document.getElementById('statBulanTertinggi').innerText = data.bulanPengeluaranTertinggi;
+    }
+    if(document.getElementById('statKategoriTerbesar') && data.kategoriTerbesar) {
+        document.getElementById('statKategoriTerbesar').innerText = data.kategoriTerbesar;
+    }
+    if(document.getElementById('statRerataPemasukan') && data.totalPemasukan) {
+        // Hitung rerata secara manual jika backend tidak mengirimkannya
+        const rerata = (data.totalPemasukan || 0) / 12;
+        document.getElementById('statRerataPemasukan').innerText = formatRp(rerata);
+    }
+}
+
 function renderYearlyBarChart(data) {
     const ctxBar = document.getElementById('yearlyBarChart').getContext('2d');
     new Chart(ctxBar, {
@@ -61,7 +79,7 @@ function renderYearlyBarChart(data) {
                 {
                     label: 'Pemasukan',
                     data: data.pemasukan,
-                    backgroundColor: '#b5ead7', // primary-container
+                    backgroundColor: '#b5ead7', 
                     borderRadius: 6,
                     barPercentage: 0.6,
                     categoryPercentage: 0.8
@@ -69,7 +87,7 @@ function renderYearlyBarChart(data) {
                 {
                     label: 'Pengeluaran',
                     data: data.pengeluaran,
-                    backgroundColor: '#ffdad6', // error-container
+                    backgroundColor: '#ffdad6', 
                     borderRadius: 6,
                     barPercentage: 0.6,
                     categoryPercentage: 0.8
@@ -80,52 +98,21 @@ function renderYearlyBarChart(data) {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: {
-                    position: 'top',
-                    align: 'end',
-                    labels: {
-                        usePointStyle: true,
-                        boxWidth: 8,
-                        font: { size: 12, weight: 500 }
-                    }
-                },
-                tooltip: {
-                    backgroundColor: '#2f3130',
-                    titleFont: { size: 13, family: 'Inter, sans-serif' },
-                    bodyFont: { size: 13, family: 'Inter, sans-serif' },
-                    padding: 12,
-                    cornerRadius: 8,
-                    displayColors: false
-                }
+                legend: { position: 'top', align: 'end', labels: { usePointStyle: true, boxWidth: 8, font: { size: 12, weight: 500 } } },
+                tooltip: { backgroundColor: '#2f3130', padding: 12, cornerRadius: 8, displayColors: false }
             },
             scales: {
-                y: {
-                    beginAtZero: true,
-                    grid: {
-                        color: '#f4f3f2', 
-                        drawBorder: false
-                    },
-                    ticks: {
-                        callback: function(value) {
-                            return 'Rp ' + (value / 1000000) + 'M';
-                        }
-                    }
-                },
-                x: {
-                    grid: {
-                        display: false,
-                        drawBorder: false
-                    }
-                }
+                y: { beginAtZero: true, grid: { color: '#f4f3f2', drawBorder: false }, ticks: { callback: function(value) { return 'Rp ' + (value / 1000000) + 'M'; } } },
+                x: { grid: { display: false, drawBorder: false } }
             }
         }
     });
 }
 
-/**
- * Merender grafik donat (Doughnut Chart) Distribusi Pengeluaran
- */
 function renderExpensePieChart(data) {
+    const bgColors = ['#b7e7f7', '#d7defa', '#b5ead7', '#ffdad6', '#e3e2e1'];
+    
+    // 1. Render Pie Chart
     const ctxPie = document.getElementById('expensePieChart').getContext('2d');
     new Chart(ctxPie, {
         type: 'doughnut',
@@ -133,7 +120,7 @@ function renderExpensePieChart(data) {
             labels: data.labels,
             datasets: [{
                 data: data.data,
-                backgroundColor: data.colors,
+                backgroundColor: bgColors,
                 borderWidth: 0,
                 hoverOffset: 4
             }]
@@ -145,35 +132,42 @@ function renderExpensePieChart(data) {
             plugins: {
                 legend: { display: false },
                 tooltip: {
-                    backgroundColor: '#2f3130',
-                    bodyFont: { size: 14, family: 'Inter, sans-serif' },
-                    padding: 12,
-                    cornerRadius: 8,
-                    callbacks: {
-                        label: function(context) {
-                            return ' ' + context.label + ': ' + context.parsed + '%';
-                        }
-                    }
+                    backgroundColor: '#2f3130', padding: 12, cornerRadius: 8,
+                    callbacks: { label: function(context) { return ' ' + context.label + ': Rp ' + context.raw.toLocaleString('id-ID'); } }
                 }
             }
         }
     });
+
+    // 2. Generate Legend HTML Secara Dinamis (Menghitung Persentase)
+    const legendContainer = document.getElementById('expenseLegend');
+    if (legendContainer && data.labels.length > 0) {
+        legendContainer.innerHTML = ''; // Kosongkan placeholder
+        const total = data.data.reduce((a, b) => a + b, 0); 
+        
+        data.labels.forEach((label, index) => {
+            const value = data.data[index];
+            const percentage = total > 0 ? Math.round((value / total) * 100) : 0;
+            const color = bgColors[index % bgColors.length];
+
+            // Terapkan styling Tailwind yang sama persis seperti sebelumnya
+            legendContainer.innerHTML += `
+                <span class="inline-flex items-center gap-1 font-label-sm text-[12px] bg-surface-container-high/30 text-on-surface-variant px-3 py-1 rounded-full">
+                    <span class="w-2 h-2 rounded-full" style="background-color: ${color};"></span> 
+                    ${label} ${percentage}%
+                </span>
+            `;
+        });
+    }
 }
 
-/**
- * Mengatur event listener untuk tombol aksi di Laporan
- */
 function setupActionButtons() {
-    // Mencari tombol Download Laporan (PDF)
     const buttons = document.querySelectorAll('button');
     const downloadBtn = Array.from(buttons).find(btn => btn.innerText.includes('Download Laporan (PDF)'));
     
     if (downloadBtn) {
         downloadBtn.addEventListener('click', () => {
-            // Simulasi proses pembuatan PDF
-            alert('Fitur ekspor PDF akan segera terhubung dengan Backend API!');
-            
-            // Opsional: Untuk sementara bisa memanggil dialog print bawaan browser
+            alert('Mempersiapkan PDF...');
             window.print();
         });
     }

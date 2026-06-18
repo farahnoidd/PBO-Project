@@ -163,7 +163,7 @@
                         <h3 class="font-label-md text-label-md text-on-surface-variant">Total Pemasukan Tahunan</h3>
                     </div>
                     <div>
-                        <p class="font-headline-lg text-headline-lg text-on-surface mt-1 text-[36px] text-left">Rp 65.000.000</p>
+                        <p id="totalPemasukanTahunan" class="font-headline-lg text-headline-lg text-on-surface mt-1 text-[36px] text-left">Rp 65.000.000</p>
                         <p class="font-label-sm text-[12px] text-outline mt-1">Tahun 2023</p>
                     </div>
                 </div>
@@ -176,7 +176,7 @@
                         <h3 class="font-label-md text-label-md text-on-surface-variant">Total Pengeluaran Tahunan</h3>
                     </div>
                     <div>
-                        <p class="font-headline-lg text-headline-lg text-on-surface mt-1 text-[36px] text-left">Rp 48.500.000</p>
+                        <p id="totalPengeluaranTahunan" class="font-headline-lg text-headline-lg text-on-surface mt-1 text-[36px] text-left">Rp 48.500.000</p>
                         <p class="font-label-sm text-[12px] text-outline mt-1">Tahun 2023</p>
                     </div>
                 </div>
@@ -189,7 +189,7 @@
                         <h3 class="font-label-md text-label-md text-on-surface-variant">Tabungan Bersih</h3>
                     </div>
                     <div>
-                        <p class="font-headline-lg text-headline-lg text-primary mt-1 text-[36px] text-left">Rp 16.500.000</p>
+                        <p id="tabunganBersih" class="font-headline-lg text-headline-lg text-primary mt-1 text-[36px] text-left">Rp 16.500.000</p>
                         <div class="inline-flex items-center gap-1 mt-1 bg-primary-container/30 text-on-primary-container px-2 py-0.5 rounded-full">
                             <span class="material-symbols-outlined text-[14px]">arrow_upward</span>
                             <span class="font-label-sm text-[12px]">Surplus</span>
@@ -211,12 +211,7 @@
                     <div class="flex-1 relative min-h-[250px] flex items-center justify-center">
                         <canvas id="expensePieChart"></canvas>
                     </div>
-                    <div class="mt-stack-sm flex flex-wrap justify-center gap-2">
-                        <span class="inline-flex items-center gap-1 font-label-sm text-[12px] bg-secondary-container/30 text-on-secondary-container px-3 py-1 rounded-full"><span class="w-2 h-2 rounded-full bg-[#b7e7f7]"></span> Makanan 30%</span>
-                        <span class="inline-flex items-center gap-1 font-label-sm text-[12px] bg-tertiary-container/30 text-on-tertiary-container px-3 py-1 rounded-full"><span class="w-2 h-2 rounded-full bg-[#d7defa]"></span> Transport 20%</span>
-                        <span class="inline-flex items-center gap-1 font-label-sm text-[12px] bg-primary-container/30 text-on-primary-container px-3 py-1 rounded-full"><span class="w-2 h-2 rounded-full bg-[#b5ead7]"></span> Belajar 15%</span>
-                        <span class="inline-flex items-center gap-1 font-label-sm text-[12px] bg-error-container/30 text-on-error-container px-3 py-1 rounded-full"><span class="w-2 h-2 rounded-full bg-[#ffdad6]"></span> Hiburan 25%</span>
-                        <span class="inline-flex items-center gap-1 font-label-sm text-[12px] bg-surface-container-high/50 text-on-surface-variant px-3 py-1 rounded-full"><span class="w-2 h-2 rounded-full bg-[#e3e2e1]"></span> Lainnya 10%</span>
+                    <div id="expenseLegend" class="mt-stack-sm flex flex-wrap justify-center gap-2">
                     </div>
                 </div>
 
@@ -230,7 +225,7 @@
                                 </div>
                                 <span class="font-body-md text-body-md text-on-surface">Bulan Pengeluaran Tertinggi</span>
                             </div>
-                            <span class="font-label-md text-label-md font-semibold text-on-surface">Oktober</span>
+                            <span id="statBulanTertinggi" class="font-label-md text-label-md font-semibold text-on-surface">Oktober</span>
                         </li>
                         <li class="flex items-center justify-between p-4 bg-surface rounded-xl border border-surface-container">
                             <div class="flex items-center gap-3">
@@ -239,7 +234,7 @@
                                 </div>
                                 <span class="font-body-md text-body-md text-on-surface">Kategori Terbesar</span>
                             </div>
-                            <span class="font-label-md text-label-md font-semibold text-on-surface">Makanan</span>
+                            <span id="statKategoriTerbesar" class="font-label-md text-label-md font-semibold text-on-surface">Makanan</span>
                         </li>
                         <li class="flex items-center justify-between p-4 bg-surface rounded-xl border border-surface-container">
                             <div class="flex items-center gap-3">
@@ -248,7 +243,7 @@
                                 </div>
                                 <span class="font-body-md text-body-md text-on-surface">Rerata Pemasukan Bulanan</span>
                             </div>
-                            <span class="font-label-md text-label-md font-semibold text-on-surface">Rp 5.416.000</span>
+                            <span id="statRerataPemasukan" class="font-label-md text-label-md font-semibold text-on-surface">Rp 5.416.000</span>
                         </li>
                     </ul>
                 </div>
@@ -265,6 +260,7 @@
     </main>
 </div>
 
-<script src="/js/laporan.js"></script>
+<script type="module" src="/js/laporan.js"></script>
+<script src="js/pwa.js" defer></script>
 </body>
 </html>

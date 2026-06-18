@@ -3,24 +3,17 @@
  * Mahasiswa 12 – FE Integrasi API & Core PWA
  *
  * Strategi cache:
- *  • Static assets (HTML, CSS, JS, ikon)  → Cache-First
- *    File-file ini jarang berubah; ambil dari cache dulu, lebih cepat.
- *
- *  • API calls ke /api/*                  → Network-First
- *    Data keuangan harus segar; coba jaringan dulu, fallback ke cache
- *    jika offline.
- *
- *  • Navigasi (halaman HTML lain)         → Cache-First dengan fallback
- *    offline.html jika sama sekali tidak ada koneksi.
- *
- * Versi cache: ubah CACHE_VERSION setiap deploy agar cache lama dibersihkan.
+ * • Static assets (HTML, CSS, JS, ikon)  → Cache-First
+ * File-file ini jarang berubah; ambil dari cache dulu, lebih cepat.
+ * ... (komentar lainnya tetap sama)
  */
 
-const CACHE_VERSION = "v1.0.0";
+// 1. NAIKKAN VERSI CACHE (Wajib setiap ada perubahan file HTML/CSS/JS)
+const CACHE_VERSION = "v1.0.1"; 
 const STATIC_CACHE = `static-${CACHE_VERSION}`;
 const API_CACHE    = `api-${CACHE_VERSION}`;
 
-// ── Daftar aset yang di-pre-cache saat instalasi ────────────────────────────
+// 2. TAMBAHKAN SEMUA FILE JS DAN CSS BARU KE SINI
 const STATIC_ASSETS = [
   "/",
   "/index.html",
@@ -30,12 +23,18 @@ const STATIC_ASSETS = [
   "/laporan.html",
   "/profil.html",
   "/admin.html",
-  "/offline.html",          // halaman fallback saat offline
-  "/css/style.css",
+  "/offline.html",          
+  "/css/component.css",     // <--- CSS Global yang baru kita buat
+  "/css/style.css",         // (Biarkan jika masih ada file lama yang pakai ini)
   "/js/api.js",
+  "/js/auth.js",            // <--- Tambahan
+  "/js/dashboard.js",       // <--- Tambahan
+  "/js/laporan.js",         // <--- Tambahan
+  "/js/profil.js",          // <--- Tambahan
+  "/js/transaksi.js",       // <--- Tambahan
   "/js/pwa.js",
   "/manifest.json",
-  "/assets/icons/icon-192.png",
+  "/assets/icons/icon-192.png", // Pastikan folder assets ini benar-benar ada di proyek Anda
   "/assets/icons/icon-512.png",
 ];
 

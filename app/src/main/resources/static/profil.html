@@ -1,59 +1,256 @@
 <!DOCTYPE html>
-<html lang="id">
+<html class="light" lang="id">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <title>Profil - FinanceBuddy</title>
-    <link rel="stylesheet" href="style.css">
+    
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed": "#baeafa",
+                        "secondary": "#356572",
+                        "on-secondary-fixed-variant": "#1a4d5a",
+                        "secondary-fixed-dim": "#9ecede",
+                        "on-primary-fixed-variant": "#1c4f41",
+                        "on-surface-variant": "#404945",
+                        "primary-fixed": "#b9eedb",
+                        "primary": "#366758",
+                        "surface-dim": "#dadad9",
+                        "surface-container": "#eeeeed",
+                        "outline-variant": "#c0c9c4",
+                        "error": "#ba1a1a",
+                        "on-error": "#ffffff",
+                        "on-surface": "#1a1c1c",
+                        "inverse-on-surface": "#f1f0f0",
+                        "on-primary-fixed": "#002018",
+                        "surface-tint": "#366758",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-fixed-variant": "#3f465d",
+                        "on-primary-container": "#396b5c",
+                        "on-error-container": "#93000a",
+                        "on-background": "#1a1c1c",
+                        "on-secondary-fixed": "#001f27",
+                        "surface-container-high": "#e9e8e7",
+                        "on-secondary-container": "#3a6977",
+                        "surface-container-highest": "#e3e2e1",
+                        "primary-fixed-dim": "#9dd1bf",
+                        "surface-bright": "#faf9f8",
+                        "error-container": "#ffdad6",
+                        "on-tertiary-container": "#5a617a",
+                        "tertiary-container": "#d7defa",
+                        "surface-container-low": "#f4f3f2",
+                        "on-secondary": "#ffffff",
+                        "inverse-primary": "#9dd1bf",
+                        "surface-variant": "#e3e2e1",
+                        "surface": "#faf9f8",
+                        "background": "#faf9f8",
+                        "tertiary-fixed": "#dbe2fe",
+                        "on-primary": "#ffffff",
+                        "inverse-surface": "#2f3130",
+                        "tertiary": "#565e76",
+                        "on-tertiary-fixed": "#131b2f",
+                        "secondary-container": "#b7e7f7",
+                        "outline": "#707975",
+                        "tertiary-fixed-dim": "#bfc6e1",
+                        "primary-container": "#b5ead7",
+                        "on-tertiary": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-sm": "12px",
+                        "stack-md": "24px",
+                        "gutter": "16px",
+                        "stack-lg": "48px",
+                        "container-margin": "24px",
+                        "base": "8px"
+                    },
+                    "fontFamily": {
+                        "headline-xl": ["Plus Jakarta Sans"],
+                        "headline-md": ["Plus Jakarta Sans"],
+                        "label-sm": ["Inter"],
+                        "headline-lg": ["Plus Jakarta Sans"],
+                        "headline-lg-mobile": ["Plus Jakarta Sans"],
+                        "body-md": ["Inter"],
+                        "label-md": ["Inter"],
+                        "body-lg": ["Inter"]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.fill {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
 </head>
-<body>
 
-<div class="container">
+<body class="bg-background text-on-background font-body-md min-h-screen flex">
 
-    <div class="sidebar">
-        <div class="logo">FinanceBuddy</div>
-        <ul>
-            <li><a href="admin.html">Dashboard</a></li>
-            <li><a href="#">Pemasukan</a></li>
-            <li><a href="#">Pengeluaran</a></li>
-            <li><a href="#">Laporan</a></li>
-            <li><a class="active" href="profil.html">Profil</a></li>
-            <li><a href="index.html" style="color: #dc3545;">Logout</a></li>
-        </ul>
-    </div>
-
-    <div class="content">
-
-        <div class="topbar">
-            <h1 class="page-title">Profil</h1>
-            <div class="profile-mini">?</div>
-        </div>
-
-        <div class="card">
-            <form action="#">
-                <div class="form-group">
-                    <label>Nama Lengkap</label>
-                    <input type="text" class="form-control" placeholder="Masukkan nama lengkap Anda..." required>
+    <nav class="hidden md:flex flex-col h-full py-6 px-4 bg-surface shadow-sm h-screen w-64 fixed left-0 top-0 z-20">
+            <div class="flex items-center gap-3 px-2 py-2 mb-2">
+                <div class="w-10 h-10 rounded-xl bg-primary-container flex items-center justify-center">
+                    <span class="material-symbols-outlined text-xl" style="color: rgb(45, 90, 76); font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; -webkit-text-stroke: 1px rgb(28, 79, 65);">account_balance_wallet</span>
                 </div>
-
-                <div class="form-group">
-                    <label>Email</label>
-                    <input type="email" class="form-control" placeholder="Masukkan email Anda..." required>
+                <div>
+                    <h1 class="font-headline-md text-[24px] font-bold text-primary tracking-tight leading-none">FinanceBuddy</h1>
+                    <p class="font-label-sm text-[12px] text-on-surface-variant mt-1">Student Edition</p>
                 </div>
-
-                <div class="form-group">
-                    <label>No HP</label>
-                    <input type="text" class="form-control" placeholder="Masukkan nomor HP..." required>
-                </div>
-
-                <button type="submit" class="btn btn-primary">
-                    Simpan Perubahan
+            </div>
+            
+            <div class="flex-1 px-4 space-y-1 mt-6">
+                <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-colors duration-200" href="#">
+                    <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+                    <span class="font-medium text-[16px]">Dashboard</span>
+                </a>
+                <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-colors duration-200" href="#">
+                    <span class="material-symbols-outlined" data-icon="account_balance_wallet">account_balance_wallet</span>
+                    <span class="font-medium text-[16px]">Pemasukan</span>
+                </a>
+                <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-colors duration-200" href="#">
+                    <span class="material-symbols-outlined" data-icon="person">person</span>
+                    <span class="font-medium text-[16px]">Pengeluaran</span>
+                </a>
+                <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-colors duration-200" href="#">
+                    <span class="material-symbols-outlined" data-icon="payments">payments</span>
+                    <span class="font-medium text-[16px]">Laporan</span>
+                </a>
+                <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-primary font-bold border-r-4 border-primary bg-primary-container/20 transition-transform scale-95 group" href="#">
+                    <span class="material-symbols-outlined" data-icon="assessment" style="font-variation-settings: 'FILL' 1;">assessment</span>
+                    <span class="font-bold text-[16px]">Profil</span>
+                </a>
+            </div>
+            
+            <div class="mt-auto pt-4 border-t border-surface-variant">
+                <button class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-error hover:bg-error-container/50 transition-colors duration-200">
+                    <span class="material-symbols-outlined" data-icon="logout">logout</span>
+                    <span class="font-medium text-[16px]">Logout</span>
                 </button>
-            </form>
+            </div>
+        </nav>
+
+    <main class="flex-1 md:ml-64 flex flex-col min-h-screen">
+        <div class="p-container-margin max-w-7xl mx-auto w-full flex-1 flex flex-col gap-stack-md">
+            <div class="mb-2">
+                <h2 class="text-on-surface text-[24px] tracking-[-0.01em] font-semibold">Profil</h2>
+                <p class="font-body-md text-body-md text-on-surface-variant mt-1">Kelola informasi pribadi dan pengaturan akun Anda.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-stack-md">
+                <div class="lg:col-span-2 flex flex-col gap-stack-md">
+                    <div class="bg-surface-container-lowest rounded-xl p-6 shadow-[0px_4px_20px_rgba(0,0,0,0.04)] border border-surface-variant/50 relative overflow-hidden group">
+                        
+                        <div class="absolute top-0 left-0 w-full h-32 bg-primary/10 rounded-t-xl z-0"></div>
+                        
+                        <div class="relative z-10 pt-16 flex flex-col sm:flex-row items-center sm:items-start gap-6">
+                            <div class="relative">
+                                <img alt="Budi Mahasiswa Profile Picture" class="w-24 h-24 sm:w-32 sm:h-32 rounded-full border-4 border-surface-container-lowest object-cover shadow-sm bg-surface" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBJBhzrAMZhrpuleFpNA9x6ZwDNVQlNIvTP_dZsy7Nlj_-aMWVs6_wcJl1JK04PlNaLb7BFjDPUvrrkXvEkBMT724I_QuWkNQAXPKukHhTESOS4TEUUCMf7YAgpkT3hntjFS2dy0BbRtG4Jj9lornW17lN19mktT99kO4VGl2Z0N4gQaFcTtl8uuYQmnrC9yzAPAZoliAtKSH8wEjroGXzs14V_Clk9WolporOxj8lw3pBFSYcMLo_WrqDVOW40bYs4GIiP2qCMJJFP">
+                                <button class="absolute bottom-0 right-0 bg-primary text-white w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center hover:bg-surface-tint transition-colors shadow-sm transform hover:-translate-y-0.5">
+                                    <span class="material-symbols-outlined text-sm sm:text-base">photo_camera</span>
+                                </button>
+                            </div>
+                            <div class="flex-1 text-center sm:text-left mt-2 sm:mt-8">
+                                <h3 id="displayNamaLengkap" class="font-headline-md text-headline-md text-on-surface">Budi</h3>
+                                <p id="displayEmail" class="font-body-md text-body-md text-on-surface-variant">budi.m@universitas.edu</p>
+                                <div class="mt-4">
+                                    <button class="bg-secondary-container text-on-secondary-container font-label-md text-label-md px-4 py-2 rounded-full font-bold hover:bg-secondary-fixed transition-all hover:shadow-sm">
+                                        Ubah Foto
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <hr class="border-surface-variant/50 my-8">
+                        
+                        <form id="profileForm" class="flex flex-col gap-5">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                <div class="flex flex-col gap-2">
+                                    <label class="font-label-sm text-label-sm text-on-surface-variant">Nama Lengkap</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-primary/50">
+                                            <span class="material-symbols-outlined text-[20px]">person</span>
+                                        </div>
+                                        <input id="inputNamaLengkap" class="w-full pl-10 pr-4 py-3 bg-surface border border-outline-variant rounded-lg font-body-md text-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" type="text" value="Budi Mahasiswa" placeholder="Budi ">
+                                    </div>
+                                </div>
+                                <div class="flex flex-col gap-2">
+                                    <label class="font-label-sm text-label-sm text-on-surface-variant">Email</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-primary/50">
+                                            <span class="material-symbols-outlined text-[20px]">mail</span>
+                                        </div>
+                                        <input id="inputEmail" class="w-full pl-10 pr-4 py-3 bg-surface border border-outline-variant rounded-lg font-body-md text-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-on-surface-variant/80" disabled type="email" value="budi.m@universitas.edu">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex flex-col gap-2">
+                                <label class="font-label-sm text-label-sm text-on-surface-variant">Target Tabungan Bulanan</label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-primary/50">
+                                        <span class="font-label-md text-label-md font-bold">Rp</span>
+                                    </div>
+                                    <input id="inputTargetTabungan" class="w-full pl-10 pr-4 py-3 bg-surface border border-outline-variant rounded-lg font-body-md text-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" type="text" value="500.000">
+                                </div>
+                                <p class="font-label-sm text-label-sm text-outline mt-1 text-xs">Target ini membantu kami menyesuaikan rekomendasi anggaran Anda.</p>
+                            </div>
+                            
+                            <div class="flex justify-end mt-4">
+                                <button type="submit" class="bg-primary text-white font-label-md text-label-md px-6 py-3 rounded-full font-bold hover:bg-surface-tint transition-all hover:shadow-[0px_4px_12px_rgba(54,103,88,0.2)] transform hover:-translate-y-0.5">
+                                    Simpan Perubahan
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <div class="flex flex-col gap-stack-md">
+                    <div class="bg-surface-container-lowest rounded-xl p-6 shadow-[0px_4px_20px_rgba(0,0,0,0.04)] border border-surface-variant/50">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 rounded-full bg-tertiary-container/50 flex items-center justify-center text-tertiary">
+                                <span class="material-symbols-outlined fill">support_agent</span>
+                            </div>
+                            <h3 class="font-headline-md text-headline-md text-on-surface text-lg">Pusat Bantuan</h3>
+                        </div>
+                        <p class="font-body-md text-body-md text-on-surface-variant text-sm mb-5">
+                            Mengalami masalah dengan aplikasi atau ada pertanyaan seputar fitur?
+                        </p>
+                        <button class="w-full bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md px-4 py-3 rounded-full font-bold transition-all flex items-center justify-center gap-2 border border-outline-variant/30">
+                            <span class="material-symbols-outlined text-[18px]">chat_bubble</span>
+                            Hubungi Admin
+                        </button>
+                    </div>
+                    
+                    <div class="text-center pt-4">
+                        <p class="font-label-sm text-label-sm text-outline-variant">FinanceBuddy v1.0.4 (Student Edition)</p>
+                        <p class="font-label-sm text-label-sm text-outline-variant mt-1">Dibuat dengan ❤️ untuk mahasiswa.</p>
+                    </div>
+                </div>
+            </div>
         </div>
+    </main>
 
-    </div>
-
-</div>
-
+    <script type="module" src="js/api.js"></script>
+    <script type="module" src="js/auth.js"></script>
+    <script type="module" src="js/profil.js"></script>
+    <script src="js/pwa.js" defer></script>
 </body>
 </html>
