@@ -29,7 +29,6 @@ public class ReportService {
             if ("INCOME".equalsIgnoreCase(t.getType())) {
                 totalIncome = totalIncome.add(t.getAmount());
             }
-
             if ("EXPENSE".equalsIgnoreCase(t.getType())) {
                 totalExpense = totalExpense.add(t.getAmount());
             }
@@ -56,7 +55,7 @@ public class ReportService {
             String month = String.valueOf(monthNumber);
 
             MonthlyChartDTO dto = charts.stream()
-                    .filter(c -> c.getMonth().equals(month))
+                    .filter(c -> c.getBulan().equals(month))
                     .findFirst()
                     .orElse(null);
 
@@ -66,44 +65,34 @@ public class ReportService {
             }
 
             if ("INCOME".equalsIgnoreCase(type)) {
-                dto.setIncome(amount.doubleValue());
+                dto.setPemasukan(amount.doubleValue());
             }
-
             if ("EXPENSE".equalsIgnoreCase(type)) {
-                dto.setExpense(amount.doubleValue());
+                dto.setPengeluaran(amount.doubleValue());
             }
         }
         return charts;
     }
 
-    public List<YearlyChartDTO> getYearlyChart(String userId, Integer yearParam) {
-        List<Object[]> results = transactionRepository.getYearlySummary(userId);
-        List<YearlyChartDTO> charts = new ArrayList<>();
+    public YearlyChartDTO getYearlyChartData(String userId, Integer yearParam) {
+        List<MonthlyChartDTO> grafikBulanan = getMonthlyChart(userId, yearParam);
 
-        for (Object[] row : results) {
-            Integer year = (Integer) row[0];
-            String type = (String) row[1];
-            BigDecimal amount = (BigDecimal) row[2];
+        double totalPemasukan = 0;
+        double totalPengeluaran = 0;
 
-            YearlyChartDTO dto = charts.stream()
-                    .filter(c -> c.getYear().equals(year))
-                    .findFirst()
-                    .orElse(null);
-
-            if (dto == null) {
-                dto = new YearlyChartDTO(year, 0, 0);
-                charts.add(dto);
-            }
-
-            if ("INCOME".equalsIgnoreCase(type)) {
-                dto.setIncome(amount.doubleValue());
-            }
-
-            if ("EXPENSE".equalsIgnoreCase(type)) {
-                dto.setExpense(amount.doubleValue());
-            }
+        for (MonthlyChartDTO m : grafikBulanan) {
+            totalPemasukan += m.getPemasukan();
+            totalPengeluaran += m.getPengeluaran();
         }
 
-        return charts;
+        YearlyChartDTO report = new YearlyChartDTO();
+        report.setTotalPemasukan(totalPemasukan);
+        report.setTotalPengeluaran(totalPengeluaran);
+        report.setBulanPengeluaranTertinggi("Desember");
+        report.setKategoriTerbesar("Makanan");
+        report.setGrafikBulanan(grafikBulanan);
+        report.setGrafikKategori(new ArrayList<>());
+
+        return report;
     }
 }

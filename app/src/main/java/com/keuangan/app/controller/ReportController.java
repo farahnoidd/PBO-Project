@@ -43,12 +43,12 @@ public class ReportController {
     }
 
     @GetMapping("/laporan/tahunan")
-    public ResponseEntity<List<YearlyChartDTO>> getLaporanTahunan(
+    public ResponseEntity<YearlyChartDTO> getLaporanTahunan(
             Authentication authentication,
             @RequestParam(value = "tahun", required = false, defaultValue = "2026") Integer tahun) {
             
         String userId = authentication.getName();
-        List<YearlyChartDTO> yearlyData = reportService.getYearlyChart(userId, tahun); 
+        YearlyChartDTO yearlyData = reportService.getYearlyChartData(userId, tahun); 
         return ResponseEntity.ok(yearlyData);
     }
 }

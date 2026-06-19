@@ -1,29 +1,30 @@
 package com.keuangan.app.dto.response;
 
 public class CategoryBreakdownDTO {
-    private String category;
-    private double amount;
+    private String kategori;
+    private double jumlah;
+
     public CategoryBreakdownDTO() {
     }
 
-    public CategoryBreakdownDTO(String category, double amount) {
-        this.category = category;
-        this.amount = amount;
+    public CategoryBreakdownDTO(String kategori, double jumlah) {
+        this.kategori = kategori;
+        this.jumlah = jumlah;
     }
 
-    public String getCategory() {
-        return category;
+    public String getKategori() {
+        return kategori;
     }
 
-    public void setCategory(String category) {
-        this.category = category;
+    public void setKategori(String kategori) {
+        this.kategori = kategori;
     }
 
-    public double getAmount() {
-        return amount;
+    public double getJumlah() {
+        return jumlah;
     }
 
-    public void setAmount(double amount) {
-        this.amount = amount;
+    public void setJumlah(double jumlah) {
+        this.jumlah = jumlah;
     }
 }

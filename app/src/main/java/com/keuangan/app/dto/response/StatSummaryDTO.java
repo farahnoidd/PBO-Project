@@ -1,29 +1,30 @@
 package com.keuangan.app.dto.response;
 
 public class StatSummaryDTO {
-    private int totalTransactions;
-    private int totalCategories;
+    private String bulanPengeluaranTertinggi;
+    private String kategoriTerbesar;
+
     public StatSummaryDTO() {
     }
 
-    public StatSummaryDTO(int totalTransactions, int totalCategories) {
-        this.totalTransactions = totalTransactions;
-        this.totalCategories = totalCategories;
+    public StatSummaryDTO(String bulanPengeluaranTertinggi, String kategoriTerbesar) {
+        this.bulanPengeluaranTertinggi = bulanPengeluaranTertinggi;
+        this.kategoriTerbesar = kategoriTerbesar;
     }
 
-    public int getTotalTransactions() {
-        return totalTransactions;
+    public String getBulanPengeluaranTertinggi() {
+        return bulanPengeluaranTertinggi;
     }
 
-    public void setTotalTransactions(int totalTransactions) {
-        this.totalTransactions = totalTransactions;
+    public void setBulanPengeluaranTertinggi(String bulanPengeluaranTertinggi) {
+        this.bulanPengeluaranTertinggi = bulanPengeluaranTertinggi;
     }
 
-    public int getTotalCategories() {
-        return totalCategories;
+    public String getKategoriTerbesar() {
+        return kategoriTerbesar;
     }
 
-    public void setTotalCategories(int totalCategories) {
-        this.totalCategories = totalCategories;
+    public void setKategoriTerbesar(String kategoriTerbesar) {
+        this.kategoriTerbesar = kategoriTerbesar;
     }
 }

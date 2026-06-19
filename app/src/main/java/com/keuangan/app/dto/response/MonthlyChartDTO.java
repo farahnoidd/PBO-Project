@@ -1,39 +1,40 @@
 package com.keuangan.app.dto.response;
 
 public class MonthlyChartDTO {
-    private String month;
-    private double income;
-    private double expense;
+    private String bulan;
+    private double pemasukan;
+    private double pengeluaran;
+
     public MonthlyChartDTO() {
     }
 
-    public MonthlyChartDTO(String month, double income, double expense) {
-        this.month = month;
-        this.income = income;
-        this.expense = expense;
+    public MonthlyChartDTO(String bulan, double pemasukan, double pengeluaran) {
+        this.bulan = bulan;
+        this.pemasukan = pemasukan;
+        this.pengeluaran = pengeluaran;
     }
 
-    public String getMonth() {
-        return month;
+    public String getBulan() {
+        return bulan;
     }
 
-    public void setMonth(String month) {
-        this.month = month;
+    public void setBulan(String bulan) {
+        this.bulan = bulan;
     }
 
-    public double getIncome() {
-        return income;
+    public double getPemasukan() {
+        return pemasukan;
     }
 
-    public void setIncome(double income) {
-        this.income = income;
+    public void setPemasukan(double pemasukan) {
+        this.pemasukan = pemasukan;
     }
 
-    public double getExpense() {
-        return expense;
+    public double getPengeluaran() {
+        return pengeluaran;
     }
 
-    public void setExpense(double expense) {
-        this.expense = expense;
+    public void setPengeluaran(double pengeluaran) {
+        this.pengeluaran = pengeluaran;
     }
 }

@@ -1,34 +1,37 @@
 package com.keuangan.app.dto.response;
 
 public class DashboardResponseDTO {
-    private double totalIncome;
-    private double totalExpense;
+    private double totalPemasukan;
+    private double totalPengeluaran;
     private double saldo;
+
     public DashboardResponseDTO() {
     }
 
-    public DashboardResponseDTO(double totalIncome,
-                                double totalExpense,
-                                double saldo) {
-        this.totalIncome = totalIncome;
-        this.totalExpense = totalExpense;
+    public DashboardResponseDTO(double totalPemasukan, double totalPengeluaran, double saldo) {
+        this.totalPemasukan = totalPemasukan;
+        this.totalPengeluaran = totalPengeluaran;
         this.saldo = saldo;
     }
 
-    public double getTotalIncome() {
-        return totalIncome;
+    public double getTotalPemasukan() {
+        return totalPemasukan;
     }
 
-    public void setTotalIncome(double totalIncome) {
-        this.totalIncome = totalIncome;
+    public void setTotalPemasukan(double totalPemasukan) {
+        this.totalPemasukan = totalPemasukan;
     }
 
-    public double getTotalExpense() {
-        return totalExpense;
+    public double getTotalPengeluaran() {
+        return totalPengeluaran;
     }
 
-    public void setTotalExpense(double totalExpense) {
-        this.totalExpense = totalExpense;
+    public void setTotalExpense(double totalPengeluaran) { 
+        this.totalPengeluaran = totalPengeluaran;
+    }
+    
+    public void setTotalPengeluaran(double totalPengeluaran) {
+        this.totalPengeluaran = totalPengeluaran;
     }
 
     public double getSaldo() {
