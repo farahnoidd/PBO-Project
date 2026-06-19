@@ -7,7 +7,6 @@ import com.keuangan.app.model.Category;
 import com.keuangan.app.repository.CategoryRepository;
 import com.keuangan.app.repository.UserRepository;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -62,7 +61,7 @@ public class DataInitializer implements CommandLineRunner {
             categoryRepository.save(new Category("Tunjangan", "INCOME"));
             categoryRepository.save(new Category("Investasi", "INCOME"));
             
-            System.out.println("✅ Data master kategori berhasil ditambahkan otomatis!");
+            System.out.println("Data master kategori berhasil ditambahkan otomatis!");
         }
     }
 }
