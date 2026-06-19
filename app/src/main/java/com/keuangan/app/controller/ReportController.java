@@ -23,7 +23,7 @@ public class ReportController {
         this.reportService = reportService;
     }
 
-    @GetMapping("/api/report/dashboard")
+    @GetMapping("/laporan/dashboard")
     public ResponseEntity<DashboardResponseDTO> getDashboard(Authentication authentication) {
         String userId = authentication.getName(); 
         
@@ -31,18 +31,22 @@ public class ReportController {
         return ResponseEntity.ok(summary);
     }
 
-    @GetMapping("/api/report/monthly-chart")
-    public ResponseEntity<List<MonthlyChartDTO>> getMonthlyChart(
+    @GetMapping("/laporan/bulanan")
+    public ResponseEntity<List<MonthlyChartDTO>> getLaporanBulanan(
             Authentication authentication,
-            @RequestParam(defaultValue = "2026") Integer year) {
+            @RequestParam(value = "bulan", required = false) Integer bulan,
+            @RequestParam(value = "tahun", required = false, defaultValue = "2026") Integer tahun) {
 
         String userId = authentication.getName();
-        List<MonthlyChartDTO> monthlyData = reportService.getMonthlyChart(userId, year);
+        List<MonthlyChartDTO> monthlyData = reportService.getMonthlyChart(userId, tahun);
         return ResponseEntity.ok(monthlyData);
     }
 
-    @GetMapping("/api/report/yearly-chart")
-    public ResponseEntity<List<YearlyChartDTO>> getYearlyChart(Authentication authentication) {
+    @GetMapping("/laporan/tahunan")
+    public ResponseEntity<List<YearlyChartDTO>> getLaporanTahunan(
+            Authentication authentication,
+            @RequestParam(value = "tahun", required = false, defaultValue = "2026") Integer tahun) {
+            
         String userId = authentication.getName();
         List<YearlyChartDTO> yearlyData = reportService.getYearlyChart(userId);
         return ResponseEntity.ok(yearlyData);
