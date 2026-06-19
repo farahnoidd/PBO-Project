@@ -23,22 +23,15 @@ const BASE_URL = "https://pbo-project-production.up.railway.app/api";
  * @returns {string|null}
  */
 function getToken() {
-  return localStorage.getItem("token"); // Diubah dari sessionStorage
+  return localStorage.getItem("token"); 
 }
 
-/**
- * Menyimpan token JWT setelah login berhasil.
- * @param {string} token
- */
 function saveToken(token) {
-  localStorage.setItem("token", token); // Diubah dari sessionStorage
+  localStorage.setItem("token", token); 
 }
 
-/**
- * Menghapus token JWT (logout).
- */
 function clearToken() {
-  localStorage.removeItem("token"); // Diubah dari sessionStorage
+  localStorage.removeItem("token"); 
 }
 
 /**
