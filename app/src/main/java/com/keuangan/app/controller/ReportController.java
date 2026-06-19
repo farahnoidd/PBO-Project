@@ -34,7 +34,7 @@ public class ReportController {
     @GetMapping("/api/report/monthly-chart")
     public ResponseEntity<List<MonthlyChartDTO>> getMonthlyChart(
             Authentication authentication,
-            @RequestParam Integer year) {
+            @RequestParam(defaultValue = "2026") Integer year) {
 
         String userId = authentication.getName();
         List<MonthlyChartDTO> monthlyData = reportService.getMonthlyChart(userId, year);
