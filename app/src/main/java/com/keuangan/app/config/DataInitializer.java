@@ -1,15 +1,15 @@
 package com.keuangan.app.config;
 
-import com.keuangan.app.enums.UserRole;
-import com.keuangan.app.enums.UserStatus;
-import com.keuangan.app.model.User;
-import com.keuangan.app.model.Category;
-import com.keuangan.app.repository.CategoryRepository;
-import com.keuangan.app.repository.UserRepository;
-
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+
+import com.keuangan.app.enums.UserRole;
+import com.keuangan.app.enums.UserStatus;
+import com.keuangan.app.model.Category;
+import com.keuangan.app.model.User;
+import com.keuangan.app.repository.CategoryRepository;
+import com.keuangan.app.repository.UserRepository;
 
 @Component
 public class DataInitializer implements CommandLineRunner {
@@ -51,6 +51,7 @@ public class DataInitializer implements CommandLineRunner {
         if (categoryRepository.count() == 0) {
             
              // Kategori Pengeluaran (EXPENSE)
+            categoryRepository.save(new Category("", "EXPENSE"));
             categoryRepository.save(new Category("MAKANAN", "EXPENSE"));
             categoryRepository.save(new Category("TRANSPORTASI", "EXPENSE"));
             categoryRepository.save(new Category("HIBURAN", "EXPENSE"));
@@ -59,6 +60,7 @@ public class DataInitializer implements CommandLineRunner {
 
 
             // Kategori Pemasukan (INCOME)
+            categoryRepository.save(new Category("", "INCOME"));
             categoryRepository.save(new Category("UANG_SAKU", "INCOME"));
             categoryRepository.save(new Category("GAJI_PART_TIME", "INCOME"));
             categoryRepository.save(new Category("FREELANCE", "INCOME"));

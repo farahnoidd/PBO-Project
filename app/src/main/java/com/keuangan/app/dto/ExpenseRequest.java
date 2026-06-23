@@ -9,20 +9,25 @@ public class ExpenseRequest {
     private String keterangan;
     private LocalDate tanggal;
     private String akun;
-    private boolean forceSave; // Untuk bypass peringatan saldo kurang
+    private boolean forceSave; // Tetap menggunakan bahasa Inggris
 
     public ExpenseRequest() {}
 
-    public BigDecimal getAmount() { return nominal; }
-    public void setAmount(BigDecimal amount) { this.nominal = amount; }
-    public String getCategory() { return kategori; }
-    public void setCategory(String category) { this.kategori = category; }
-    public String getDescription() { return keterangan; }
-    public void setDescription(String description) { this.keterangan = description; }
-    public LocalDate getDate() { return tanggal; }
-    public void setDate(LocalDate date) { this.tanggal = date; }
+    public BigDecimal getNominal() { return nominal; }
+    public void setNominal(BigDecimal nominal) { this.nominal = nominal; }
+
+    public String getKategori() { return kategori; }
+    public void setKategori(String kategori) { this.kategori = kategori; }
+
+    public String getKeterangan() { return keterangan; }
+    public void setKeterangan(String keterangan) { this.keterangan = keterangan; }
+
+    public LocalDate getTanggal() { return tanggal; }
+    public void setTanggal(LocalDate tanggal) { this.tanggal = tanggal; }
+
     public String getAkun() { return akun; }
     public void setAkun(String akun) { this.akun = akun; }
+
     public boolean isForceSave() { return forceSave; }
     public void setForceSave(boolean forceSave) { this.forceSave = forceSave; }
 }

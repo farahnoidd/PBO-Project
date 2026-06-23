@@ -12,18 +12,18 @@ public class IncomeRequest {
 
     public IncomeRequest() {}
 
-      // Getter dan Setter
-    public BigDecimal getAmount() { return nominal; }
-    public void setAmount(BigDecimal amount) { this.nominal = amount; }
+    // Getter dan Setter
+    public BigDecimal getNominal() { return nominal; }
+    public void setNominal(BigDecimal nominal) { this.nominal = nominal; }
 
-    public String getCategory() { return kategori; }
-    public void setCategory(String category) { this.kategori = category; }
+    public String getKategori() { return kategori; }
+    public void setKategori(String kategori) { this.kategori = kategori; }
 
-    public String getDescription() { return keterangan; }
-    public void setDescription(String description) { this.keterangan = description; }
+    public String getKeterangan() { return keterangan; }
+    public void setKeterangan(String keterangan) { this.keterangan = keterangan; }
 
-    public LocalDate getDate() { return tanggal; }
-    public void setDate(LocalDate date) { this.tanggal = date; }
+    public LocalDate getTanggal() { return tanggal; }
+    public void setTanggal(LocalDate tanggal) { this.tanggal = tanggal; }
 
     public String getAkun() { return akun; }
     public void setAkun(String akun) { this.akun = akun; }

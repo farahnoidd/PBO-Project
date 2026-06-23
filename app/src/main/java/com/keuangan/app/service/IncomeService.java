@@ -22,23 +22,23 @@ public class IncomeService {
     private CategoryRepository categoryRepository;
 
     public String saveIncome(IncomeRequest request, String userId) {
-        // 1. Validasi Angka
-        if (request.getAmount() == null || request.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
+        // 1. Validasi Angka (Menggunakan getNominal)
+        if (request.getNominal() == null || request.getNominal().compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Nominal pemasukan harus lebih besar dari 0");
         }
 
-        // 2. Validasi Kategori Bersama (Wajib bertipe INCOME)
-        categoryRepository.findByNameIgnoreCaseAndType(request.getCategory(), "INCOME")
-                .orElseThrow(() -> new IllegalArgumentException("Kategori '" + request.getCategory() + "' tidak valid untuk pemasukan"));
+        // 2. Validasi Kategori Bersama (Wajib bertipe INCOME) (Menggunakan getKategori)
+        categoryRepository.findByNameIgnoreCaseAndType(request.getKategori(), "INCOME")
+                .orElseThrow(() -> new IllegalArgumentException("Kategori '" + request.getKategori() + "' tidak valid untuk pemasukan"));
 
         // 3. Mapping ke Entity Transaction
         Transaction t = new Transaction();
         t.setUserId(userId);
         t.setType("INCOME");
-        t.setCategory(request.getCategory());
-        t.setAmount(request.getAmount());
-        t.setDescription(request.getDescription());
-        t.setDate(request.getDate());
+        t.setCategory(request.getKategori());
+        t.setAmount(request.getNominal());
+        t.setDescription(request.getKeterangan());
+        t.setDate(request.getTanggal());
         t.setAkun(request.getAkun());
 
         transactionRepository.save(t);
@@ -55,20 +55,20 @@ public class IncomeService {
             throw new SecurityException("Akses ditolak: Anda tidak berhak mengubah data ini");
         }
 
-        // Validasi Angka
-        if (request.getAmount() == null || request.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
+        // Validasi Angka (Menggunakan getNominal)
+        if (request.getNominal() == null || request.getNominal().compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Nominal pemasukan harus lebih besar dari 0");
         }
 
-        // Validasi Kategori
-        categoryRepository.findByNameIgnoreCaseAndType(request.getCategory(), "INCOME")
-                .orElseThrow(() -> new IllegalArgumentException("Kategori '" + request.getCategory() + "' tidak valid untuk pemasukan"));
+        // Validasi Kategori (Menggunakan getKategori)
+        categoryRepository.findByNameIgnoreCaseAndType(request.getKategori(), "INCOME")
+                .orElseThrow(() -> new IllegalArgumentException("Kategori '" + request.getKategori() + "' tidak valid untuk pemasukan"));
 
         // Update data
-        t.setAmount(request.getAmount());
-        t.setCategory(request.getCategory());
-        t.setDescription(request.getDescription());
-        t.setDate(request.getDate());
+        t.setAmount(request.getNominal());
+        t.setCategory(request.getKategori());
+        t.setDescription(request.getKeterangan());
+        t.setDate(request.getTanggal());
         t.setAkun(request.getAkun());
 
         return transactionRepository.save(t);
