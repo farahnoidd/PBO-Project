@@ -28,46 +28,49 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
+        System.out.println("DataInitializer dijalankan...");
 
-        System.out.println("DataInitializer dijalankan");
-
+        // 1. SEEDING USER ADMIN
         if (userRepository.count() == 0) {
-
             User admin = new User();
-
             admin.setUsername("admin");
             admin.setEmail("admin@financebuddy.com");
             admin.setPassword(passwordEncoder.encode("admin123"));
             admin.setNamaLengkap("Administrator");
             admin.setRole(UserRole.ADMIN);
             admin.setStatus(UserStatus.TERVALIDASI);
-
             userRepository.save(admin);
-
             System.out.println("Admin default berhasil dibuat.");
-            System.out.println("Jumlah user = " + userRepository.count());
         }
 
-        if (categoryRepository.count() == 0) {
-            
-             // Kategori Pengeluaran (EXPENSE)
-            categoryRepository.save(new Category("", "EXPENSE"));
-            categoryRepository.save(new Category("MAKANAN", "EXPENSE"));
-            categoryRepository.save(new Category("TRANSPORTASI", "EXPENSE"));
-            categoryRepository.save(new Category("HIBURAN", "EXPENSE"));
-            categoryRepository.save(new Category("TAGIHAN", "EXPENSE"));
-            categoryRepository.save(new Category("LAINNYA", "EXPENSE"));
+        // 2. SEEDING KATEGORI MASTER (Menggunakan Helper Method Anti-Skip)
+        System.out.println("Memeriksa data master kategori...");
+        
+        // Kategori Pengeluaran (EXPENSE)
+        ensureCategoryExists("MAKANAN", "EXPENSE");
+        ensureCategoryExists("TRANSPORTASI", "EXPENSE");
+        ensureCategoryExists("HIBURAN", "EXPENSE");
+        ensureCategoryExists("TAGIHAN", "EXPENSE");
+        ensureCategoryExists("LAINNYA_PENGELUARAN", "EXPENSE");
 
+        // Kategori Pemasukan (INCOME)
+        ensureCategoryExists("UANG_SAKU", "INCOME");
+        ensureCategoryExists("GAJI_PART_TIME", "INCOME");
+        ensureCategoryExists("FREELANCE", "INCOME");
+        ensureCategoryExists("BONUS", "INCOME");
+        ensureCategoryExists("LAINNYA_PEMASUKAN", "INCOME");
 
-            // Kategori Pemasukan (INCOME)
-            categoryRepository.save(new Category("", "INCOME"));
-            categoryRepository.save(new Category("UANG_SAKU", "INCOME"));
-            categoryRepository.save(new Category("GAJI_PART_TIME", "INCOME"));
-            categoryRepository.save(new Category("FREELANCE", "INCOME"));
-            categoryRepository.save(new Category("BONUS", "INCOME"));
-            categoryRepository.save(new Category("LAINNYA", "INCOME"));
-            
-            System.out.println("Data master kategori berhasil ditambahkan otomatis!");
+        System.out.println("Data master kategori aman terkendali!");
+    }
+
+    /**
+     * 💡 HELPER METHOD: Berfungsi untuk mengecek kategori satu per satu ke database.
+     * Jika belum ada, baru akan disimpan. Jika sudah ada, akan dilewati tanpa bikin crash.
+     */
+    private void ensureCategoryExists(String name, String type) {
+        if (categoryRepository.findByNameIgnoreCaseAndType(name, type).isEmpty()) {
+            categoryRepository.save(new Category(name, type));
+            System.out.println("Kategori baru berhasil ditambahkan: " + name + " (" + type + ")");
         }
     }
 }
