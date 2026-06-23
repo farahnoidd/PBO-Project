@@ -1,6 +1,7 @@
 package com.keuangan.app.service;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,7 +26,7 @@ public class IncomeService {
 
     @Transactional(readOnly = true)
     public List<Transaction> getAllIncomes(String userId) {
-        return transactionRepository.findByUserId(userId).stream()
+        return transactionRepository.findByUserIdOrderByTanggalDescIdDesc(userId).stream()
                 .filter(t -> "INCOME".equalsIgnoreCase(t.getType()))
                 .collect(Collectors.toList());
     }
@@ -47,7 +48,7 @@ public class IncomeService {
         t.setKategori(request.getKategori());
         t.setNominal(request.getNominal());
         t.setKeterangan(request.getKeterangan());
-        t.setTanggal(request.getTanggal());
+        t.setTanggal(LocalDateTime.now());
         t.setAkun(request.getAkun());
 
         transactionRepository.save(t);
@@ -77,7 +78,7 @@ public class IncomeService {
         t.setNominal(request.getNominal());
         t.setKategori(request.getKategori());
         t.setKeterangan(request.getKeterangan());
-        t.setTanggal(request.getTanggal());
+        t.setTanggal(LocalDateTime.now());
         t.setAkun(request.getAkun());
 
         return transactionRepository.save(t);
