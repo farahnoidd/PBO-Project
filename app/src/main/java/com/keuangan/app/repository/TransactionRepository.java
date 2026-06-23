@@ -19,7 +19,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     """)
     BigDecimal getRealtimeBalance(@Param("userId") String userId);
 
-    List<Transaction> findByUserId(String userId);
+    List<Transaction> findByUserIdOrderByTanggalDescIdDesc(String userId);
 
     @Query("""
         SELECT MONTH(t.tanggal), t.type, SUM(t.nominal)

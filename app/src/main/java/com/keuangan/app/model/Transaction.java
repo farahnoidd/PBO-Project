@@ -2,6 +2,7 @@ package com.keuangan.app.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -33,7 +34,7 @@ public class Transaction {
     private String keterangan;
 
     @Column(nullable = false)
-    private LocalDate tanggal;
+    private LocalDateTime tanggal;
 
     @Column(nullable = false, length = 50)
     private String akun; // "Gopay", "Ovo", "BCA", dll.
@@ -59,8 +60,8 @@ public class Transaction {
     public String getKeterangan() { return keterangan; }
     public void setKeterangan(String keterangan) { this.keterangan = keterangan; }
     
-    public LocalDate getTanggal() { return tanggal; }
-    public void setTanggal(LocalDate tanggal) { this.tanggal = tanggal; }
+    public LocalDateTime getTanggal() { return tanggal; }
+    public void setTanggal(LocalDateTime tanggal) { this.tanggal = tanggal; }
     
     public String getAkun() { return akun; }
     public void setAkun(String akun) { this.akun = akun; }
