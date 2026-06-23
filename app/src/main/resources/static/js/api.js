@@ -12,11 +12,6 @@
  * - Token JWT disimpan di localStorage["token"].
  */
 
-// ─── Konfigurasi ────────────────────────────────────────────────────────────
-
-// DISESUAIKAN: Mengarah ke port lokal laptopmu saat ini
-const BASE_URL = "http://localhost:8081/api";
-
 // ─── Helper internal ─────────────────────────────────────────────────────────
 
 /**
