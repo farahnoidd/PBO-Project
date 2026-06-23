@@ -1,127 +1,162 @@
 /**
- * File: transaksi.js
- * Fungsi: Menangani interaktivitas, validasi input form, dan konversi JSON untuk Transaksi.
+ * File: js/transaksi.js
+ * Sinkronisasi Pengolahan Data Form & Tabel Output Riwayat + Kalkulasi Kartu Atas
  */
+import {
+  tambahPemasukan,
+  getRiwayatPemasukan,
+  tambahPengeluaran,
+  getRiwayatPengeluaran,
+  requireAuth,
+  logout,
+} from "./api.js";
 
-// 1. IMPORT fungsi dari api.js
-import { tambahPemasukan, tambahPengeluaran, requireAuth } from './api.js';
-
-// 2. PROTEKSI HALAMAN: Pastikan user sudah login sebelum bisa input transaksi
+// 1. Proteksi keamanan halaman
 requireAuth();
 
-document.addEventListener('DOMContentLoaded', () => {
-    // 1. Deteksi halaman yang sedang aktif berdasarkan URL
-    const pathName = window.location.pathname.toLowerCase();
-    const isPemasukan = pathName.includes('pemasukan');
-    const isPengeluaran = pathName.includes('pengeluaran');
+document.addEventListener("DOMContentLoaded", () => {
+  const pathName = window.location.pathname.toLowerCase();
+  const isPemasukan = pathName.includes("pemasukan");
 
-    // 2. Tangkap elemen form 
-    const formTransaksi = document.getElementById('formTransaksi');
-    const inputNominal = document.getElementById('nominal');
-    const inputDeskripsi = document.getElementById('deskripsi');
-    const selectKategori = document.getElementById('kategori');
-    const selectAkun = document.getElementById('akun');
+  const formTransaksi = document.getElementById("formTransaksi");
+  const inputNominal = document.getElementById("nominal");
+  const selectKategori = document.getElementById("kategori");
+  const selectAkun = document.getElementById("akun");
+  const inputDeskripsi = document.getElementById("deskripsi");
+  const btnSimpan = document.getElementById("btnSimpan");
+  const btnLogout = document.getElementById("btnLogout");
 
-    if (formTransaksi) {
-        // PERUBAHAN: Jadikan fungsi callback event listener sebagai 'async'
-        formTransaksi.addEventListener('submit', async function (e) {
-            e.preventDefault(); 
+  // Format Rupiah Utilitas
+  const formatRupiah = (angka) => {
+    return new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+      maximumFractionDigits: 0,
+    }).format(angka);
+  };
 
-            // 3. Ambil dan bersihkan nilai input
-            const rawNominal = inputNominal.value ? inputNominal.value.replace(/[^0-9]/g, '') : '0';
-            const nominal = parseInt(rawNominal, 10);
-            
-            const deskripsi = inputDeskripsi.value.trim();
-            const kategori = selectKategori.value;
-            const akun = selectAkun ? selectAkun.value : '';
+  // 2. FUNGSI OUTPUT: Mengambil data riwayat dari database dan merendernya ke tabel HTML + Update Kartu Atas
+  async function muatRiwayatTabel() {
+    const tbody = document.getElementById("tabelTransaksiBody");
+    if (!tbody) return;
 
-            // 4. Proses Validasi (Frontend Guard)
-            if (isNaN(nominal) || nominal <= 0) {
-                alert('Peringatan: Nominal harus berupa angka dan lebih dari 0.');
-                return;
-            }
+    try {
+      tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-gray-500">Memuat data transaksi...</td></tr>`;
 
-            if (deskripsi === '') {
-                alert('Peringatan: Deskripsi transaksi tidak boleh kosong.');
-                return;
-            }
+      // Ambil data dari backend berdasarkan jenis halaman aktif
+      const dataRiwayat = isPemasukan
+        ? await getRiwayatPemasukan()
+        : await getRiwayatPengeluaran();
 
-            if (kategori === '') {
-                alert('Peringatan: Silakan pilih kategori transaksi.');
-                return;
-            }
+      tbody.innerHTML = ""; // Reset tabel loading
 
-            // Validasi lanjutan sesuai Enum Backend
-            const validKategoriPemasukan = ['GAJI_PART_TIME', 'UANG_SAKU', 'FREELANCE', 'BONUS', 'LAINNYA'];
-            const validKategoriPengeluaran = ['MAKANAN', 'TRANSPORTASI', 'BELAJAR', 'HIBURAN', 'TAGIHAN', 'LAINNYA'];
+      // ====== LOGIKA HITUNG SALDO KARTU ATAS SECARA DINAMIS ======
+      let akumulasiTotal = 0;
+      let rataRata = 0;
+      let jumlahItem = dataRiwayat ? dataRiwayat.length : 0;
 
-            // Uncomment validasi ketat ini jika Enum di file HTML sudah 100% sama dengan di Backend
-            /*
-            if (isPemasukan && !validKategoriPemasukan.includes(kategori)) {
-                alert('Sistem Error: Kategori Pemasukan tidak valid.');
-                return;
-            }
-            if (isPengeluaran && !validKategoriPengeluaran.includes(kategori)) {
-                alert('Sistem Error: Kategori Pengeluaran tidak valid.');
-                return;
-            }
-            */
-
-            // 5. Susun Data (Diselaraskan dengan kebutuhan api.js)
-            // api.js membutuhkan parameter: nominal, keterangan, kategori, tanggal
-            const payloadTransaksi = {
-                nominal: nominal,
-                keterangan: deskripsi, // diselaraskan dengan api.js
-                kategori: kategori,
-                tanggal: new Date().toISOString().split('T')[0], // Mengambil tanggal hari ini format YYYY-MM-DD
-                akun: akun // Tambahan, jaga-jaga jika Backend membutuhkannya
-            };
-
-            console.log('🚀 Payload siap dikirim ke API :', payloadTransaksi);
-
-            // 6. Eksekusi pengiriman data ke Backend
-            try {
-                // Menampilkan status loading (opsional)
-                const submitBtn = formTransaksi.querySelector('button[type="submit"]');
-                if(submitBtn) {
-                    submitBtn.disabled = true;
-                    submitBtn.innerText = 'Menyimpan...';
-                }
-
-                // Tentukan endpoint berdasarkan halaman
-                if (isPemasukan) {
-                    await tambahPemasukan(payloadTransaksi);
-                    alert('🎉 Berhasil! Pemasukan telah dicatat.');
-                } else if (isPengeluaran) {
-                    await tambahPengeluaran(payloadTransaksi);
-                    alert('🎉 Berhasil! Pengeluaran telah dicatat.');
-                } else {
-                    alert('Sistem Error: Halaman tidak dikenali sebagai Pemasukan atau Pengeluaran.');
-                    return;
-                }
-
-                // Kosongkan form kembali setelah sukses
-                formTransaksi.reset();
-
-                // Kembalikan tombol seperti semula
-                if(submitBtn) {
-                    submitBtn.disabled = false;
-                    submitBtn.innerText = 'Simpan Transaksi';
-                }
-
-            } catch (error) {
-                console.error("Gagal menyimpan transaksi:", error);
-                alert("❌ Gagal menyimpan transaksi: " + error.message);
-                
-                // Kembalikan tombol jika gagal
-                const submitBtn = formTransaksi.querySelector('button[type="submit"]');
-                if(submitBtn) {
-                    submitBtn.disabled = false;
-                    submitBtn.innerText = 'Simpan Transaksi';
-                }
-            }
+      if (dataRiwayat && jumlahItem > 0) {
+        dataRiwayat.forEach((item) => {
+          akumulasiTotal += item.nominal;
         });
-    } else {
-        console.warn('⚠️ Elemen form dengan ID "formTransaksi" belum ditemukan di HTML ini.');
+        rataRata = Math.round(akumulasiTotal / jumlahItem);
+      }
+
+      // Suntikkan hasil hitungan ke komponen ID kartu atas masing-masing halaman
+      if (isPemasukan) {
+        const elTotal = document.getElementById("txtTotalPemasukanBulanIni");
+        const elAvg = document.getElementById("txtRataRataPemasukan");
+        if (elTotal) elTotal.innerText = formatRupiah(akumulasiTotal);
+        if (elAvg) elAvg.innerText = formatRupiah(rataRata);
+      } else {
+        const elTotal = document.getElementById("txtTotalPengeluaranBulanIni");
+        const elAvg = document.getElementById("txtRataRataPengeluaran");
+        const elCount = document.getElementById("txtJumlahItemPengeluaran");
+        if (elTotal) elTotal.innerText = formatRupiah(akumulasiTotal);
+        if (elAvg) elAvg.innerText = formatRupiah(rataRata);
+        if (elCount) elCount.innerText = jumlahItem;
+      }
+      // =========================================================
+
+      if (!dataRiwayat || jumlahItem === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-gray-400">Belum ada riwayat catatan transaksi.</td></tr>`;
+        return;
+      }
+
+      // Loop data array dari Spring Boot untuk baris tabel
+      dataRiwayat.forEach((item) => {
+        const warnaTeksJumlah = isPemasukan ? "text-green-600" : "text-red-600";
+        const simbolMataUang = isPemasukan ? "+" : "-";
+
+        tbody.innerHTML += `
+                    <tr class="border-b hover:bg-gray-50/50 transition-colors">
+                        <td class="py-4 px-6 text-gray-700">${item.tanggal || "-"}</td>
+                        <td class="py-4 px-6">
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[12px] font-medium ${isPemasukan ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"}">
+                                ${item.kategori}
+                            </span>
+                        </td>
+                        <td class="py-4 px-6 text-gray-700">${item.keterangan || "-"}</td>
+                        <td class="py-4 px-6 text-gray-500">${item.akun || "-"}</td>
+                        <td class="py-4 px-6 font-semibold ${warnaTeksJumlah}">
+                            ${simbolMataUang}${formatRupiah(item.nominal)}
+                        </td>
+                    </tr>
+                `;
+      });
+    } catch (error) {
+      console.error("Gagal memuat tabel:", error);
+      tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-red-500">Gagal mengambil data dari server.</td></tr>`;
     }
+  }
+
+  // 3. FUNGSI INPUT: Mengirim payload JSON baru saat user submit form
+  if (formTransaksi) {
+    formTransaksi.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const payload = {
+        nominal: parseFloat(inputNominal.value),
+        kategori: selectKategori.value,
+        akun: selectAkun.value,
+        keterangan: inputDeskripsi.value.trim(),
+        tanggal: new Date().toISOString().split("T")[0], // Otomatis format YYYY-MM-DD
+      };
+
+      try {
+        btnSimpan.disabled = true;
+        btnSimpan.innerText = "Menyimpan...";
+
+        if (isPemasukan) {
+          await tambahPemasukan(payload);
+          alert("🎉 Pemasukan berhasil dicatat!");
+        } else {
+          await tambahPengeluaran(payload);
+          alert("🎉 Pengeluaran berhasil dicatat!");
+        }
+
+        formTransaksi.reset();
+        await muatRiwayatTabel();
+      } catch (error) {
+        alert("❌ Gagal menyimpan: " + error.message);
+      } finally {
+        // 👈 SUDAH DISUBSTITUSI MENJADI FINALLY
+        btnSimpan.disabled = false;
+        btnSimpan.innerText = "Simpan";
+      }
+    });
+  }
+
+  // 4. LOGOUT EVENT BINDING
+  if (btnLogout) {
+    btnLogout.addEventListener("click", (e) => {
+      e.preventDefault();
+      if (confirm("Apakah Anda yakin ingin keluar dari FinanceBuddy?")) {
+        logout();
+      }
+    });
+  }
+
+  // Jalankan penarikan data riwayat saat halaman pertama kali dibuka
+  muatRiwayatTabel();
 });

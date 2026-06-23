@@ -1,266 +1,185 @@
-﻿<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="utf-8">
-    <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <title>Laporan Tahunan - FinanceBuddy</title>
-    <link href="https://fonts.googleapis.com" rel="preconnect">
-    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Laporan - FinanceBuddy</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    "colors": {
-                        "on-primary-fixed-variant": "#1c4f41",
-                        "surface-container-high": "#e9e8e7",
-                        "tertiary-fixed-dim": "#bfc6e1",
-                        "on-background": "#1a1c1c",
-                        "on-primary-container": "#396b5c",
-                        "outline": "#707975",
-                        "on-error-container": "#93000a",
-                        "outline-variant": "#c0c9c4",
-                        "surface-container-highest": "#e3e2e1",
-                        "on-primary": "#ffffff",
-                        "surface": "#faf9f8",
-                        "surface-dim": "#dadad9",
-                        "inverse-on-surface": "#f1f0f0",
-                        "primary-fixed-dim": "#9dd1bf",
-                        "surface-tint": "#366758",
-                        "on-surface-variant": "#404945",
-                        "on-secondary-fixed-variant": "#1a4d5a",
-                        "on-tertiary-fixed-variant": "#3f465d",
-                        "primary": "#366758",
-                        "error": "#ba1a1a",
-                        "on-tertiary-container": "#5a617a",
-                        "inverse-primary": "#9dd1bf",
-                        "secondary-fixed-dim": "#9ecede",
-                        "tertiary-container": "#d7defa",
-                        "on-secondary": "#ffffff",
-                        "on-surface": "#1a1c1c",
-                        "on-secondary-fixed": "#001f27",
-                        "surface-variant": "#e3e2e1",
-                        "surface-container": "#eeeeed",
-                        "surface-bright": "#faf9f8",
-                        "tertiary-fixed": "#dbe2fe",
-                        "tertiary": "#565e76",
-                        "on-tertiary": "#ffffff",
-                        "on-error": "#ffffff",
-                        "on-tertiary-fixed": "#131b2f",
-                        "primary-container": "#b5ead7",
-                        "inverse-surface": "#2f3130",
-                        "secondary": "#356572",
-                        "surface-container-lowest": "#ffffff",
-                        "secondary-fixed": "#baeafa",
-                        "on-primary-fixed": "#002018",
-                        "surface-container-low": "#f4f3f2",
-                        "secondary-container": "#b7e7f7",
-                        "error-container": "#ffdad6",
-                        "primary-fixed": "#b9eedb",
-                        "on-secondary-container": "#3a6977",
-                        "background": "#faf9f8"
-                    },
-                    "borderRadius": {
-                        "DEFAULT": "0.5rem",
-                        "sm": "0.25rem",
-                        "md": "0.75rem",
-                        "lg": "1rem",
-                        "xl": "1.5rem",
-                        "2xl": "1.5rem",
-                        "full": "9999px"
-                    },
-                    "spacing": {
-                        "stack-lg": "48px",
-                        "container-margin": "24px",
-                        "stack-md": "24px",
-                        "gutter": "16px",
-                        "base": "8px",
-                        "stack-sm": "12px"
-                    },
-                    "fontFamily": {
-                        "headline-xl": ["Plus Jakarta Sans", "sans-serif"],
-                        "headline-lg": ["Plus Jakarta Sans", "sans-serif"],
-                        "headline-md": ["Plus Jakarta Sans", "sans-serif"],
-                        "headline-lg-mobile": ["Plus Jakarta Sans", "sans-serif"],
-                        "body-lg": ["Inter", "sans-serif"],
-                        "body-md": ["Inter", "sans-serif"],
-                        "label-md": ["Inter", "sans-serif"],
-                        "label-sm": ["Inter", "sans-serif"]
-                    }
-                }
-            }
-        }
-    </script>
-    <link rel="stylesheet" href="css/component.css">
-</head>
-
-<body class="bg-background text-on-background font-body-md antialiased selection:bg-primary-container selection:text-on-primary-container">
-
-<div class="relative flex h-auto min-h-screen w-full flex-col lg:flex-row overflow-x-hidden">
-    <nav class="hidden md:flex flex-col h-full py-6 px-4 bg-surface shadow-sm h-screen w-64 fixed left-0 top-0 z-20">
+  </head>
+  <body class="bg-[#faf9f8] text-[#1a1c1c] font-sans antialiased">
+    <div class="relative flex min-h-screen w-full flex-col lg:flex-row">
+      <!-- Sidebar Navigation -->
+      <nav
+        class="hidden md:flex flex-col py-6 px-4 bg-white shadow-sm h-screen w-64 fixed left-0 top-0 z-20"
+      >
         <div class="flex items-center gap-3 px-2 py-2 mb-2">
-            <div class="w-10 h-10 rounded-xl bg-primary-container flex items-center justify-center">
-                <span class="material-symbols-outlined text-xl" style="color: rgb(45, 90, 76); font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; -webkit-text-stroke: 1px rgb(28, 79, 65);">account_balance_wallet</span>
-            </div>
-            <div>
-                <h1 class="font-headline-md text-[24px] font-bold text-primary tracking-tight leading-none">FinanceBuddy</h1>
-                <p class="font-label-sm text-[12px] text-on-surface-variant mt-1">Student Edition</p>
-            </div>
+          <div
+            class="w-10 h-10 rounded-xl bg-[#b5ead7] flex items-center justify-center"
+          >
+            <span class="material-symbols-outlined text-xl text-[#1c4f41]"
+              >account_balance_wallet</span
+            >
+          </div>
+          <div>
+            <h1
+              class="text-[20px] font-bold text-[#366758] tracking-tight leading-none"
+            >
+              FinanceBuddy
+            </h1>
+            <p class="text-[12px] text-[#404945] mt-1">Student Edition</p>
+          </div>
         </div>
-        <div class="flex-1 px-4 space-y-1 mt-6">
-            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-colors duration-200" href="app\src\main\resources\static\dashboard.html">
-                <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
-                <span class="font-medium text-[16px]">Dashboard</span>
-            </a>
-            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-colors duration-200" href="app\src\main\resources\static\pemasukan.html">
-                <span class="material-symbols-outlined" data-icon="account_balance_wallet">account_balance_wallet</span>
-                <span class="font-medium text-[16px]">Pemasukan</span>
-            </a>
-            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-colors duration-200" href="app\src\main\resources\static\pengeluaran.html">
-                <span class="material-symbols-outlined" data-icon="payments">payments</span>
-                <span class="font-medium text-[16px]">Pengeluaran</span>
-            </a>
-            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-primary font-bold border-r-4 border-primary bg-primary-container/20 transition-transform scale-95 group" href="app\src\main\resources\static\laporan.html">
-                <span class="material-symbols-outlined" data-icon="assessment" style="font-variation-settings: 'FILL' 1;">assessment</span>
-                <span class="font-bold text-[16px]">Laporan</span>
-            </a>
-            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-colors duration-200" href="app\src\main\resources\static\profil.html">
-                <span class="material-symbols-outlined" data-icon="person">person</span>
-                <span class="font-medium text-[16px]">Profil</span>
-            </a>
+        <div class="flex-1 space-y-1 mt-6">
+          <a
+            class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#404945] hover:bg-gray-100 transition-colors"
+            href="dashboard.html"
+          >
+            <span class="material-symbols-outlined text-[20px]">dashboard</span>
+            Dashboard
+          </a>
+          <a
+            class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#404945] hover:bg-gray-100 transition-colors"
+            href="pemasukan.html"
+          >
+            <span class="material-symbols-outlined text-[20px]"
+              >account_balance_wallet</span
+            >
+            Pemasukan
+          </a>
+          <a
+            class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#404945] hover:bg-gray-100 transition-colors"
+            href="pengeluaran.html"
+          >
+            <span class="material-symbols-outlined text-[20px]">payments</span>
+            Pengeluaran
+          </a>
+          <!-- Laporan Aktif (Hijau Khas) -->
+          <a
+            class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#366758] font-bold bg-[#b5ead7]/20 border-r-4 border-[#366758] transition-colors"
+            href="laporan.html"
+          >
+            <span class="material-symbols-outlined text-[20px]"
+              >assessment</span
+            >
+            Laporan
+          </a>
+          <a
+            class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#404945] hover:bg-gray-100 transition-colors"
+            href="profil.html"
+          >
+            <span class="material-symbols-outlined text-[20px]">person</span>
+            Profil
+          </a>
         </div>
-        <div class="mt-auto pt-4 border-t border-surface-variant">
-            <button class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-error hover:bg-error-container/50 transition-colors duration-200">
-                <span class="material-symbols-outlined" data-icon="logout">logout</span>
-                <span class="font-medium text-[16px]">Logout</span>
-            </button>
-        </div>
-    </nav>
+        <button
+          id="btnLogout"
+          class="text-left flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg font-medium transition-colors"
+        >
+          <span class="material-symbols-outlined text-[20px]">logout</span>
+          Logout
+        </button>
+      </nav>
 
-    <main class="flex-1 md:ml-64 flex flex-col min-h-screen">
-        <header class="flex items-center justify-between whitespace-nowrap border-b border-outline-variant px-container-margin py-6 bg-surface/80 backdrop-blur-md sticky top-0 z-20 h-20">
-            <div class="flex items-center gap-4">
-                <button class="md:hidden text-on-surface hover:text-primary transition-colors flex items-center justify-center w-10 h-10 rounded-full bg-surface-container-low">
-                    <span class="material-symbols-outlined">menu</span>
-                </button>
-                <h2 class="text-on-surface text-[24px] tracking-[-0.01em] font-semibold">Laporan Tahunan</h2>
-            </div>
-            <img alt="Student Profile Avatar" class="w-10 h-10 rounded-full object-cover border-2 border-primary-container" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBJBhzrAMZhrpuleFpNA9x6ZwDNVQlNIvTP_dZsy7Nlj_-aMWVs6_wcJl1JK04PlNaLb7BFjDPUvrrkXvEkBMT724I_QuWkNQAXPKukHhTESOS4TEUUCMf7YAgpkT3hntjFS2dy0BbRtG4Jj9lornW17lN19mktT99kO4VGl2Z0N4gQaFcTtl8uuYQmnrC9yzAPAZoliAtKSH8wEjroGXzs14V_Clk9WolporOxj8lw3pBFSYcMLo_WrqDVOW40bYs4GIiP2qCMJJFP">
+      <!-- Main Content -->
+      <main class="flex-1 md:ml-64 p-6 space-y-6">
+        <header class="flex items-center justify-between border-b pb-4">
+          <h2 class="text-[24px] font-semibold">Laporan Tahunan</h2>
         </header>
 
-        <div class="p-container-margin flex flex-col gap-stack-md pb-24">
-            
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
-                <div class="bg-surface-container-lowest rounded-[24px] p-stack-md ambient-shadow-sm card-outline flex flex-col justify-between min-h-[140px]">
-                    <div class="flex items-center gap-2 mb-2">
-                        <div class="p-2 bg-primary-container/30 rounded-lg">
-                            <span class="material-symbols-outlined text-on-primary-container text-sm">trending_up</span>
-                        </div>
-                        <h3 class="font-label-md text-label-md text-on-surface-variant">Total Pemasukan Tahunan</h3>
-                    </div>
-                    <div>
-                        <p id="totalPemasukanTahunan" class="font-headline-lg text-headline-lg text-on-surface mt-1 text-[36px] text-left">Rp 65.000.000</p>
-                        <p class="font-label-sm text-[12px] text-outline mt-1">Tahun 2023</p>
-                    </div>
-                </div>
-                
-                <div class="bg-surface-container-lowest rounded-[24px] p-stack-md ambient-shadow-sm card-outline flex flex-col justify-between min-h-[140px]">
-                    <div class="flex items-center gap-2 mb-2">
-                        <div class="p-2 bg-error-container/50 rounded-lg">
-                            <span class="material-symbols-outlined text-on-error-container text-sm">trending_down</span>
-                        </div>
-                        <h3 class="font-label-md text-label-md text-on-surface-variant">Total Pengeluaran Tahunan</h3>
-                    </div>
-                    <div>
-                        <p id="totalPengeluaranTahunan" class="font-headline-lg text-headline-lg text-on-surface mt-1 text-[36px] text-left">Rp 48.500.000</p>
-                        <p class="font-label-sm text-[12px] text-outline mt-1">Tahun 2023</p>
-                    </div>
-                </div>
-                
-                <div class="bg-surface-container-lowest rounded-[24px] p-stack-md ambient-shadow-sm card-outline flex flex-col justify-between min-h-[140px]">
-                    <div class="flex items-center gap-2 mb-2">
-                        <div class="p-2 bg-secondary-container/50 rounded-lg">
-                            <span class="material-symbols-outlined text-on-secondary-container text-sm">savings</span>
-                        </div>
-                        <h3 class="font-label-md text-label-md text-on-surface-variant">Tabungan Bersih</h3>
-                    </div>
-                    <div>
-                        <p id="tabunganBersih" class="font-headline-lg text-headline-lg text-primary mt-1 text-[36px] text-left">Rp 16.500.000</p>
-                        <div class="inline-flex items-center gap-1 mt-1 bg-primary-container/30 text-on-primary-container px-2 py-0.5 rounded-full">
-                            <span class="material-symbols-outlined text-[14px]">arrow_upward</span>
-                            <span class="font-label-sm text-[12px]">Surplus</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-surface-container-lowest rounded-[24px] p-stack-md ambient-shadow-sm card-outline">
-                <h3 class="font-headline-md text-headline-md font-semibold text-on-surface mb-stack-md">Perbandingan Pemasukan vs Pengeluaran</h3>
-                <div class="relative h-72 w-full">
-                    <canvas id="yearlyBarChart"></canvas>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-gutter">
-                <div class="bg-surface-container-lowest rounded-[24px] p-stack-md ambient-shadow-sm card-outline flex flex-col">
-                    <h3 class="font-headline-md text-headline-md font-semibold text-on-surface mb-stack-md">Distribusi Pengeluaran Tahunan</h3>
-                    <div class="flex-1 relative min-h-[250px] flex items-center justify-center">
-                        <canvas id="expensePieChart"></canvas>
-                    </div>
-                    <div id="expenseLegend" class="mt-stack-sm flex flex-wrap justify-center gap-2">
-                    </div>
-                </div>
-
-                <div class="bg-surface-container-lowest rounded-[24px] p-stack-md ambient-shadow-sm card-outline flex flex-col">
-                    <h3 class="font-headline-md text-headline-md font-semibold text-on-surface mb-stack-md">Ringkasan Statistik</h3>
-                    <ul class="space-y-4 flex-1">
-                        <li class="flex items-center justify-between p-4 bg-surface rounded-xl border border-surface-container">
-                            <div class="flex items-center gap-3">
-                                <div class="p-2 bg-error-container/30 rounded-lg text-on-error-container">
-                                    <span class="material-symbols-outlined">calendar_today</span>
-                                </div>
-                                <span class="font-body-md text-body-md text-on-surface">Bulan Pengeluaran Tertinggi</span>
-                            </div>
-                            <span id="statBulanTertinggi" class="font-label-md text-label-md font-semibold text-on-surface">Oktober</span>
-                        </li>
-                        <li class="flex items-center justify-between p-4 bg-surface rounded-xl border border-surface-container">
-                            <div class="flex items-center gap-3">
-                                <div class="p-2 bg-secondary-container/30 rounded-lg text-on-secondary-container">
-                                    <span class="material-symbols-outlined">pie_chart</span>
-                                </div>
-                                <span class="font-body-md text-body-md text-on-surface">Kategori Terbesar</span>
-                            </div>
-                            <span id="statKategoriTerbesar" class="font-label-md text-label-md font-semibold text-on-surface">Makanan</span>
-                        </li>
-                        <li class="flex items-center justify-between p-4 bg-surface rounded-xl border border-surface-container">
-                            <div class="flex items-center gap-3">
-                                <div class="p-2 bg-primary-container/30 rounded-lg text-on-primary-container">
-                                    <span class="material-symbols-outlined">arrow_upward</span>
-                                </div>
-                                <span class="font-body-md text-body-md text-on-surface">Rerata Pemasukan Bulanan</span>
-                            </div>
-                            <span id="statRerataPemasukan" class="font-label-md text-label-md font-semibold text-on-surface">Rp 5.416.000</span>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="flex justify-end pt-2">
-                <button class="inline-flex items-center justify-center gap-2 bg-primary hover:bg-on-primary-fixed-variant text-on-primary font-label-md text-[14px] font-bold py-3 px-6 rounded-full shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5">
-                    <span class="material-symbols-outlined text-[18px]">picture_as_pdf</span>
-                    Download Laporan (PDF)
-                </button>
-            </div>
-            
+        <!-- 3 Kartu Akumulasi Tahunan -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div
+            class="bg-white p-6 rounded-[24px] border border-gray-100 shadow-sm"
+          >
+            <p class="text-xs text-gray-500">Total Pemasukan Tahunan</p>
+            <h3 id="lblTotalIncome" class="text-[24px] font-bold mt-2">Rp 0</h3>
+          </div>
+          <div
+            class="bg-white p-6 rounded-[24px] border border-gray-100 shadow-sm"
+          >
+            <p class="text-xs text-gray-500">Total Pengeluaran Tahunan</p>
+            <h3 id="lblTotalExpense" class="text-[24px] font-bold mt-2">
+              Rp 0
+            </h3>
+          </div>
+          <div
+            class="bg-white p-6 rounded-[24px] border border-gray-100 shadow-sm"
+          >
+            <p class="text-xs text-gray-500">Tabungan Bersih</p>
+            <h3
+              id="lblNetSavings"
+              class="text-[24px] font-bold text-[#366758] mt-2"
+            >
+              Rp 0
+            </h3>
+          </div>
         </div>
-    </main>
-</div>
 
-<script type="module" src="/js/laporan.js"></script>
-<script src="js/pwa.js" defer></script>
-</body>
+        <!-- Grafik Histogram Batang -->
+        <div
+          class="bg-white p-6 rounded-[24px] border border-gray-100 shadow-sm"
+        >
+          <h4 class="font-semibold text-sm mb-4">
+            Perbandingan Pemasukan vs Pengeluaran
+          </h4>
+          <div class="h-64"><canvas id="chartBatangLaporan"></canvas></div>
+        </div>
+
+        <!-- Distribusi & Tombol Cetak Dokumen -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div
+            class="bg-white p-6 rounded-[24px] border border-gray-100 shadow-sm"
+          >
+            <h4 class="font-semibold text-sm mb-4">
+              Distribusi Pengeluaran Tahunan
+            </h4>
+            <div class="h-56"><canvas id="chartDonatTahunan"></canvas></div>
+          </div>
+          <div
+            class="bg-white p-6 rounded-[24px] border border-gray-100 shadow-sm flex flex-col justify-between"
+          >
+            <h4 class="font-semibold text-sm mb-4">Ringkasan Statistik</h4>
+            <div class="space-y-4 flex-1 flex flex-col justify-center">
+              <div class="flex justify-between border-b pb-2 text-sm">
+                <span>Kategori Terbesar</span
+                ><span class="font-bold text-[#366758]">Makanan</span>
+              </div>
+              <div class="flex justify-between border-b pb-2 text-sm">
+                <span>Rata-rata Pemasukan Bulanan</span
+                ><span class="font-bold text-gray-700" id="lblAvgIncome"
+                  >Rp 0</span
+                >
+              </div>
+            </div>
+            <button
+              onclick="window.print()"
+              class="w-full py-2.5 mt-4 bg-[#366758] text-white font-semibold rounded-xl hover:bg-[#1c4f41] transition-colors shadow-sm flex items-center justify-center gap-2"
+            >
+              <span class="material-symbols-outlined text-[18px]"
+                >download</span
+              >
+              Download Laporan (PDF)
+            </button>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script type="module" src="js/laporan.js"></script>
+    <script type="module">
+      import { logout } from "./js/api.js";
+      document.getElementById("btnLogout").addEventListener("click", logout);
+    </script>
+  </body>
 </html>

@@ -1,20 +1,21 @@
 /**
- * api.js
+ * File: js/api.js
  * Mahasiswa 12 – FE Integrasi API & Core PWA
  *
  * Semua komunikasi ke backend Spring Boot dilakukan dari sini.
  * Tidak ada fetch() di file HTML/JS lain — cukup import fungsi ini.
  *
  * Konvensi:
- *  - Setiap fungsi mengembalikan Promise<data> (sudah di-parse JSON).
- *  - Jika respons gagal (status ≥ 400), fungsi melempar Error dengan
- *    pesan dari backend (field "message" atau teks status HTTP).
- *  - Token JWT disimpan di sessionStorage["jwt_token"].
+ * - Setiap fungsi mengembalikan Promise<data> (sudah di-parse JSON).
+ * - Jika respons gagal (status ≥ 400), fungsi melempar Error dengan
+ * pesan dari backend (field "message" atau teks status HTTP).
+ * - Token JWT disimpan di localStorage["token"].
  */
 
 // ─── Konfigurasi ────────────────────────────────────────────────────────────
 
-const BASE_URL = "https://pbo-project-production.up.railway.app/api";
+// DISESUAIKAN: Mengarah ke port lokal laptopmu saat ini
+const BASE_URL = "http://localhost:8081/api";
 
 // ─── Helper internal ─────────────────────────────────────────────────────────
 
@@ -23,15 +24,15 @@ const BASE_URL = "https://pbo-project-production.up.railway.app/api";
  * @returns {string|null}
  */
 function getToken() {
-  return localStorage.getItem("token"); 
+  return localStorage.getItem("token");
 }
 
 function saveToken(token) {
-  localStorage.setItem("token", token); 
+  localStorage.setItem("token", token);
 }
 
 function clearToken() {
-  localStorage.removeItem("token"); 
+  localStorage.removeItem("token");
 }
 
 /**
@@ -161,8 +162,8 @@ export async function validasiUser(userId) {
  * Mencatat transaksi pemasukan baru.
  *
  * @param {{ nominal: number, keterangan: string, kategori: string, tanggal: string }} payload
- *   kategori harus sesuai enum IncomeCategory di backend
- *   (contoh: "GAJI", "FREELANCE", "INVESTASI", "BONUS", "LAINNYA")
+ * kategori harus sesuai enum IncomeCategory di backend
+ * (contoh: "GAJI", "FREELANCE", "INVESTASI", "BONUS", "LAINNYA")
  * @returns {Promise<any>}
  */
 export async function tambahPemasukan(payload) {
@@ -195,8 +196,8 @@ export async function getRiwayatPemasukan(filter = {}) {
  * Mencatat transaksi pengeluaran baru.
  *
  * @param {{ nominal: number, keterangan: string, kategori: string, tanggal: string }} payload
- *   kategori harus sesuai enum ExpenseCategory di backend
- *   (contoh: "MAKANAN", "TRANSPORTASI", "KESEHATAN", "HIBURAN", "TAGIHAN", "LAINNYA")
+ * kategori harus sesuai enum ExpenseCategory di backend
+ * (contoh: "MAKANAN", "TRANSPORTASI", "KESEHATAN", "HIBURAN", "TAGIHAN", "LAINNYA")
  * @returns {Promise<any>}
  */
 export async function tambahPengeluaran(payload) {
@@ -229,11 +230,11 @@ export async function getRiwayatPengeluaran(filter = {}) {
  * Mendapatkan ringkasan saldo & statistik untuk Dashboard.
  * Backend (Mahasiswa 8) mengembalikan:
  * {
- *   totalSaldo: number,
- *   totalPemasukan: number,
- *   totalPengeluaran: number,
- *   grafikBulanan: [{ bulan: string, pemasukan: number, pengeluaran: number }],
- *   grafikKategori: [{ kategori: string, jumlah: number }]
+ * totalSaldo: number,
+ * totalPemasukan: number,
+ * totalPengeluaran: number,
+ * grafikBulanan: [{ bulan: string, pemasukan: number, pengeluaran: number }],
+ * grafikKategori: [{ kategori: string, jumlah: number }]
  * }
  *
  * @returns {Promise<object>}

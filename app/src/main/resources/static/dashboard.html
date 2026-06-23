@@ -1,322 +1,198 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="utf-8">
-    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Dashboard - FinanceBuddy</title>
-    <link href="https://fonts.googleapis.com" rel="preconnect">
-    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    "colors": {
-                        "on-primary-fixed-variant": "#1c4f41",
-                        "surface-container-high": "#e9e8e7",
-                        "tertiary-fixed-dim": "#bfc6e1",
-                        "on-background": "#1a1c1c",
-                        "on-primary-container": "#396b5c",
-                        "outline": "#707975",
-                        "on-error-container": "#93000a",
-                        "outline-variant": "#c0c9c4",
-                        "surface-container-highest": "#e3e2e1",
-                        "on-primary": "#ffffff",
-                        "surface": "#faf9f8",
-                        "surface-dim": "#dadad9",
-                        "inverse-on-surface": "#f1f0f0",
-                        "primary-fixed-dim": "#9dd1bf",
-                        "surface-tint": "#366758",
-                        "on-surface-variant": "#404945",
-                        "on-secondary-fixed-variant": "#1a4d5a",
-                        "on-tertiary-fixed-variant": "#3f465d",
-                        "primary": "#366758",
-                        "error": "#ba1a1a",
-                        "on-tertiary-container": "#5a617a",
-                        "inverse-primary": "#9dd1bf",
-                        "secondary-fixed-dim": "#9ecede",
-                        "tertiary-container": "#d7defa",
-                        "on-secondary": "#ffffff",
-                        "on-surface": "#1a1c1c",
-                        "on-secondary-fixed": "#001f27",
-                        "surface-variant": "#e3e2e1",
-                        "surface-container": "#eeeeed",
-                        "surface-bright": "#faf9f8",
-                        "tertiary-fixed": "#dbe2fe",
-                        "tertiary": "#565e76",
-                        "on-tertiary": "#ffffff",
-                        "on-error": "#ffffff",
-                        "on-tertiary-fixed": "#131b2f",
-                        "primary-container": "#b5ead7",
-                        "inverse-surface": "#2f3130",
-                        "secondary": "#356572",
-                        "surface-container-lowest": "#ffffff",
-                        "secondary-fixed": "#baeafa",
-                        "on-primary-fixed": "#002018",
-                        "surface-container-low": "#f4f3f2",
-                        "secondary-container": "#b7e7f7",
-                        "error-container": "#ffdad6",
-                        "primary-fixed": "#b9eedb",
-                        "on-secondary-container": "#3a6977",
-                        "background": "#faf9f8"
-                    },
-                    "borderRadius": {
-                        "DEFAULT": "0.5rem",
-                        "sm": "0.25rem",
-                        "md": "0.75rem",
-                        "lg": "1rem",
-                        "xl": "1.5rem",
-                        "2xl": "1.5rem",
-                        "full": "9999px"
-                    },
-                    "spacing": {
-                        "stack-lg": "48px",
-                        "container-margin": "24px",
-                        "stack-md": "24px",
-                        "gutter": "16px",
-                        "base": "8px",
-                        "stack-sm": "12px"
-                    },
-                    "fontFamily": {
-                        "headline-xl": ["Plus Jakarta Sans", "sans-serif"],
-                        "headline-lg": ["Plus Jakarta Sans", "sans-serif"],
-                        "headline-md": ["Plus Jakarta Sans", "sans-serif"],
-                        "headline-lg-mobile": ["Plus Jakarta Sans", "sans-serif"],
-                        "body-lg": ["Inter", "sans-serif"],
-                        "body-md": ["Inter", "sans-serif"],
-                        "label-md": ["Inter", "sans-serif"],
-                        "label-sm": ["Inter", "sans-serif"]
-                    }
-                }
-            }
-        }
-    </script>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="css/component.css">
-</head>
-
-<body class="bg-background text-on-background font-body-md antialiased selection:bg-primary-container selection:text-on-primary-container">
-
-<div class="relative flex h-auto min-h-screen w-full flex-col lg:flex-row overflow-x-hidden">
-    <nav class="hidden md:flex flex-col h-full py-6 px-4 bg-surface shadow-sm h-screen w-64 fixed left-0 top-0 z-20">
+  </head>
+  <body class="bg-[#faf9f8] text-[#1a1c1c] font-sans antialiased">
+    <div class="relative flex min-h-screen w-full flex-col lg:flex-row">
+      <!-- Sidebar Navigation -->
+      <nav
+        class="hidden md:flex flex-col py-6 px-4 bg-white shadow-sm h-screen w-64 fixed left-0 top-0 z-20"
+      >
         <div class="flex items-center gap-3 px-2 py-2 mb-2">
-            <div class="w-10 h-10 rounded-xl bg-primary-container flex items-center justify-center">
-                <span class="material-symbols-outlined text-xl" style="color: rgb(45, 90, 76); font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; -webkit-text-stroke: 1px rgb(28, 79, 65);">account_balance_wallet</span>
-            </div>
-            <div>
-                <h1 class="font-headline-md text-[24px] font-bold text-primary tracking-tight leading-none">FinanceBuddy</h1>
-                <p class="font-label-sm text-[12px] text-on-surface-variant mt-1">Student Edition</p>
-            </div>
+          <div
+            class="w-10 h-10 rounded-xl bg-[#b5ead7] flex items-center justify-center"
+          >
+            <span class="material-symbols-outlined text-xl text-[#1c4f41]"
+              >account_balance_wallet</span
+            >
+          </div>
+          <div>
+            <h1
+              class="text-[20px] font-bold text-[#366758] tracking-tight leading-none"
+            >
+              FinanceBuddy
+            </h1>
+            <p class="text-[12px] text-[#404945] mt-1">Student Edition</p>
+          </div>
         </div>
-        
-        <div class="flex-1 px-4 space-y-1 mt-6">
-            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-primary font-bold border-r-4 border-primary bg-primary-container/20 transition-transform scale-95 group" href="app\src\main\resources\static\dashboard.html">
-                <span class="material-symbols-outlined" data-icon="dashboard" style="font-variation-settings: 'FILL' 1;">dashboard</span>
-                <span class="font-bold text-[16px]">Dashboard</span>
-            </a>
-            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-colors duration-200" href="app\src\main\resources\static\pemasukan.html">
-                <span class="material-symbols-outlined" data-icon="account_balance_wallet">account_balance_wallet</span>
-                <span class="font-medium text-[16px]">Pemasukan</span>
-            </a>
-            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-colors duration-200" href="app\src\main\resources\static\pengeluaran.html">
-                <span class="material-symbols-outlined" data-icon="payments">payments</span>
-                <span class="font-medium text-[16px]">Pengeluaran</span>
-            </a>
-            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-colors duration-200" href="app\src\main\resources\static\laporan.html">
-                <span class="material-symbols-outlined" data-icon="assessment">assessment</span>
-                <span class="font-medium text-[16px]">Laporan</span>
-            </a>
-            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-colors duration-200" href="app\src\main\resources\static\profil.html">
-                <span class="material-symbols-outlined" data-icon="person">person</span>
-                <span class="font-medium text-[16px]">Profil</span>
-            </a>
+        <div class="flex-1 space-y-1 mt-6">
+          <!-- Dashboard Aktif (Hijau Khas) -->
+          <a
+            class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#366758] font-bold bg-[#b5ead7]/20 border-r-4 border-[#366758] transition-colors"
+            href="dashboard.html"
+          >
+            <span class="material-symbols-outlined text-[20px]">dashboard</span>
+            Dashboard
+          </a>
+          <a
+            class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#404945] hover:bg-gray-100 transition-colors"
+            href="pemasukan.html"
+          >
+            <span class="material-symbols-outlined text-[20px]"
+              >account_balance_wallet</span
+            >
+            Pemasukan
+          </a>
+          <a
+            class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#404945] hover:bg-gray-100 transition-colors"
+            href="pengeluaran.html"
+          >
+            <span class="material-symbols-outlined text-[20px]">payments</span>
+            Pengeluaran
+          </a>
+          <a
+            class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#404945] hover:bg-gray-100 transition-colors"
+            href="laporan.html"
+          >
+            <span class="material-symbols-outlined text-[20px]"
+              >assessment</span
+            >
+            Laporan
+          </a>
+          <a
+            class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#404945] hover:bg-gray-100 transition-colors"
+            href="profil.html"
+          >
+            <span class="material-symbols-outlined text-[20px]">person</span>
+            Profil
+          </a>
         </div>
-        
-        <div class="mt-auto pt-4 border-t border-surface-variant">
-            <button class="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-error hover:bg-error-container/50 transition-colors duration-200">
-                <span class="material-symbols-outlined" data-icon="logout">logout</span>
-                <span class="font-medium text-[16px]">Logout</span>
-            </button>
-        </div>
-    </nav>
+        <button
+          id="btnLogout"
+          class="text-left flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg font-medium transition-colors"
+        >
+          <span class="material-symbols-outlined text-[20px]">logout</span>
+          Logout
+        </button>
+      </nav>
 
-    <main class="flex-1 md:ml-64 flex flex-col min-h-screen">
-        <header class="flex items-center justify-between whitespace-nowrap border-b border-outline-variant px-container-margin py-6 bg-surface/80 backdrop-blur-md sticky top-0 z-20 h-20">
-            <div class="flex items-center gap-4">
-                <button class="md:hidden text-on-surface hover:text-primary transition-colors flex items-center justify-center w-10 h-10 rounded-full bg-surface-container-low">
-                    <span class="material-symbols-outlined">menu</span>
-                </button>
-                <h2 class="text-on-surface text-[24px] tracking-[-0.01em] font-semibold">Dashboard</h2>
-            </div>
-            <img alt="Student Profile Avatar" class="w-10 h-10 rounded-full object-cover border-2 border-primary-container" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBJBhzrAMZhrpuleFpNA9x6ZwDNVQlNIvTP_dZsy7Nlj_-aMWVs6_wcJl1JK04PlNaLb7BFjDPUvrrkXvEkBMT724I_QuWkNQAXPKukHhTESOS4TEUUCMf7YAgpkT3hntjFS2dy0BbRtG4Jj9lornW17lN19mktT99kO4VGl2Z0N4gQaFcTtl8uuYQmnrC9yzAPAZoliAtKSH8wEjroGXzs14V_Clk9WolporOxj8lw3pBFSYcMLo_WrqDVOW40bYs4GIiP2qCMJJFP">
+      <!-- Main Content -->
+      <main class="flex-1 md:ml-64 p-6 space-y-6">
+        <header class="flex items-center justify-between border-b pb-4">
+          <h2 class="text-[24px] font-semibold">Dashboard Utama</h2>
         </header>
 
-        <div class="p-container-margin flex flex-col gap-stack-md pb-24">
-            
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
-                <div class="md:col-span-2 bg-surface-container-lowest rounded-[24px] p-stack-md ambient-shadow-sm card-outline flex flex-col justify-between relative overflow-hidden group">
-                    <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                        <span class="material-symbols-outlined text-[120px] text-primary">savings</span>
-                    </div>
-                    <div>
-                        <h3 class="font-label-md text-label-md text-on-surface-variant mb-2">Total Saldo</h3>
-                        <div id="totalSaldo" class="font-headline-xl text-headline-xl font-bold text-on-surface text-[40px]">Rp 4.500.000</div>
-                    </div>
-                    <div class="mt-4 flex items-center gap-2">
-                        <span class="px-2 py-1 bg-primary-container text-on-primary-container rounded-full font-label-sm text-[12px] flex items-center gap-1">
-                            <span class="material-symbols-outlined text-[14px]">trending_up</span> +5%
-                        </span>
-                        <span class="font-label-sm text-[12px] text-on-surface-variant">vs bulan lalu</span>
-                    </div>
-                    
-                    <div class="mt-6 pt-6 border-t border-surface-variant/50">
-                        <p class="font-label-sm text-[12px] text-on-surface-variant mb-3 uppercase tracking-wider">Saldo per Akun</p>
-                        <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
-                            <div class="flex flex-col">
-                                <span class="text-[12px] text-on-surface-variant">BCA</span>
-                                <span id="saldoBca" class="text-[14px] font-semibold text-on-surface">Rp 2.500.000</span>
-                            </div>
-                            <div class="flex flex-col">
-                                <span class="text-[12px] text-on-surface-variant">Mandiri</span>
-                                <span id="saldoMandiri" class="text-[14px] font-semibold text-on-surface">Rp 1.200.000</span>
-                            </div>
-                            <div class="flex flex-col">
-                                <span class="text-[12px] text-on-surface-variant">Gopay</span>
-                                <span id="saldoGopay" class="text-[14px] font-semibold text-on-surface">Rp 350.000</span>
-                            </div>
-                            <div class="flex flex-col">
-                                <span class="text-[12px] text-on-surface-variant">Dana</span>
-                                <span id="saldoDana" class="text-[14px] font-semibold text-on-surface">Rp 300.000</span>
-                            </div>
-                            <div class="flex flex-col">
-                                <span class="text-[12px] text-on-surface-variant">Cash</span>
-                                <span id="saldoCash" class="text-[14px] font-semibold text-on-surface">Rp 150.000</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="flex flex-col gap-gutter h-full">
-                    <div class="bg-primary-container/20 rounded-[24px] p-stack-md ambient-shadow-sm card-outline flex-1 flex flex-col justify-center border-primary-container/30">
-                        <div class="flex items-center gap-2 mb-2">
-                            <div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center">
-                                <span class="material-symbols-outlined text-on-primary-container text-[18px]">arrow_downward</span>
-                            </div>
-                            <h3 class="text-[14px] font-medium text-on-surface-variant">Pemasukan Bulan Ini</h3>
-                        </div>
-                        <p id="pemasukanBulanIni" class="font-headline-lg text-[32px] font-bold text-primary mt-1">Rp 2.000.000</p>
-                    </div>
-                    <div class="bg-error-container/20 rounded-[24px] p-stack-md ambient-shadow-sm card-outline flex-1 flex flex-col justify-center border-error-container/30">
-                        <div class="flex items-center gap-2 mb-2">
-                            <div class="w-8 h-8 rounded-full bg-error-container flex items-center justify-center">
-                                <span class="material-symbols-outlined text-on-error-container text-[18px]">arrow_upward</span>
-                            </div>
-                            <h3 class="text-[14px] font-medium text-on-surface-variant">Pengeluaran Bulan Ini</h3>
-                        </div>
-                        <p id="pengeluaranBulanIni" class="font-headline-lg text-[32px] font-bold text-error mt-1">Rp 850.000</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="flex flex-wrap gap-4 mt-2">
-                <button class="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-4 bg-primary text-on-primary rounded-full text-[14px] font-semibold hover:bg-on-primary-fixed-variant transition-colors duration-200">
-                    <span class="material-symbols-outlined text-[20px]">add</span>
-                    Tambah Pemasukan
-                </button>
-                <button class="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-4 bg-secondary-container text-on-secondary-container rounded-full text-[14px] font-semibold hover:bg-secondary-fixed-dim transition-colors duration-200">
-                    <span class="material-symbols-outlined text-[20px]">add</span>
-                    Tambah Pengeluaran
-                </button>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-gutter">
-                
-                <div class="bg-surface-container-lowest rounded-[24px] p-stack-md ambient-shadow-sm card-outline flex flex-col">
-                    <h3 class="text-on-surface text-[20px] font-semibold mb-6">Kategori Pengeluaran</h3>
-                    <div class="flex-1 relative min-h-[250px] flex items-center justify-center">
-                        <canvas id="kategoriChart"></canvas>
-                        <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                            <span class="text-[12px] text-on-surface-variant">Total</span>
-                            <span id="totalPengeluaranTengah" class="text-[20px] font-bold text-on-surface">Rp 850k</span>
-                        </div>
-                    </div>
-                    <div id="kategoriLegend" class="mt-6 flex flex-wrap gap-4 justify-center">
-                    </div>
-                </div>
-
-                <div class="bg-surface-container-lowest rounded-[24px] p-stack-md ambient-shadow-sm card-outline flex flex-col">
-                    <h3 class="text-on-surface text-[20px] font-semibold mb-6">Pemasukan vs Pengeluaran</h3>
-                    <div class="flex-1 relative min-h-[250px] w-full">
-                        <canvas id="trenChart"></canvas>
-                    </div>
-                </div>
-
-            </div>
-            <div class="bg-surface-container-lowest rounded-[24px] ambient-shadow-sm card-outline overflow-hidden">
-                <div class="p-6 pb-4 border-b border-surface-container-highest flex justify-between items-center flex-wrap gap-4">
-                    <h3 class="text-on-surface text-[16px] font-semibold">Riwayat Transaksi Terakhir</h3>
-                    <button class="text-primary hover:text-on-primary-fixed-variant text-[14px] font-medium transition-colors">Lihat Semua</button>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="bg-surface-container-lowest border-b border-surface-container-highest">
-                                <th class="py-4 px-6 text-on-surface-variant text-[12px] font-semibold tracking-wider whitespace-nowrap">Tanggal</th>
-                                <th class="py-4 px-6 text-on-surface-variant text-[12px] font-semibold tracking-wider whitespace-nowrap">Deskripsi</th>
-                                <th class="py-4 px-6 text-on-surface-variant text-[12px] font-semibold tracking-wider whitespace-nowrap">Kategori</th>
-                                <th class="py-4 px-6 text-on-surface-variant text-[12px] font-semibold tracking-wider whitespace-nowrap">Akun</th>
-                                <th class="py-4 px-6 text-on-surface-variant text-[12px] font-semibold tracking-wider whitespace-nowrap">Jumlah</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-surface-container-highest">
-                            <tr class="hover:bg-surface-container-high/30 transition-colors group">
-                                <td class="py-4 px-6 text-on-surface text-[14px] whitespace-nowrap">12 Nov 2023</td>
-                                <td class="py-4 px-6 text-on-surface text-[14px] max-w-[200px] truncate font-medium">Uang Bulanan Ortu</td>
-                                <td class="py-4 px-6 whitespace-nowrap">
-                                    <span class="inline-flex items-center px-3 py-1 bg-primary-container text-on-primary-container rounded-full text-[12px] font-medium">Uang Saku</span>
-                                </td>
-                                <td class="py-4 px-6 text-on-surface-variant text-[14px] whitespace-nowrap">BCA</td>
-                                <td class="py-4 px-6 text-primary text-[14px] font-semibold text-left whitespace-nowrap tabular-nums">+ Rp 2.000.000</td>
-                            </tr>
-                            <tr class="hover:bg-surface-container-high/30 transition-colors group">
-                                <td class="py-4 px-6 text-on-surface text-[14px] whitespace-nowrap">10 Nov 2023</td>
-                                <td class="py-4 px-6 text-on-surface text-[14px] max-w-[200px] truncate font-medium">Makan Nasi Padang</td>
-                                <td class="py-4 px-6 whitespace-nowrap">
-                                    <span class="inline-flex items-center px-3 py-1 bg-tertiary-container text-on-tertiary-container rounded-full text-[12px] font-medium">Makanan</span>
-                                </td>
-                                <td class="py-4 px-6 text-on-surface-variant text-[14px] whitespace-nowrap">Cash</td>
-                                <td class="py-4 px-6 text-on-surface text-[14px] font-semibold text-left whitespace-nowrap tabular-nums">- Rp 35.000</td>
-                            </tr>
-                            <tr class="hover:bg-surface-container-high/30 transition-colors group">
-                                <td class="py-4 px-6 text-on-surface text-[14px] whitespace-nowrap">08 Nov 2023</td>
-                                <td class="py-4 px-6 text-on-surface text-[14px] max-w-[200px] truncate font-medium">Isi Saldo GoRide</td>
-                                <td class="py-4 px-6 whitespace-nowrap">
-                                    <span class="inline-flex items-center px-3 py-1 bg-secondary-container text-on-secondary-container rounded-full text-[12px] font-medium">Transport</span>
-                                </td>
-                                <td class="py-4 px-6 text-on-surface-variant text-[14px] whitespace-nowrap">Gopay</td>
-                                <td class="py-4 px-6 text-on-surface text-[14px] font-semibold text-left whitespace-nowrap tabular-nums">- Rp 50.000</td>
-                            </tr>
-                            <tr class="hover:bg-surface-container-high/30 transition-colors group">
-                                <td class="py-4 px-6 text-on-surface text-[14px] whitespace-nowrap">05 Nov 2023</td>
-                                <td class="py-4 px-6 text-on-surface text-[14px] max-w-[200px] truncate font-medium">Buku Tulis & Pulpen</td>
-                                <td class="py-4 px-6 whitespace-nowrap">
-                                    <span class="inline-flex items-center px-3 py-1 bg-[#fef3c7] text-[#92400e] rounded-full text-[12px] font-medium">Belajar</span>
-                                </td>
-                                <td class="py-4 px-6 text-on-surface-variant text-[14px] whitespace-nowrap">BCA</td>
-                                <td class="py-4 px-6 text-on-surface text-[14px] font-semibold text-left whitespace-nowrap tabular-nums">- Rp 85.000</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            
+        <!-- 3 Rangkuman Kartu Atas -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div
+            class="bg-white p-6 rounded-[24px] shadow-sm border border-gray-100"
+          >
+            <p class="text-xs font-medium text-gray-500">Total Saldo</p>
+            <h3 id="txtTotalSaldo" class="text-[28px] font-bold mt-2">Rp 0</h3>
+          </div>
+          <div
+            class="bg-white p-6 rounded-[24px] shadow-sm border border-gray-100"
+          >
+            <p class="text-xs font-medium text-gray-500">Pemasukan Bulan Ini</p>
+            <h3
+              id="txtTotalPemasukan"
+              class="text-[24px] font-bold text-green-600 mt-2"
+            >
+              Rp 0
+            </h3>
+          </div>
+          <div
+            class="bg-white p-6 rounded-[24px] shadow-sm border border-gray-100"
+          >
+            <p class="text-xs font-medium text-gray-500">
+              Pengeluaran Bulan Ini
+            </p>
+            <h3
+              id="txtTotalPengeluaran"
+              class="text-[24px] font-bold text-red-600 mt-2"
+            >
+              Rp 0
+            </h3>
+          </div>
         </div>
-    </main>
-</div>
-<script type="module" src="js/dashboard.js"></script>
-<script src="js/pwa.js" defer></script>
-</body>
+
+        <!-- Tombol Aksi Cepat -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <button
+            onclick="window.location.href = 'pemasukan.html'"
+            class="py-3 bg-[#366758] text-white rounded-xl font-semibold shadow-sm hover:bg-[#1c4f41] transition-colors"
+          >
+            + Tambah Pemasukan
+          </button>
+          <button
+            onclick="window.location.href = 'pengeluaran.html'"
+            class="py-3 bg-[#b5ead7]/40 text-[#1c4f41] rounded-xl font-semibold shadow-sm hover:bg-[#b5ead7]/60 transition-colors"
+          >
+            + Tambah Pengeluaran
+          </button>
+        </div>
+
+        <!-- Section Grafik Kontainer -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div
+            class="bg-white p-6 rounded-[24px] border border-gray-100 shadow-sm"
+          >
+            <h4 class="font-semibold text-sm mb-4">Pengeluaran per Kategori</h4>
+            <div class="h-56"><canvas id="chartKategori"></canvas></div>
+          </div>
+          <div
+            class="bg-white p-6 rounded-[24px] border border-gray-100 shadow-sm"
+          >
+            <h4 class="font-semibold text-sm mb-4">Pemasukan vs Pengeluaran</h4>
+            <div class="h-56"><canvas id="chartTren"></canvas></div>
+          </div>
+        </div>
+
+        <!-- Tabel Riwayat Terakhir -->
+        <div
+          class="bg-white rounded-[24px] border border-gray-100 shadow-sm overflow-hidden"
+        >
+          <div class="p-6 border-b flex justify-between items-center">
+            <h3 class="font-semibold">Riwayat Transaksi Terakhir</h3>
+            <a
+              href="laporan.html"
+              class="text-xs text-[#366758] font-semibold hover:underline"
+              >Lihat Semua</a
+            >
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left">
+              <thead>
+                <tr class="bg-gray-50 text-gray-500 text-[12px] border-b">
+                  <th class="py-3 px-6">Tanggal</th>
+                  <th class="py-3 px-6">Deskripsi</th>
+                  <th class="py-3 px-6">Kategori</th>
+                  <th class="py-3 px-6">Akun</th>
+                  <th class="py-3 px-6">Jumlah</th>
+                </tr>
+              </thead>
+              <tbody id="listTransaksiTerakhir" class="text-[14px]"></tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script type="module" src="js/dashboard.js"></script>
+  </body>
 </html>
