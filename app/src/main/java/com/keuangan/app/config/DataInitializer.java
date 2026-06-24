@@ -11,6 +11,8 @@ import com.keuangan.app.model.User;
 import com.keuangan.app.repository.CategoryRepository;
 import com.keuangan.app.repository.UserRepository;
 
+import java.util.List;
+
 @Component
 public class DataInitializer implements CommandLineRunner {
 
@@ -30,7 +32,6 @@ public class DataInitializer implements CommandLineRunner {
     public void run(String... args) {
         System.out.println("DataInitializer dijalankan...");
 
-        // 1. SEEDING USER ADMIN
         if (userRepository.count() == 0) {
             User admin = new User();
             admin.setUsername("admin");
@@ -43,32 +44,31 @@ public class DataInitializer implements CommandLineRunner {
             System.out.println("Admin default berhasil dibuat.");
         }
 
-        // 2. SEEDING KATEGORI MASTER (Menggunakan Helper Method Anti-Skip)
         System.out.println("Memeriksa data master kategori...");
         
-        // Kategori Pengeluaran (EXPENSE)
-        ensureCategoryExists("MAKANAN", "EXPENSE");
-        ensureCategoryExists("TRANSPORTASI", "EXPENSE");
-        ensureCategoryExists("HIBURAN", "EXPENSE");
-        ensureCategoryExists("TAGIHAN", "EXPENSE");
-        ensureCategoryExists("LAINNYA_PENGELUARAN", "EXPENSE");
+        List<Category> allCategories = categoryRepository.findAll();
 
-        // Kategori Pemasukan (INCOME)
-        ensureCategoryExists("UANG_SAKU", "INCOME");
-        ensureCategoryExists("GAJI_PART_TIME", "INCOME");
-        ensureCategoryExists("FREELANCE", "INCOME");
-        ensureCategoryExists("BONUS", "INCOME");
-        ensureCategoryExists("LAINNYA_PEMASUKAN", "INCOME");
+        ensureCategoryExists(allCategories, "MAKANAN", "EXPENSE");
+        ensureCategoryExists(allCategories, "TRANSPORTASI", "EXPENSE");
+        ensureCategoryExists(allCategories, "HIBURAN", "EXPENSE");
+        ensureCategoryExists(allCategories, "TAGIHAN", "EXPENSE");
+        ensureCategoryExists(allCategories, "LAINNYA_PENGELUARAN", "EXPENSE");
+
+        ensureCategoryExists(allCategories, "UANG_SAKU", "INCOME");
+        ensureCategoryExists(allCategories, "GAJI_PART_TIME", "INCOME");
+        ensureCategoryExists(allCategories, "FREELANCE", "INCOME");
+        ensureCategoryExists(allCategories, "BONUS", "INCOME");
+        ensureCategoryExists(allCategories, "LAINNYA_PEMASUKAN", "INCOME");
 
         System.out.println("Data master kategori aman terkendali!");
     }
 
-    /**
-     * 💡 HELPER METHOD: Berfungsi untuk mengecek kategori satu per satu ke database.
-     * Jika belum ada, baru akan disimpan. Jika sudah ada, akan dilewati tanpa bikin crash.
-     */
-    private void ensureCategoryExists(String name, String type) {
-        if (categoryRepository.findByNameIgnoreCaseAndType(name, type).isEmpty()) {
+    private void ensureCategoryExists(List<Category> existingCategories, String name, String type) {
+        boolean exists = existingCategories.stream()
+                .anyMatch(c -> c.getName() != null && c.getName().equalsIgnoreCase(name) 
+                            && c.getType() != null && c.getType().equalsIgnoreCase(type));
+
+        if (!exists) {
             categoryRepository.save(new Category(name, type));
             System.out.println("Kategori baru berhasil ditambahkan: " + name + " (" + type + ")");
         }
