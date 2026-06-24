@@ -1,7 +1,9 @@
 package com.keuangan.app.model;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -25,15 +27,16 @@ public class Transaction {
     private String type; // "EXPENSE" atau "INCOME"
 
     @Column(nullable = false, length = 50)
-    private String category;
+    private String kategori;
 
     @Column(nullable = false)
-    private BigDecimal amount;
+    private BigDecimal nominal;
 
-    private String description;
+    private String keterangan;
 
     @Column(nullable = false)
-    private LocalDate date;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    private LocalDateTime tanggal;
 
     @Column(nullable = false, length = 50)
     private String akun; // "Gopay", "Ovo", "BCA", dll.
@@ -50,17 +53,17 @@ public class Transaction {
     public void setType(String type) { this.type = type; }
     
     // Perubahan nama Getter & Setter ke Bahasa Indonesia
-    public String getKategori() { return category; }
-    public void setKategori(String kategori) { this.category = kategori; }
+    public String getKategori() { return kategori; }
+    public void setKategori(String kategori) { this.kategori = kategori; }
     
-    public BigDecimal getNominal() { return amount; }
-    public void setNominal(BigDecimal nominal) { this.amount = nominal; }
+    public BigDecimal getNominal() { return nominal; }
+    public void setNominal(BigDecimal nominal) { this.nominal = nominal; }
     
-    public String getKeterangan() { return description; }
-    public void setKeterangan(String keterangan) { this.description = keterangan; }
+    public String getKeterangan() { return keterangan; }
+    public void setKeterangan(String keterangan) { this.keterangan = keterangan; }
     
-    public LocalDate getTanggal() { return date; }
-    public void setTanggal(LocalDate tanggal) { this.date = tanggal; }
+    public LocalDateTime getTanggal() { return tanggal; }
+    public void setTanggal(LocalDateTime tanggal) { this.tanggal = tanggal; }
     
     public String getAkun() { return akun; }
     public void setAkun(String akun) { this.akun = akun; }

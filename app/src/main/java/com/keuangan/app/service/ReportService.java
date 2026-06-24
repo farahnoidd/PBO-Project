@@ -21,7 +21,7 @@ public class ReportService {
     }
 
     public DashboardResponseDTO getDashboardSummary(String userId) {
-        List<Transaction> transactions = transactionRepository.findByUserId(userId);
+        List<Transaction> transactions = transactionRepository.findByUserIdOrderByTanggalDescIdDesc(userId);
 
         BigDecimal totalIncome = BigDecimal.ZERO;
         BigDecimal totalExpense = BigDecimal.ZERO;

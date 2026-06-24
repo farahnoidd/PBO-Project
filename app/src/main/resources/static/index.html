@@ -1,107 +1,233 @@
 <!doctype html>
-<html lang="en">
+<html lang="id">
   <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Login - FinanceBuddy</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
   </head>
-  <body
-    class="bg-slate-50 flex items-center justify-center min-h-screen font-sans"
-  >
-    <div
-      class="bg-white p-8 rounded-[24px] shadow-sm border border-gray-100 w-full max-w-md"
-    >
+  <body class="bg-slate-50 flex items-center justify-center min-h-screen font-sans">
+    <div class="bg-white p-8 rounded-[24px] shadow-sm border border-gray-100 w-full max-w-md">
       <div class="text-center mb-8">
-        <h1 class="text-[32px] font-bold text-[#366758] tracking-tight">
-          FinanceBuddy
-        </h1>
+        <h1 class="text-[32px] font-bold text-[#366758] tracking-tight">FinanceBuddy</h1>
         <p class="text-gray-500 text-sm mt-1">Student Edition</p>
       </div>
 
-      <form id="loginForm" class="space-y-5">
-        <div>
-          <label
-            class="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5"
-            >Username / ID</label
-          >
-          <input
-            type="text"
-            id="username"
-            placeholder="Enter your student ID"
-            class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-[#366758] focus:ring-1 focus:ring-[#366758]"
-            required
-          />
-        </div>
-        <div>
-          <label
-            class="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5"
-            >Password</label
-          >
-          <input
-            type="password"
-            id="password"
-            placeholder="••••••••"
-            class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-[#366758] focus:ring-1 focus:ring-[#366758]"
-            required
-          />
+      <!-- ══ STEP 1: Username & Password ══════════════════════════════════════ -->
+      <div id="stepLogin">
+        <form id="loginForm" class="space-y-5">
+          <div>
+            <label class="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5">Username / ID</label>
+            <input type="text" id="username" placeholder="Masukkan student ID"
+              class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-[#366758] focus:ring-1 focus:ring-[#366758]" required />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5">Password</label>
+            <input type="password" id="password" placeholder="••••••••"
+              class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-[#366758] focus:ring-1 focus:ring-[#366758]" required />
+          </div>
+
+          <p id="loginError" class="text-red-500 text-sm hidden"></p>
+
+          <button type="submit" id="btnLogin"
+            class="w-full py-3 bg-[#9dd1bf] hover:bg-[#366758] hover:text-white text-[#1c4f41] rounded-xl font-semibold transition-all duration-200 flex items-center justify-center gap-2 shadow-sm">
+            Kirim OTP ke Email <span>➔</span>
+          </button>
+        </form>
+      </div>
+
+      <!-- ══ STEP 2: Input OTP ═════════════════════════════════════════════════ -->
+      <div id="stepOtp" class="hidden space-y-5">
+        <div class="bg-green-50 border border-green-200 rounded-xl p-4 text-center">
+          <div class="text-2xl mb-1">📧</div>
+          <p class="text-sm text-green-700 font-medium">OTP telah dikirim ke email Anda</p>
+          <p class="text-xs text-green-600 mt-1" id="emailInfo">Cek inbox atau folder spam.</p>
+          <p class="text-xs text-green-600 mt-1">Berlaku <span id="countdown" class="font-bold">5:00</span></p>
         </div>
 
-        <div class="text-right text-xs">
-          <a href="#" class="text-[#366758] font-medium hover:underline"
-            >Forgot password?</a
-          >
+        <!-- 6 kotak OTP -->
+        <div class="flex justify-center gap-2" id="otpBoxes">
+          <input type="text" maxlength="1" class="otp-input w-11 h-12 text-center text-xl font-bold border-2 border-gray-200 rounded-xl focus:border-[#366758] focus:outline-none bg-gray-50" />
+          <input type="text" maxlength="1" class="otp-input w-11 h-12 text-center text-xl font-bold border-2 border-gray-200 rounded-xl focus:border-[#366758] focus:outline-none bg-gray-50" />
+          <input type="text" maxlength="1" class="otp-input w-11 h-12 text-center text-xl font-bold border-2 border-gray-200 rounded-xl focus:border-[#366758] focus:outline-none bg-gray-50" />
+          <input type="text" maxlength="1" class="otp-input w-11 h-12 text-center text-xl font-bold border-2 border-gray-200 rounded-xl focus:border-[#366758] focus:outline-none bg-gray-50" />
+          <input type="text" maxlength="1" class="otp-input w-11 h-12 text-center text-xl font-bold border-2 border-gray-200 rounded-xl focus:border-[#366758] focus:outline-none bg-gray-50" />
+          <input type="text" maxlength="1" class="otp-input w-11 h-12 text-center text-xl font-bold border-2 border-gray-200 rounded-xl focus:border-[#366758] focus:outline-none bg-gray-50" />
         </div>
 
-        <button
-          type="submit"
-          id="btnLogin"
-          class="w-full py-3 bg-[#9dd1bf] hover:bg-[#366758] hover:text-white text-[#1c4f41] rounded-xl font-semibold transition-all duration-200 flex items-center justify-center gap-2 shadow-sm"
-        >
-          Login <span>➔</span>
+        <p id="otpError" class="text-red-500 text-sm text-center hidden"></p>
+
+        <button id="btnVerify"
+          class="w-full py-3 bg-[#9dd1bf] hover:bg-[#366758] hover:text-white text-[#1c4f41] rounded-xl font-semibold transition-all duration-200 shadow-sm">
+          Verifikasi OTP ✓
         </button>
-      </form>
 
-      <div
-        class="mt-8 pt-6 border-t border-gray-100 text-center text-xs text-gray-500"
-      >
-        Need an account?
-        <a href="#" class="text-[#366758] font-semibold hover:underline"
-          >Contact Admin</a
-        >
+        <button id="btnResend" class="w-full py-2 text-sm text-[#366758] hover:underline font-medium hidden">
+          Kirim ulang OTP
+        </button>
+
+        <button id="btnBack" class="w-full py-2 text-sm text-gray-500 hover:text-gray-700">
+          ← Kembali ke login
+        </button>
+      </div>
+
+      <div class="mt-8 pt-6 border-t border-gray-100 text-center text-xs text-gray-500">
+        Belum punya akun?
+        <a href="#" class="text-[#366758] font-semibold hover:underline">Hubungi Admin</a>
       </div>
     </div>
 
     <script type="module">
-      import { login } from "./js/api.js";
+      import { sendOtp, verifyOtp } from "./js/api.js";
 
-      document
-        .getElementById("loginForm")
-        .addEventListener("submit", async (e) => {
-          e.preventDefault();
-          const btn = document.getElementById("btnLogin");
-          try {
-            btn.disabled = true;
-            btn.innerText = "Processing...";
+      const stepLogin = document.getElementById("stepLogin");
+      const stepOtp   = document.getElementById("stepOtp");
+      let savedUsername = "";
+      let savedPassword = "";
+      let countdownInterval = null;
 
-            const res = await login(
-              document.getElementById("username").value,
-              document.getElementById("password").value,
-            );
+      // ── STEP 1: Kirim OTP ke email ─────────────────────────────────────────
+      document.getElementById("loginForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const btn   = document.getElementById("btnLogin");
+        const errEl = document.getElementById("loginError");
+        errEl.classList.add("hidden");
 
-            alert("Login Berhasil!");
-            window.location.href =
-              res.role === "ADMIN" ? "admin.html" : "dashboard.html";
-          } catch (err) {
-            alert("Login Gagal: " + err.message);
-            btn.disabled = false;
-            btn.innerText = "Login ➔";
+        savedUsername = document.getElementById("username").value;
+        savedPassword = document.getElementById("password").value;
+
+        try {
+          btn.disabled = true;
+          btn.innerText = "Mengirim OTP...";
+          const res = await sendOtp(savedUsername, savedPassword);
+
+          // Tampilkan email yang disamarkan (mis: f***@gmail.com)
+          if (res.maskedEmail) {
+            document.getElementById("emailInfo").textContent =
+              "Dikirim ke " + res.maskedEmail + " — cek inbox atau folder spam.";
           }
+
+          showOtpStep();
+        } catch (err) {
+          errEl.textContent = "Login Gagal: " + err.message;
+          errEl.classList.remove("hidden");
+          btn.disabled = false;
+          btn.innerHTML = 'Kirim OTP ke Email <span>➔</span>';
+        }
+      });
+
+      // ── STEP 2: Verifikasi OTP ─────────────────────────────────────────────
+      document.getElementById("btnVerify").addEventListener("click", async () => {
+        const otp   = getOtpValue();
+        const errEl = document.getElementById("otpError");
+        const btn   = document.getElementById("btnVerify");
+        errEl.classList.add("hidden");
+
+        if (otp.length < 6) {
+          errEl.textContent = "Masukkan 6 digit kode OTP";
+          errEl.classList.remove("hidden");
+          return;
+        }
+
+        try {
+          btn.disabled = true;
+          btn.innerText = "Memverifikasi...";
+          const res = await verifyOtp(savedUsername, savedPassword, otp);
+          clearInterval(countdownInterval);
+          alert("Login Berhasil! Selamat datang 👋");
+          window.location.href = res.role === "ADMIN" ? "admin.html" : "dashboard.html";
+        } catch (err) {
+          errEl.textContent = err.message || "OTP tidak valid atau sudah expired.";
+          errEl.classList.remove("hidden");
+          btn.disabled = false;
+          btn.innerText = "Verifikasi OTP ✓";
+          clearOtpBoxes();
+        }
+      });
+
+      // ── Kembali ────────────────────────────────────────────────────────────
+      document.getElementById("btnBack").addEventListener("click", () => {
+        clearInterval(countdownInterval);
+        stepOtp.classList.add("hidden");
+        stepLogin.classList.remove("hidden");
+        const btn = document.getElementById("btnLogin");
+        btn.disabled = false;
+        btn.innerHTML = 'Kirim OTP ke Email <span>➔</span>';
+      });
+
+      // ── Kirim ulang ────────────────────────────────────────────────────────
+      document.getElementById("btnResend").addEventListener("click", async () => {
+        try {
+          await sendOtp(savedUsername, savedPassword);
+          startCountdown(5 * 60);
+          document.getElementById("btnResend").classList.add("hidden");
+          document.getElementById("otpError").classList.add("hidden");
+          clearOtpBoxes();
+          alert("OTP baru telah dikirim ke email Anda!");
+        } catch (err) {
+          alert("Gagal kirim ulang: " + err.message);
+        }
+      });
+
+      // ── OTP boxes ──────────────────────────────────────────────────────────
+      function setupOtpBoxes() {
+        const boxes = document.querySelectorAll(".otp-input");
+        boxes.forEach((box, i) => {
+          box.addEventListener("input", () => {
+            box.value = box.value.replace(/\D/g, "");
+            if (box.value && i < boxes.length - 1) boxes[i + 1].focus();
+          });
+          box.addEventListener("keydown", (e) => {
+            if (e.key === "Backspace" && !box.value && i > 0) boxes[i - 1].focus();
+          });
+          box.addEventListener("paste", (e) => {
+            e.preventDefault();
+            const paste = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 6);
+            paste.split("").forEach((ch, idx) => { if (boxes[idx]) boxes[idx].value = ch; });
+            if (boxes[paste.length - 1]) boxes[paste.length - 1].focus();
+          });
         });
+      }
+
+      function getOtpValue() {
+        return [...document.querySelectorAll(".otp-input")].map(b => b.value).join("");
+      }
+
+      function clearOtpBoxes() {
+        document.querySelectorAll(".otp-input").forEach(b => b.value = "");
+        document.querySelectorAll(".otp-input")[0].focus();
+      }
+
+      // ── Countdown ──────────────────────────────────────────────────────────
+      function startCountdown(seconds) {
+        clearInterval(countdownInterval);
+        const el = document.getElementById("countdown");
+        let remaining = seconds;
+        el.textContent = formatTime(remaining);
+        countdownInterval = setInterval(() => {
+          remaining--;
+          el.textContent = formatTime(remaining);
+          if (remaining <= 0) {
+            clearInterval(countdownInterval);
+            el.textContent = "Expired";
+            document.getElementById("btnResend").classList.remove("hidden");
+          }
+        }, 1000);
+      }
+
+      function formatTime(s) {
+        return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+      }
+
+      function showOtpStep() {
+        stepLogin.classList.add("hidden");
+        stepOtp.classList.remove("hidden");
+        clearOtpBoxes();
+        startCountdown(5 * 60);
+        setupOtpBoxes();
+        document.querySelectorAll(".otp-input")[0].focus();
+      }
     </script>
   </body>
 </html>

@@ -17,11 +17,18 @@ const formatRp = (v) =>
     maximumFractionDigits: 0,
   }).format(v || 0);
 
+const formatWaktuRealtime = (tanggalStr) => {
+  if (!tanggalStr) return "-";
+  const [tgl, jamFull] = tanggalStr.split("T");
+  const jamMenit = jamFull ? jamFull.substring(0, 5) : "";
+  return jamMenit ? `${tgl} ${jamMenit}` : tgl;
+};
+
 async function initDashboard() {
   try {
     const summary = await getDashboardData();
     document.getElementById("txtTotalSaldo").innerText = formatRp(
-      summary.totalSaldo,
+      summary.saldo,
     );
     document.getElementById("txtTotalPemasukan").innerText = formatRp(
       summary.totalPemasukan,

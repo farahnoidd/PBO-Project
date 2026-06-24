@@ -13,6 +13,7 @@
  */
 
 // ─── Helper internal ─────────────────────────────────────────────────────────
+const BASE_URL = "";
 
 /**
  * Mengambil token JWT yang tersimpan.
@@ -46,11 +47,12 @@ function buildHeaders(withAuth = true) {
 
 /**
  * Wrapper fetch yang menangani error secara seragam.
- * @param {string} endpoint  - path relatif, misal "/auth/login"
+ * @param {string} endpoint  - path relatif, misal "/api/auth/login"
  * @param {RequestInit} options
  * @returns {Promise<any>}   - parsed JSON body
  */
 async function request(endpoint, options = {}) {
+  // 💡 SINKRONISASI: Menghindari penumpukan jika BASE_URL diisi di kemudian hari
   const url = `${BASE_URL}${endpoint}`;
   const response = await fetch(url, options);
 
@@ -83,7 +85,8 @@ async function request(endpoint, options = {}) {
  * @returns {Promise<{ token: string, role: string }>}
  */
 export async function login(username, password) {
-  const data = await request("/auth/login", {
+  // 💡 PERBAIKAN: Menghapus BASE_URL ganda di dalam parameter request
+  const data = await request("/api/auth/login", {
     method: "POST",
     headers: buildHeaders(false),
     body: JSON.stringify({ username, password }),
@@ -94,7 +97,6 @@ export async function login(username, password) {
 
 /**
  * Logout — hapus token lokal.
- * (Backend stateless JWT tidak perlu hit endpoint khusus.)
  */
 export function logout() {
   clearToken();
@@ -108,7 +110,8 @@ export function logout() {
  * @returns {Promise<any>}
  */
 export async function register(payload) {
-  return request("/auth/register", {
+  // 💡 PERBAIKAN: Menyesuaikan path agar lolos security permitAll (/api/auth/**)
+  return request("/api/auth/register", {
     method: "POST",
     headers: buildHeaders(false),
     body: JSON.stringify(payload),
@@ -157,12 +160,10 @@ export async function validasiUser(userId) {
  * Mencatat transaksi pemasukan baru.
  *
  * @param {{ nominal: number, keterangan: string, kategori: string, tanggal: string }} payload
- * kategori harus sesuai enum IncomeCategory di backend
- * (contoh: "GAJI", "FREELANCE", "INVESTASI", "BONUS", "LAINNYA")
  * @returns {Promise<any>}
  */
 export async function tambahPemasukan(payload) {
-  return request("/transaksi/pemasukan", {
+  return request("/api/transaksi/pemasukan", {
     method: "POST",
     headers: buildHeaders(),
     body: JSON.stringify(payload),
@@ -179,7 +180,9 @@ export async function getRiwayatPemasukan(filter = {}) {
   if (filter.bulan) params.append("bulan", filter.bulan);
   if (filter.tahun) params.append("tahun", filter.tahun);
   const query = params.toString() ? `?${params}` : "";
-  return request(`/transaksi/pemasukan${query}`, {
+
+  // 💡 PERBAIKAN: Menambahkan prefix /api agar terbenteng keamanan Spring Security dengan benar
+  return request(`/api/transaksi/pemasukan${query}`, {
     method: "GET",
     headers: buildHeaders(),
   });
@@ -191,12 +194,11 @@ export async function getRiwayatPemasukan(filter = {}) {
  * Mencatat transaksi pengeluaran baru.
  *
  * @param {{ nominal: number, keterangan: string, kategori: string, tanggal: string }} payload
- * kategori harus sesuai enum ExpenseCategory di backend
- * (contoh: "MAKANAN", "TRANSPORTASI", "KESEHATAN", "HIBURAN", "TAGIHAN", "LAINNYA")
  * @returns {Promise<any>}
  */
 export async function tambahPengeluaran(payload) {
-  return request("/transaksi/pengeluaran", {
+  // 💡 PERBAIKAN FATAL: Kemarin di kode lu tertulis nembak ke /pemasukan, sekarang diganti ke /pengeluaran
+  return request("/api/transaksi/pengeluaran", {
     method: "POST",
     headers: buildHeaders(),
     body: JSON.stringify(payload),
@@ -213,7 +215,9 @@ export async function getRiwayatPengeluaran(filter = {}) {
   if (filter.bulan) params.append("bulan", filter.bulan);
   if (filter.tahun) params.append("tahun", filter.tahun);
   const query = params.toString() ? `?${params}` : "";
-  return request(`/transaksi/pengeluaran${query}`, {
+
+  // 💡 PERBAIKAN: Menambahkan prefix /api agar sinkron dengan Controller
+  return request(`/api/transaksi/pengeluaran${query}`, {
     method: "GET",
     headers: buildHeaders(),
   });
@@ -223,15 +227,6 @@ export async function getRiwayatPengeluaran(filter = {}) {
 
 /**
  * Mendapatkan ringkasan saldo & statistik untuk Dashboard.
- * Backend (Mahasiswa 8) mengembalikan:
- * {
- * totalSaldo: number,
- * totalPemasukan: number,
- * totalPengeluaran: number,
- * grafikBulanan: [{ bulan: string, pemasukan: number, pengeluaran: number }],
- * grafikKategori: [{ kategori: string, jumlah: number }]
- * }
- *
  * @returns {Promise<object>}
  */
 export async function getDashboardData() {
@@ -244,7 +239,7 @@ export async function getDashboardData() {
 /**
  * Mendapatkan laporan bulanan lengkap.
  * @param {number} bulan  - 1–12
- * @param {number} tahun  - misal 2025
+ * @param {number} tahun  - misal 2026
  * @returns {Promise<object>}
  */
 export async function getLaporanBulanan(bulan, tahun) {

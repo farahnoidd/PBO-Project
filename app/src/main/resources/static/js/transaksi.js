@@ -35,6 +35,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }).format(angka);
   };
 
+  const formatWaktuRealtime = (tanggalStr) => {
+    if (!tanggalStr) return "-";
+    const [tgl, jamFull] = tanggalStr.split("T");
+    const jamMenit = jamFull ? jamFull.substring(0, 5) : "";
+    return jamMenit ? `${tgl} ${jamMenit}` : tgl;
+  };
+
   // 2. FUNGSI OUTPUT: Mengambil data riwayat dari database dan merendernya ke tabel HTML + Update Kartu Atas
   async function muatRiwayatTabel() {
     const tbody = document.getElementById("tabelTransaksiBody");
