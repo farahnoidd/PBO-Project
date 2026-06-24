@@ -26,14 +26,14 @@ public class ExpenseService {
 
     @Transactional(readOnly = true)
     public List<Transaction> getAllExpenses(String userId) {
-        return transactionRepository.findByUserIdOrderByTanggalDescIdDesc(userId).stream()
+        return transactionRepository.findByUserIdOrderByDateDescIdDesc(userId).stream()
                 .filter(t -> "EXPENSE".equalsIgnoreCase(t.getType()))
                 .collect(Collectors.toList());
     }
 
     public String createExpense(ExpenseRequest request, String userId) {
         // 1. Validasi Aturan Angka (Menggunakan getNominal)
-        if (request.getNominal() == null || request.getNominal().compareTo(BigDecimal.ZERO) <= 0) {
+        if (request.getAmount() == null || request.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Nominal pengeluaran harus lebih besar dari 0");
         }
 
@@ -49,7 +49,7 @@ public class ExpenseService {
         }
 
         // 3. Pengecekan Batas Saldo Minus (Menggunakan getNominal dan isForceSave)
-        if (currentBalance.compareTo(request.getNominal()) < 0 && !request.isForceSave()) {
+        if (currentBalance.compareTo(request.getAmount()) < 0 && !request.isForceSave()) {
             throw new IllegalStateException("WARNING_INSUFFICIENT_BALANCE");
         }
 
@@ -58,13 +58,13 @@ public class ExpenseService {
         t.setUserId(userId);
         t.setType("EXPENSE");
         t.setKategori(request.getKategori());
-        t.setNominal(request.getNominal());
+        t.setNominal(request.getAmount());
         t.setKeterangan(request.getKeterangan());
         t.setTanggal(LocalDateTime.now());
         t.setAkun(request.getAkun());
 
         transactionRepository.save(t);
-        return "Pengeluaran berhasil dicatat" + (currentBalance.compareTo(request.getNominal()) < 0 ? " (Saldo Anda Minus!)" : "");
+        return "Pengeluaran berhasil dicatat" + (currentBalance.compareTo(request.getAmount()) < 0 ? " (Saldo Anda Minus!)" : "");
     }
 
     public Transaction updateExpense(Long id, ExpenseRequest request, String userId) {
@@ -76,7 +76,7 @@ public class ExpenseService {
         }
 
         // Menggunakan getNominal
-        if (request.getNominal() == null || request.getNominal().compareTo(BigDecimal.ZERO) <= 0) {
+        if (request.getAmount() == null || request.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Nominal pengeluaran harus lebih besar dari 0");
         }
 
@@ -86,12 +86,12 @@ public class ExpenseService {
 
         BigDecimal currentBalance = transactionRepository.getRealtimeBalance(userId);
         // Menggunakan getNominal dan isForceSave
-        if (currentBalance.compareTo(request.getNominal()) < 0 && !request.isForceSave()) {
+        if (currentBalance.compareTo(request.getAmount()) < 0 && !request.isForceSave()) {
             throw new IllegalStateException("WARNING_INSUFFICIENT_BALANCE");
         }
 
         // Update data (Sekarang menggunakan setter Bahasa Indonesia)
-        t.setNominal(request.getNominal());
+        t.setNominal(request.getAmount());
         t.setKategori(request.getKategori());
         t.setKeterangan(request.getKeterangan());
         t.setTanggal(LocalDateTime.now());

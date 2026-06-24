@@ -56,13 +56,13 @@ public class Transaction {
     public String getKategori() { return kategori; }
     public void setKategori(String kategori) { this.kategori = kategori; }
     
-    public BigDecimal getNominal() { return nominal; }
+    public BigDecimal getAmount() { return nominal; }
     public void setNominal(BigDecimal nominal) { this.nominal = nominal; }
     
     public String getKeterangan() { return keterangan; }
     public void setKeterangan(String keterangan) { this.keterangan = keterangan; }
     
-    public LocalDateTime getTanggal() { return tanggal; }
+    public LocalDateTime getDate() { return tanggal; }
     public void setTanggal(LocalDateTime tanggal) { this.tanggal = tanggal; }
     
     public String getAkun() { return akun; }
