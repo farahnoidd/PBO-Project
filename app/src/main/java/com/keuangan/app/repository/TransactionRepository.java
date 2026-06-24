@@ -12,28 +12,34 @@ import java.util.List;
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
 
+    // 1. TAMBAHKAN METHOD INI (Ini kunci utama biar ExpenseService & IncomeService GAK MERAH lagi)
+    List<Transaction> findByUserIdOrderByTanggalDescIdDesc(String userId);
+
+    // 2. Query Realtime Balance (Disesuaikan memakai 'nominal' beralih dari 'amount')
     @Query("""
-    SELECT COALESCE(SUM(CASE WHEN t.type = 'INCOME' THEN t.amount ELSE -t.amount END), 0)
-    FROM Transaction t
-    WHERE t.userId = :userId
-""")
-BigDecimal getRealtimeBalance(@Param("userId") String userId);
+        SELECT COALESCE(SUM(CASE WHEN t.type = 'INCOME' THEN t.nominal ELSE -t.nominal END), 0)
+        FROM Transaction t
+        WHERE t.userId = :userId
+    """)
+    BigDecimal getRealtimeBalance(@Param("userId") String userId);
 
-@Query("""
-    SELECT MONTH(t.date), t.type, SUM(t.amount)
-    FROM Transaction t
-    WHERE t.userId = :userId AND YEAR(t.date) = :year
-    GROUP BY MONTH(t.date), t.type
-    ORDER BY MONTH(t.date)
-""")
-List<Object[]> getMonthlySummary(@Param("userId") String userId, @Param("year") Integer year);
+    // 3. Query Bulanan (Disesuaikan memakai 'tanggal' dan 'nominal')
+    @Query("""
+        SELECT MONTH(t.tanggal), t.type, SUM(t.nominal)
+        FROM Transaction t
+        WHERE t.userId = :userId AND YEAR(t.tanggal) = :year
+        GROUP BY MONTH(t.tanggal), t.type
+        ORDER BY MONTH(t.tanggal)
+    """)
+    List<Object[]> getMonthlySummary(@Param("userId") String userId, @Param("year") Integer year);
 
-@Query("""
-    SELECT YEAR(t.date), t.type, SUM(t.amount)
-    FROM Transaction t
-    WHERE t.userId = :userId
-    GROUP BY YEAR(t.date), t.type
-    ORDER BY YEAR(t.date)
-""")
-List<Object[]> getYearlySummary(@Param("userId") String userId);
+    // 4. Query Tahunan (Disesuaikan memakai 'tanggal' dan 'nominal')
+    @Query("""
+        SELECT YEAR(t.tanggal), t.type, SUM(t.nominal)
+        FROM Transaction t
+        WHERE t.userId = :userId
+        GROUP BY YEAR(t.tanggal), t.type
+        ORDER BY YEAR(t.tanggal)
+    """)
+    List<Object[]> getYearlySummary(@Param("userId") String userId);
 }

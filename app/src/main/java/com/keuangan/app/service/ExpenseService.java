@@ -26,7 +26,7 @@ public class ExpenseService {
 
     @Transactional(readOnly = true)
     public List<Transaction> getAllExpenses(String userId) {
-        return transactionRepository.findByUserIdOrderByDateDescIdDesc(userId).stream()
+        return transactionRepository.findByUserIdOrderByTanggalDescIdDesc(userId).stream()
                 .filter(t -> "EXPENSE".equalsIgnoreCase(t.getType()))
                 .collect(Collectors.toList());
     }
