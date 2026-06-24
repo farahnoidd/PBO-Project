@@ -32,14 +32,19 @@ document.addEventListener("DOMContentLoaded", () => {
       style: "currency",
       currency: "IDR",
       maximumFractionDigits: 0,
-    }).format(angka);
+    }).format(angka || 0);
   };
 
+  // Format waktu dari LocalDateTime (ISO String) menjadi YYYY-MM-DD HH:MM
   const formatWaktuRealtime = (tanggalStr) => {
     if (!tanggalStr) return "-";
-    const [tgl, jamFull] = tanggalStr.split("T");
-    const jamMenit = jamFull ? jamFull.substring(0, 5) : "";
-    return jamMenit ? `${tgl} ${jamMenit}` : tgl;
+    // Jika formatnya ISO (mengandung 'T')
+    if (tanggalStr.includes("T")) {
+      const [tgl, jamFull] = tanggalStr.split("T");
+      const jamMenit = jamFull ? jamFull.substring(0, 5) : "";
+      return jamMenit ? `${tgl} ${jamMenit}` : tgl;
+    }
+    return tanggalStr;
   };
 
   // 2. FUNGSI OUTPUT: Mengambil data riwayat dari database dan merendernya ke tabel HTML + Update Kartu Atas
@@ -64,7 +69,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (dataRiwayat && jumlahItem > 0) {
         dataRiwayat.forEach((item) => {
-          akumulasiTotal += item.nominal;
+          // Tetap pakai item.nominal karena backend melakukan t.setNominal()
+          acumulasiTotal += item.nominal || 0;
         });
         rataRata = Math.round(akumulasiTotal / jumlahItem);
       }
@@ -97,7 +103,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         tbody.innerHTML += `
                     <tr class="border-b hover:bg-gray-50/50 transition-colors">
-                        <td class="py-4 px-6 text-gray-700">${item.tanggal || "-"}</td>
+                        <td class="py-4 px-6 text-gray-700">${formatWaktuRealtime(item.tanggal)}</td>
                         <td class="py-4 px-6">
                             <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[12px] font-medium ${isPemasukan ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"}">
                                 ${item.kategori}
@@ -122,12 +128,13 @@ document.addEventListener("DOMContentLoaded", () => {
     formTransaksi.addEventListener("submit", async (e) => {
       e.preventDefault();
 
+      // SINKRONISASI PAYLOAD GADO-GADO BERSAMA BACKEND (MURNI MENGIKUTI DTO JAVA)
       const payload = {
-        nominal: parseFloat(inputNominal.value),
-        kategori: selectKategori.value,
-        akun: selectAkun.value,
-        keterangan: inputDeskripsi.value.trim(),
-        tanggal: new Date().toISOString().split("T")[0], // Otomatis format YYYY-MM-DD
+        amount: parseFloat(inputNominal.value), // Wajib "amount" mengikuti request.getAmount()
+        kategori: selectKategori.value,         // Wajib "kategori" mengikuti request.getKategori()
+        keterangan: inputDeskripsi.value.trim(),// Wajib "keterangan" mengikuti request.getKeterangan()
+        akun: selectAkun.value,                 // Wajib "akun" mengikuti request.getAkun()
+        forceSave: false                        // Untuk melewati validasi saldo minus di backend jika diperlukan
       };
 
       try {
@@ -147,7 +154,6 @@ document.addEventListener("DOMContentLoaded", () => {
       } catch (error) {
         alert("❌ Gagal menyimpan: " + error.message);
       } finally {
-        // 👈 SUDAH DISUBSTITUSI MENJADI FINALLY
         btnSimpan.disabled = false;
         btnSimpan.innerText = "Simpan";
       }
