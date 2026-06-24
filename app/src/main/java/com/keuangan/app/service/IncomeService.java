@@ -26,14 +26,14 @@ public class IncomeService {
 
     @Transactional(readOnly = true)
     public List<Transaction> getAllIncomes(String userId) {
-        return transactionRepository.findByUserIdOrderByDateDescIdDesc(userId).stream()
+        return transactionRepository.findByUserIdOrderByTanggalDescIdDesc(userId).stream()
                 .filter(t -> "INCOME".equalsIgnoreCase(t.getType()))
                 .collect(Collectors.toList());
     }
 
     public String saveIncome(IncomeRequest request, String userId) {
         // 1. Validasi Angka (Menggunakan getNominal)
-        if (request.getAmount() == null || request.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
+        if (request.getNominal() == null || request.getNominal().compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Nominal pemasukan harus lebih besar dari 0");
         }
 
@@ -46,7 +46,7 @@ public class IncomeService {
         t.setUserId(userId);
         t.setType("INCOME");
         t.setKategori(request.getKategori());
-        t.setNominal(request.getAmount());
+        t.setNominal(request.getNominal());
         t.setKeterangan(request.getKeterangan());
         t.setTanggal(LocalDateTime.now());
         t.setAkun(request.getAkun());
@@ -66,7 +66,7 @@ public class IncomeService {
         }
 
         // Validasi Angka (Menggunakan getNominal)
-        if (request.getAmount() == null || request.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
+        if (request.getNominal() == null || request.getNominal().compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Nominal pemasukan harus lebih besar dari 0");
         }
 
@@ -75,7 +75,7 @@ public class IncomeService {
                 .orElseThrow(() -> new IllegalArgumentException("Kategori '" + request.getKategori() + "' tidak valid untuk pemasukan"));
 
         // Update data (Sekarang menggunakan setter Bahasa Indonesia)
-        t.setNominal(request.getAmount());
+        t.setNominal(request.getNominal());
         t.setKategori(request.getKategori());
         t.setKeterangan(request.getKeterangan());
         t.setTanggal(LocalDateTime.now());

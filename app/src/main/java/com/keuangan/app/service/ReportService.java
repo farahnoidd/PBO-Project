@@ -21,18 +21,18 @@ public class ReportService {
     }
 
     public DashboardResponseDTO getDashboardSummary(String userId) {
-        List<Transaction> transactions = transactionRepository.findByUserIdOrderByDateDescIdDesc(userId);
+        List<Transaction> transactions = transactionRepository.findByUserIdOrderByTanggalDescIdDesc(userId);
 
         BigDecimal totalIncome = BigDecimal.ZERO;
         BigDecimal totalExpense = BigDecimal.ZERO;
 
         for (Transaction t : transactions) {
-            // Menyelaraskan dengan getAmount() pada model Transaction yang baru
+            // Menyelaraskan dengan getNominal() pada model Transaction yang baru
             if ("INCOME".equalsIgnoreCase(t.getType())) {
-                totalIncome = totalIncome.add(t.getAmount());
+                totalIncome = totalIncome.add(t.getNominal());
             }
             if ("EXPENSE".equalsIgnoreCase(t.getType())) {
-                totalExpense = totalExpense.add(t.getAmount());
+                totalExpense = totalExpense.add(t.getNominal());
             }
         }
 
