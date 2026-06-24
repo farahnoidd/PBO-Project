@@ -63,12 +63,13 @@ public class SecurityConfig {
             )
 
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/**").permitAll()
-                    .requestMatchers("/", "/*.html", "/css/**", "/js/**", "/assets/**",
-                                "/manifest.json", "/sw.js").permitAll()
-                        .requestMatchers("/h2-console/**").permitAll()
-                    .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                .anyRequest().authenticated()
+    .requestMatchers("/api/auth/**").permitAll()
+    .requestMatchers("/api/report/dashboard").permitAll() // ← Tambahkan yang ini ya!
+    .requestMatchers("/", "/*.html", "/css/**", "/js/**", "/assets/**",
+                    "/manifest.json", "/sw.js").permitAll()
+    .requestMatchers("/h2-console/**").permitAll()
+    .requestMatchers("/api/admin/**").hasRole("ADMIN")
+    .anyRequest().authenticated()
             )
             .headers(headers ->
                 headers.frameOptions(frame -> frame.disable())
