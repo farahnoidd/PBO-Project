@@ -70,7 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (dataRiwayat && jumlahItem > 0) {
         dataRiwayat.forEach((item) => {
           // Tetap pakai item.nominal karena backend melakukan t.setNominal()
-          acumulasiTotal += item.nominal || 0;
+          akumulasiTotal += item.nominal || 0;
         });
         rataRata = Math.round(akumulasiTotal / jumlahItem);
       }
@@ -128,9 +128,9 @@ document.addEventListener("DOMContentLoaded", () => {
     formTransaksi.addEventListener("submit", async (e) => {
       e.preventDefault();
 
-      // SINKRONISASI PAYLOAD GADO-GADO BERSAMA BACKEND (MURNI MENGIKUTI DTO JAVA)
+      // SINKRONISASI PAYLOAD BERSAMA BACKEND (MENGIKUTI DTO JAVA)
       const payload = {
-        amount: parseFloat(inputNominal.value), // Wajib "amount" mengikuti request.getAmount()
+        nominal: parseFloat(inputNominal.value),  // Menggunakan "nominal" mengikuti request.getNominal()
         kategori: selectKategori.value,         // Wajib "kategori" mengikuti request.getKategori()
         keterangan: inputDeskripsi.value.trim(),// Wajib "keterangan" mengikuti request.getKeterangan()
         akun: selectAkun.value,                 // Wajib "akun" mengikuti request.getAkun()
