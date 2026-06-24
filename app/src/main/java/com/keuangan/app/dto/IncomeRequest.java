@@ -13,7 +13,7 @@ public class IncomeRequest {
     public IncomeRequest() {}
 
     // Getter dan Setter
-    public BigDecimal getAmount() { return nominal; }
+    public BigDecimal getNominal() { return nominal; }
     public void setNominal(BigDecimal nominal) { this.nominal = nominal; }
 
     public String getKategori() { return kategori; }
@@ -22,7 +22,7 @@ public class IncomeRequest {
     public String getKeterangan() { return keterangan; }
     public void setKeterangan(String keterangan) { this.keterangan = keterangan; }
 
-    public LocalDate getDate() { return tanggal; }
+    public LocalDate getTanggal() { return tanggal; }
     public void setTanggal(LocalDate tanggal) { this.tanggal = tanggal; }
 
     public String getAkun() { return akun; }
