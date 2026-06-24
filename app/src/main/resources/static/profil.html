@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Profil - FinanceBuddy</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+  </head>
+  <body class="bg-[#faf9f8] text-[#1a1c1c] font-sans antialiased">
+    <div class="relative flex min-h-screen w-full flex-col lg:flex-row">
+      <!-- Sidebar Navigation -->
+      <nav
+        class="hidden md:flex flex-col py-6 px-4 bg-white shadow-sm h-screen w-64 fixed left-0 top-0 z-20"
+      >
+        <div class="flex items-center gap-3 px-2 py-2 mb-2">
+          <div
+            class="w-10 h-10 rounded-xl bg-[#b5ead7] flex items-center justify-center"
+          >
+            <span class="material-symbols-outlined text-xl text-[#1c4f41]"
+              >account_balance_wallet</span
+            >
+          </div>
+          <div>
+            <h1
+              class="text-[20px] font-bold text-[#366758] tracking-tight leading-none"
+            >
+              FinanceBuddy
+            </h1>
+            <p class="text-[12px] text-[#404945] mt-1">Student Edition</p>
+          </div>
+        </div>
+        <div class="flex-1 space-y-1 mt-6">
+          <a
+            class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#404945] hover:bg-gray-100 transition-colors"
+            href="dashboard.html"
+          >
+            <span class="material-symbols-outlined text-[20px]">dashboard</span>
+            Dashboard
+          </a>
+          <a
+            class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#404945] hover:bg-gray-100 transition-colors"
+            href="pemasukan.html"
+          >
+            <span class="material-symbols-outlined text-[20px]"
+              >account_balance_wallet</span
+            >
+            Pemasukan
+          </a>
+          <a
+            class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#404945] hover:bg-gray-100 transition-colors"
+            href="pengeluaran.html"
+          >
+            <span class="material-symbols-outlined text-[20px]">payments</span>
+            Pengeluaran
+          </a>
+          <a
+            class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#404945] hover:bg-gray-100 transition-colors"
+            href="laporan.html"
+          >
+            <span class="material-symbols-outlined text-[20px]"
+              >assessment</span
+            >
+            Laporan
+          </a>
+          <!-- Profil Aktif (Hijau Khas) -->
+          <a
+            class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#366758] font-bold bg-[#b5ead7]/20 border-r-4 border-[#366758] transition-colors"
+            href="profil.html"
+          >
+            <span class="material-symbols-outlined text-[20px]">person</span>
+            Profil
+          </a>
+        </div>
+        <button
+          id="btnLogout"
+          class="text-left flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg font-medium transition-colors"
+        >
+          <span class="material-symbols-outlined text-[20px]">logout</span>
+          Logout
+        </button>
+      </nav>
+
+      <!-- Main Content -->
+      <main class="flex-1 md:ml-64 p-6 flex flex-col lg:flex-row gap-6">
+        <!-- Form Pengolahan Data Profil -->
+        <div
+          class="flex-1 bg-white p-8 rounded-[24px] border border-gray-100 shadow-sm space-y-6"
+        >
+          <div>
+            <h2 class="text-xl font-bold" id="lblNamaUser">Memuat nama...</h2>
+            <p class="text-sm text-gray-500" id="lblEmailUser">
+              loading@universitas.edu
+            </p>
+          </div>
+
+          <form id="formProfil" class="space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="flex flex-col gap-1.5">
+                <label class="text-xs font-medium text-gray-600"
+                  >Nama Lengkap</label
+                >
+                <input
+                  type="text"
+                  id="txtNamaLengkap"
+                  class="w-full px-4 py-2 border rounded-xl bg-gray-50 focus:border-[#366758] outline-none"
+                />
+              </div>
+              <div class="flex flex-col gap-1.5">
+                <label class="text-xs font-medium text-gray-600"
+                  >Email Akademik</label
+                >
+                <input
+                  type="email"
+                  id="txtEmail"
+                  class="w-full px-4 py-2 border rounded-xl bg-gray-50 focus:border-[#366758] outline-none"
+                />
+              </div>
+            </div>
+            <div class="flex flex-col gap-1.5">
+              <label class="text-xs font-medium text-gray-600"
+                >Target Tabungan Bulanan (Rp)</label
+              >
+              <input
+                type="number"
+                id="txtTargetTabungan"
+                class="w-full px-4 py-2 border rounded-xl bg-gray-50 focus:border-[#366758] outline-none"
+              />
+              <p class="text-[11px] text-gray-400">
+                Target ini digunakan instrumen dashboard untuk memantau
+                pencapaian target keuangan.
+              </p>
+            </div>
+            <button
+              type="submit"
+              class="px-6 py-2 bg-[#366758] text-white font-semibold rounded-xl hover:bg-[#1c4f41] transition-colors shadow-sm"
+            >
+              Simpan Perubahan
+            </button>
+          </form>
+        </div>
+
+        <!-- Hubungi Admin Sekunder Card -->
+        <div
+          class="w-full lg:w-80 bg-white p-6 rounded-[24px] border border-gray-100 shadow-sm h-fit"
+        >
+          <h4 class="font-semibold text-sm mb-2">Pusat Bantuan</h4>
+          <p class="text-xs text-gray-500 mb-4">
+            Mengalami kendala sinkronisasi data atau token tidak tervalidasi
+            oleh sistem?
+          </p>
+          <button
+            onclick="alert('Hubungi Admin Kelompok IT Universitas')"
+            class="w-full py-2.5 bg-gray-100 hover:bg-gray-200 font-semibold rounded-xl text-sm transition-colors flex items-center justify-center gap-2"
+          >
+            <span class="material-symbols-outlined text-[18px]"
+              >support_agent</span
+            >
+            Hubungi Admin
+          </button>
+        </div>
+      </main>
+    </div>
+
+    <script type="module" src="js/profil.js"></script>
+    <script type="module">
+      import { logout } from "./js/api.js";
+      document.getElementById("btnLogout").addEventListener("click", logout);
+    </script>
+  </body>
+</html>

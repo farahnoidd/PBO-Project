@@ -20,7 +20,6 @@
             color: #333;
             margin-bottom: 20px;
         }
-        /* Mengatur Grid Box Card & Grafik */
         .grid-container {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
@@ -68,46 +67,42 @@
         </div>
     </div>
 
-    async function fetchDashboardData() {
-    try {
-        // 1. Ambil token JWT yang disimpan pas login (asumsi disimpen di localStorage)
-        const token = localStorage.getItem('token') || localStorage.getItem('jwt') || localStorage.getItem('accessToken'); 
+    <script>
+        async function fetchDashboardData() {
+            try {
+                const token = localStorage.getItem('token') || localStorage.getItem('jwt') || localStorage.getItem('accessToken'); 
 
-        // Jika token belum ada (user belum login), arahkan ke halaman login biar gak error
-        if (!token) {
-            console.warn("Token tidak ditemukan, silahkan login terlebih dahulu.");
-            // window.location.href = '/login.html'; // <--- aktifkan ini nanti kalau halaman login udah jadi
-            return;
-        }
+                if (!token) {
+                    console.warn("Token tidak ditemukan, silahkan login terlebih dahulu.");
+                    return;
+                }
 
-        // 2. Tembak API dengan menyertakan token di Header
-        const response = await fetch('/api/report/dashboard', {
-            method: 'GET',
-            headers: {
-                'Authorization': 'Bearer ' + token, // Ini kunci gembok Spring Security dari Farah
-                'Content-Type': 'application/json'
+                const response = await fetch('/api/report/dashboard', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': 'Bearer ' + token,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Gagal mengambil data riil dari backend. Status: ' + response.status);
+                }
+
+                const data = await response.json(); 
+                
+                barChart.data.datasets[0].data = [data.totalIncome];
+                barChart.data.datasets[1].data = [data.totalExpense];
+                
+                barChart.update();
+
+                console.log("Data riil database sukses masuk ke grafik:", data);
+            } catch (error) {
+                console.error("Error saat fetch data riil:", error);
             }
-        });
-        
-        if (!response.ok) {
-            throw new Error('Gagal mengambil data riil dari backend. Status: ' + response.status);
         }
 
-        // 3. Terima data DTO asli dari database
-        const data = await response.json(); 
-        
-        // 4. Masukkan data riil database ke grafik batang Chart.js kamu
-        barChart.data.datasets[0].data = [data.totalIncome];
-        barChart.data.datasets[1].data = [data.totalExpense];
-        
-        // Gambar ulang grafik dengan angka baru
-        barChart.update();
-
-        console.log("Data riil database sukses masuk ke grafik:", data);
-    } catch (error) {
-        console.error("Error saat fetch data riil:", error);
-    }
-}
-
-// Jalankan fungsi fetch otomatis saat halaman dashboard dimuat
-window.onload = fetchDashboardData;
+        window.onload = fetchDashboardData;
+    </script>
+</body>
+</html>

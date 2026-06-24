@@ -4,28 +4,30 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public class ExpenseRequest {
-    private String userId;
-    private BigDecimal amount;
-    private String category;
-    private String description;
-    private LocalDate date;
+    private BigDecimal nominal;
+    private String kategori;
+    private String keterangan;
+    private LocalDate tanggal;
     private String akun;
-    private boolean forceSave; // Untuk bypass peringatan saldo kurang
+    private boolean forceSave; // Tetap menggunakan bahasa Inggris
 
     public ExpenseRequest() {}
 
-    public String getUserId() { return userId; }
-    public void setUserId(String userId) { this.userId = userId; }
-    public BigDecimal getAmount() { return amount; }
-    public void setAmount(BigDecimal amount) { this.amount = amount; }
-    public String getCategory() { return category; }
-    public void setCategory(String category) { this.category = category; }
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
-    public LocalDate getDate() { return date; }
-    public void setDate(LocalDate date) { this.date = date; }
+    public BigDecimal getNominal() { return nominal; }
+    public void setNominal(BigDecimal nominal) { this.nominal = nominal; }
+
+    public String getKategori() { return kategori; }
+    public void setKategori(String kategori) { this.kategori = kategori; }
+
+    public String getKeterangan() { return keterangan; }
+    public void setKeterangan(String keterangan) { this.keterangan = keterangan; }
+
+    public LocalDate getTanggal() { return tanggal; }
+    public void setTanggal(LocalDate tanggal) { this.tanggal = tanggal; }
+
     public String getAkun() { return akun; }
     public void setAkun(String akun) { this.akun = akun; }
+
     public boolean isForceSave() { return forceSave; }
     public void setForceSave(boolean forceSave) { this.forceSave = forceSave; }
 }

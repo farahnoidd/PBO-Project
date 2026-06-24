@@ -1,8 +1,16 @@
 package com.keuangan.app.model;
 
-import jakarta.persistence.*;
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "transactions")
@@ -19,15 +27,16 @@ public class Transaction {
     private String type; // "EXPENSE" atau "INCOME"
 
     @Column(nullable = false, length = 50)
-    private String category;
+    private String kategori;
 
     @Column(nullable = false)
-    private BigDecimal amount;
+    private BigDecimal nominal;
 
-    private String description;
+    private String keterangan;
 
     @Column(nullable = false)
-    private LocalDate date;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    private LocalDateTime tanggal;
 
     @Column(nullable = false, length = 50)
     private String akun; // "Gopay", "Ovo", "BCA", dll.
@@ -36,18 +45,26 @@ public class Transaction {
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
+    
     public String getUserId() { return userId; }
     public void setUserId(String userId) { this.userId = userId; }
+    
     public String getType() { return type; }
     public void setType(String type) { this.type = type; }
-    public String getCategory() { return category; }
-    public void setCategory(String category) { this.category = category; }
-    public BigDecimal getAmount() { return amount; }
-    public void setAmount(BigDecimal amount) { this.amount = amount; }
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
-    public LocalDate getDate() { return date; }
-    public void setDate(LocalDate date) { this.date = date; }
+    
+    // Perubahan nama Getter & Setter ke Bahasa Indonesia
+    public String getKategori() { return kategori; }
+    public void setKategori(String kategori) { this.kategori = kategori; }
+    
+    public BigDecimal getNominal() { return nominal; }
+    public void setNominal(BigDecimal nominal) { this.nominal = nominal; }
+    
+    public String getKeterangan() { return keterangan; }
+    public void setKeterangan(String keterangan) { this.keterangan = keterangan; }
+    
+    public LocalDateTime getTanggal() { return tanggal; }
+    public void setTanggal(LocalDateTime tanggal) { this.tanggal = tanggal; }
+    
     public String getAkun() { return akun; }
     public void setAkun(String akun) { this.akun = akun; }
 }

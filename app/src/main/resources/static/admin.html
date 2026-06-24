@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - FinanceBuddy</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="container">
+
+  <div class="sidebar">
+    <div class="logo">FinanceBuddy</div>
+    <ul>
+      <li><a class="active" href="admin.html">Dashboard</a></li>
+      <li><a href="profil.html">Profil Saya</a></li>
+      <li><a href="#" onclick="doLogout(); return false;" style="color:#dc3545;">Logout</a></li>
+    </ul>
+  </div>
+
+  <!-- Konten diisi oleh admin.js (rebuildUI) -->
+  <div class="content">
+    <p style="padding:40px;color:#999;text-align:center;">Memuat dashboard...</p>
+  </div>
+
+</div>
+
+<script src="js/admin.js"></script>
+</body>
+</html>

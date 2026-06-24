@@ -1,0 +1,59 @@
+{
+  "name": "FinanceBuddy",
+  "short_name": "FinanceBuddy",
+  "description": "Aplikasi pencatatan pemasukan dan pengeluaran pribadi berbasis web.",
+  "start_url": "/dashboard.html",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "theme_color": "#366758",
+  "background_color": "#faf9f8",
+  "lang": "id-ID",
+  "categories": ["finance", "productivity"],
+  "icons": [
+    {
+      "src": "/assets/icons/icon-1.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/icons/icon-1.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/assets/icons/icon-2.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/icons/icon-2.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Tambah Pemasukan",
+      "short_name": "Pemasukan",
+      "description": "Catat pemasukan baru",
+      "url": "/pemasukan.html",
+      "icons": [
+        { "src": "/assets/icons/icon-1.png", "sizes": "192x192" }
+      ]
+    },
+    {
+      "name": "Tambah Pengeluaran",
+      "short_name": "Pengeluaran",
+      "description": "Catat pengeluaran baru",
+      "url": "/pengeluaran.html",
+      "icons": [
+        { "src": "/assets/icons/icon-1.png", "sizes": "192x192" }
+      ]
+    }
+  ]
+}

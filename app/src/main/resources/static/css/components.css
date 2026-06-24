@@ -1,0 +1,86 @@
+/* =========================================
+   FinanceBuddy - Global Components CSS
+   ========================================= */
+
+/* --- Typography & Icons --- */
+.material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+/* --- Cards & Surfaces --- */
+.ambient-shadow-sm {
+    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+.card-outline {
+    border: 1px solid #F0F0F0;
+}
+
+/* --- Effects --- */
+.glass-blur {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+/* --- SVG Chart Animations (Fallback visual di halaman non-laporan) --- */
+@keyframes growUp {
+    from { transform: scaleY(0); }
+    to { transform: scaleY(1); }
+}
+
+.bar-grow {
+    transform-origin: bottom;
+    animation: growUp 1s ease-out forwards;
+}
+
+@keyframes strokeDraw {
+    to { stroke-dashoffset: 0; }
+}
+
+.donut-segment {
+    stroke-dasharray: 100 100;
+    stroke-dashoffset: 100;
+    animation: strokeDraw 1.5s ease-out forwards;
+}
+
+/* =========================================
+   Print Media (Khusus untuk Ekspor PDF Laporan)
+   ========================================= */
+@media print {
+    /* 1. Sembunyikan Sidebar, Header Atas, dan semua Tombol Action */
+    nav, header, button {
+        display: none !important;
+    }
+
+    /* 2. Paskan Konten Utama (Hilangkan margin kiri yang biasanya untuk sidebar) */
+    main {
+        margin-left: 0 !important;
+        padding-top: 0 !important;
+    }
+    
+    .p-container-margin {
+        padding: 0 !important;
+    }
+
+    /* 3. Bersihkan bayangan agar PDF lebih ringan & hemat tinta */
+    .ambient-shadow-sm {
+        box-shadow: none !important;
+    }
+    
+    /* 4. Berikan garis batas abu-abu tegas untuk kotak data di PDF */
+    .card-outline {
+        border: 1px solid #dadad9 !important; /* warna surface-dim */
+    }
+
+    /* 5. Pastikan background kertas putih dan teks hitam */
+    body {
+        background-color: #ffffff !important;
+        color: #1a1c1c !important; 
+    }
+
+    /* 6. Atur ukuran kertas PDF menjadi A4 */
+    @page {
+        size: A4 portrait;
+        margin: 1.5cm;
+    }
+}
