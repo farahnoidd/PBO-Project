@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Register - FinanceBuddy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+</head>
+<body class="bg-slate-50 flex items-center justify-center min-h-screen font-sans">
+  <div class="bg-white p-8 rounded-[24px] shadow-sm border border-gray-100 w-full max-w-md my-8">
+    <div class="text-center mb-8">
+      <h1 class="text-[32px] font-bold text-[#366758] tracking-tight">FinanceBuddy</h1>
+      <p class="text-gray-500 text-sm mt-1">Daftar Akun Baru</p>
+    </div>
+
+    <!-- STEP 1: Registration Form -->
+    <div id="stepRegister">
+      <form id="registerForm" class="space-y-5">
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5">Nama Lengkap</label>
+          <input type="text" id="namaLengkap" placeholder="Masukkan nama lengkap"
+            class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-[#366758] focus:ring-1 focus:ring-[#366758]" required />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5">Email</label>
+          <input type="email" id="email" placeholder="email@contoh.com"
+            class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-[#366758] focus:ring-1 focus:ring-[#366758]" required />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5">Username / ID</label>
+          <input type="text" id="username" placeholder="Masukkan student ID"
+            class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-[#366758] focus:ring-1 focus:ring-[#366758]" required />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5">Password</label>
+          <input type="password" id="password" placeholder="••••••••"
+            class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-[#366758] focus:ring-1 focus:ring-[#366758]" required />
+        </div>
+
+        <p id="registerError" class="text-red-500 text-sm hidden"></p>
+
+        <button type="submit" id="btnRegister"
+          class="w-full py-3 bg-[#9dd1bf] hover:bg-[#366758] hover:text-white text-[#1c4f41] rounded-xl font-semibold transition-all duration-200 flex items-center justify-center gap-2 shadow-sm">
+          Daftar <span>➔</span>
+        </button>
+      </form>
+    </div>
+
+    <!-- STEP 2: Input OTP -->
+    <div id="stepOtp" class="hidden space-y-5">
+      <div class="bg-green-50 border border-green-200 rounded-xl p-4 text-center">
+        <div class="text-2xl mb-1">📧</div>
+        <p class="text-sm text-green-700 font-medium">OTP telah dikirim ke email Anda</p>
+        <p class="text-xs text-green-600 mt-1" id="emailInfo">Cek inbox atau folder spam.</p>
+      </div>
+
+      <!-- 6 kotak OTP -->
+      <div class="flex justify-center gap-2" id="otpBoxes">
+        <input type="text" maxlength="1" class="otp-input w-11 h-12 text-center text-xl font-bold border-2 border-gray-200 rounded-xl focus:border-[#366758] focus:outline-none bg-gray-50" />
+        <input type="text" maxlength="1" class="otp-input w-11 h-12 text-center text-xl font-bold border-2 border-gray-200 rounded-xl focus:border-[#366758] focus:outline-none bg-gray-50" />
+        <input type="text" maxlength="1" class="otp-input w-11 h-12 text-center text-xl font-bold border-2 border-gray-200 rounded-xl focus:border-[#366758] focus:outline-none bg-gray-50" />
+        <input type="text" maxlength="1" class="otp-input w-11 h-12 text-center text-xl font-bold border-2 border-gray-200 rounded-xl focus:border-[#366758] focus:outline-none bg-gray-50" />
+        <input type="text" maxlength="1" class="otp-input w-11 h-12 text-center text-xl font-bold border-2 border-gray-200 rounded-xl focus:border-[#366758] focus:outline-none bg-gray-50" />
+        <input type="text" maxlength="1" class="otp-input w-11 h-12 text-center text-xl font-bold border-2 border-gray-200 rounded-xl focus:border-[#366758] focus:outline-none bg-gray-50" />
+      </div>
+
+      <p id="otpError" class="text-red-500 text-sm text-center hidden"></p>
+
+      <button id="btnVerify"
+        class="w-full py-3 bg-[#9dd1bf] hover:bg-[#366758] hover:text-white text-[#1c4f41] rounded-xl font-semibold transition-all duration-200 shadow-sm">
+        Verifikasi OTP ✓
+      </button>
+
+      <button id="btnBack" class="w-full py-2 text-sm text-gray-500 hover:text-gray-700">
+        ← Kembali ke Pendaftaran
+      </button>
+    </div>
+
+    <div class="mt-8 pt-6 border-t border-gray-100 text-center text-xs text-gray-500">
+      Sudah punya akun?
+      <a href="index.html" class="text-[#366758] font-semibold hover:underline">Masuk di sini</a>
+    </div>
+  </div>
+
+  <script type="module">
+    import { register, verifyRegisterOtp } from "./js/api.js";
+
+    const stepRegister = document.getElementById("stepRegister");
+    const stepOtp = document.getElementById("stepOtp");
+    let savedUsername = "";
+
+    // ── STEP 1: Submit Registrasi ─────────────────────────────────────────
+    document.getElementById("registerForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById("btnRegister");
+      const errEl = document.getElementById("registerError");
+      errEl.classList.add("hidden");
+
+      const namaLengkap = document.getElementById("namaLengkap").value;
+      const email = document.getElementById("email").value;
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+
+      try {
+        btn.disabled = true;
+        btn.innerText = "Mendaftar...";
+        
+        await register({ username, password, email, namaLengkap });
+
+        savedUsername = username;
+        showOtpStep();
+      } catch (err) {
+        errEl.textContent = "Registrasi Gagal: " + err.message;
+        errEl.classList.remove("hidden");
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = 'Daftar <span>➔</span>';
+      }
+    });
+
+    // ── STEP 2: Verifikasi OTP ─────────────────────────────────────────────
+    document.getElementById("btnVerify").addEventListener("click", async () => {
+      const otp = getOtpValue();
+      const errEl = document.getElementById("otpError");
+      const btn = document.getElementById("btnVerify");
+      errEl.classList.add("hidden");
+
+      if (otp.length < 6) {
+        errEl.textContent = "Masukkan 6 digit kode OTP";
+        errEl.classList.remove("hidden");
+        return;
+      }
+
+      try {
+        btn.disabled = true;
+        btn.innerText = "Memverifikasi...";
+        await verifyRegisterOtp(savedUsername, otp);
+        
+        alert("Pendaftaran Berhasil dan Akun Divalidasi! Silakan login.");
+        window.location.href = "index.html";
+      } catch (err) {
+        errEl.textContent = err.message || "OTP tidak valid atau sudah expired.";
+        errEl.classList.remove("hidden");
+        btn.disabled = false;
+        btn.innerText = "Verifikasi OTP ✓";
+        clearOtpBoxes();
+      }
+    });
+
+    // ── Kembali ────────────────────────────────────────────────────────────
+    document.getElementById("btnBack").addEventListener("click", () => {
+      stepOtp.classList.add("hidden");
+      stepRegister.classList.remove("hidden");
+    });
+
+    // ── OTP boxes ──────────────────────────────────────────────────────────
+    function setupOtpBoxes() {
+      const boxes = document.querySelectorAll(".otp-input");
+      boxes.forEach((box, i) => {
+        box.addEventListener("input", () => {
+          box.value = box.value.replace(/\D/g, "");
+          if (box.value && i < boxes.length - 1) boxes[i + 1].focus();
+        });
+        box.addEventListener("keydown", (e) => {
+          if (e.key === "Backspace" && !box.value && i > 0) boxes[i - 1].focus();
+        });
+        box.addEventListener("paste", (e) => {
+          e.preventDefault();
+          const paste = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 6);
+          paste.split("").forEach((ch, idx) => { if (boxes[idx]) boxes[idx].value = ch; });
+          if (boxes[paste.length - 1]) boxes[paste.length - 1].focus();
+        });
+      });
+    }
+
+    function getOtpValue() {
+      return [...document.querySelectorAll(".otp-input")].map(b => b.value).join("");
+    }
+
+    function clearOtpBoxes() {
+      document.querySelectorAll(".otp-input").forEach(b => b.value = "");
+      document.querySelectorAll(".otp-input")[0].focus();
+    }
+
+    function showOtpStep() {
+      stepRegister.classList.add("hidden");
+      stepOtp.classList.remove("hidden");
+      clearOtpBoxes();
+      setupOtpBoxes();
+      document.querySelectorAll(".otp-input")[0].focus();
+    }
+  </script>
+</body>
+</html>

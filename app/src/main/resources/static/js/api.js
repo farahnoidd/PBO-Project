@@ -118,6 +118,30 @@ export async function register(payload) {
   });
 }
 
+export async function verifyRegisterOtp(username, otp) {
+  return request("/api/auth/register/verify-otp", {
+    method: "POST",
+    headers: buildHeaders(false),
+    body: JSON.stringify({ username, otp }),
+  });
+}
+
+export async function sendForgotPasswordOtp(username) {
+  return request("/api/auth/forgot-password/send-otp", {
+    method: "POST",
+    headers: buildHeaders(false),
+    body: JSON.stringify({ username }),
+  });
+}
+
+export async function resetPassword(username, otp, newPassword) {
+  return request("/api/auth/forgot-password/reset", {
+    method: "POST",
+    headers: buildHeaders(false),
+    body: JSON.stringify({ username, otp, newPassword }),
+  });
+}
+
 // ─── USER / PROFIL ────────────────────────────────────────────────────────────
 
 /**

@@ -70,6 +70,39 @@ public class UserController {
         }
     }
 
+    @PostMapping("/api/auth/register/verify-otp")
+    public ResponseEntity<UserDto.ApiResponse> verifyRegisterOtp(
+            @RequestBody com.keuangan.app.dto.VerifyOtpRequest request) {
+        try {
+            UserDto.UserResponse data = userService.verifyRegisterOtp(request);
+            return ResponseEntity.ok(new UserDto.ApiResponse(true, "Registrasi berhasil, akun divalidasi.", data));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(new UserDto.ApiResponse(false, e.getMessage()));
+        }
+    }
+
+    @PostMapping("/api/auth/forgot-password/send-otp")
+    public ResponseEntity<UserDto.ApiResponse> forgotPasswordSendOtp(
+            @RequestBody UserDto.ForgotPasswordRequest request) {
+        try {
+            userService.forgotPasswordSendOtp(request.getUsername());
+            return ResponseEntity.ok(new UserDto.ApiResponse(true, "OTP telah dikirim ke email Anda."));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(new UserDto.ApiResponse(false, e.getMessage()));
+        }
+    }
+
+    @PostMapping("/api/auth/forgot-password/reset")
+    public ResponseEntity<UserDto.ApiResponse> resetPassword(
+            @RequestBody UserDto.ResetPasswordRequest request) {
+        try {
+            userService.resetPassword(request);
+            return ResponseEntity.ok(new UserDto.ApiResponse(true, "Password berhasil direset. Silakan login."));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(new UserDto.ApiResponse(false, e.getMessage()));
+        }
+    }
+
     // ─────────────────────────────────────────────────────────────────────────
     // USER – PROFIL SENDIRI
     // ─────────────────────────────────────────────────────────────────────────

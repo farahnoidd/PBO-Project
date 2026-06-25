@@ -1,6 +1,7 @@
 package com.keuangan.app.service;
 
 import com.keuangan.app.dto.UserDto;
+import com.keuangan.app.dto.VerifyOtpRequest;
 import com.keuangan.app.enums.UserStatus;
 import com.keuangan.app.model.User;
 import com.keuangan.app.repository.UserRepository;
@@ -22,10 +23,12 @@ public class UserService {
 
     private final UserRepository  userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final OtpService otpService;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, OtpService otpService) {
         this.userRepository  = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.otpService      = otpService;
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -71,7 +74,54 @@ public class UserService {
         );
 
         User tersimpan = userRepository.save(user);
+
+        // Kirim OTP
+        otpService.generateAndSend(tersimpan.getUsername(), tersimpan.getEmail());
+
         return toResponse(tersimpan);
+    }
+
+    public UserDto.UserResponse verifyRegisterOtp(VerifyOtpRequest req) {
+        if (!otpService.verify(req.getUsername(), req.getOtp())) {
+            throw new IllegalArgumentException("OTP tidak valid atau sudah expired.");
+        }
+        User user = userRepository.findByUsername(req.getUsername())
+                .orElseThrow(() -> new IllegalArgumentException("User tidak ditemukan."));
+
+        if (user.getStatus() != UserStatus.BELUM_TERVALIDASI) {
+            throw new IllegalArgumentException("Akun ini sudah divalidasi atau ditolak.");
+        }
+
+        user.setStatus(UserStatus.TERVALIDASI);
+        user.setValidatedAt(LocalDateTime.now());
+        return toResponse(userRepository.save(user));
+    }
+
+    public void forgotPasswordSendOtp(String usernameOrEmail) {
+        // Cari user berdasarkan username atau email
+        User user = userRepository.findByUsername(usernameOrEmail).orElse(null);
+        if (user == null) {
+            user = userRepository.findByEmail(usernameOrEmail)
+                    .orElseThrow(() -> new IllegalArgumentException("User tidak ditemukan dengan identifier tersebut."));
+        }
+        
+        otpService.generateAndSend(user.getUsername(), user.getEmail());
+    }
+
+    public void resetPassword(UserDto.ResetPasswordRequest req) {
+        if (!otpService.verify(req.getUsername(), req.getOtp())) {
+            throw new IllegalArgumentException("OTP tidak valid atau sudah expired.");
+        }
+
+        User user = userRepository.findByUsername(req.getUsername())
+                .orElseThrow(() -> new IllegalArgumentException("User tidak ditemukan."));
+
+        if (req.getNewPassword() == null || req.getNewPassword().length() < 8) {
+            throw new IllegalArgumentException("Password minimal 8 karakter.");
+        }
+
+        user.setPassword(passwordEncoder.encode(req.getNewPassword()));
+        userRepository.save(user);
     }
 
     // ─────────────────────────────────────────────────────────────────────────
