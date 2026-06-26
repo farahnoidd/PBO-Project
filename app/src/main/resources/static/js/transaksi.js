@@ -1,8 +1,3 @@
-/**
- * File: js/transaksi.js
- * Sinkronisasi Pengolahan Data Form & Tabel Output Riwayat + Kalkulasi Kartu Atas
- * 💡 FIX AKHIR: Memaksa text wrap kebawah (break-all) & Sinkronisasi ID Baca Selengkapnya
- */
 import {
   tambahPemasukan,
   getRiwayatPemasukan,
@@ -13,13 +8,13 @@ import {
   logout,
 } from "./api.js";
 
-// 1. Proteksi keamanan halaman login
+// Proteksi halaman login
 requireAuth();
 
 let lineChartInst = null;
 let donutChartInst = null;
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   const pathName = window.location.pathname.toLowerCase();
   const isPemasukan = pathName.includes("pemasukan");
 
@@ -31,11 +26,22 @@ document.addEventListener("DOMContentLoaded", () => {
   const btnSimpan = document.getElementById("btnSimpan");
   const btnLogout = document.getElementById("btnLogout");
 
-  // Sinkronisasi Pilihan Pilihan Akun Aktif dari Dashboard
+  // 💡 FIX PREFIX: Membaca properti pData.data.email sesuai struktur ApiResponse Spring Boot kelompokmu
+  let userPrefix = "guest";
+  try {
+    const pData = await getProfil();
+    if (pData && pData.data && pData.data.email) {
+      userPrefix = pData.data.email.replace(/[^a-zA-Z0-9]/g, "_");
+    }
+  } catch (e) {
+    console.error(e);
+  }
+
+  // Sinkronisasi Pilihan Akun Aktif dari Dashboard lokal memori per user session
   if (selectAkun) {
     const defaultAkun = ["BCA", "MANDIRI", "GOPAY", "DANA", "CASH"];
     const listAkunAktif = JSON.parse(
-      localStorage.getItem("fb_daftar_akun_user") ||
+      localStorage.getItem(`${userPrefix}_fb_daftar_akun_user`) ||
         JSON.stringify(defaultAkun),
     );
     selectAkun.innerHTML = "";
@@ -47,7 +53,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Kamus warna terpadu agar warna tabel riwayat sewarna dengan grafik lingkaran donat
   const mapWarnaKategori = {
     BONUS: { bg: "#c7ebd9", text: "#133a2e" },
     UANG_SAKU: { bg: "#b5ead7", text: "#164436" },
@@ -70,7 +75,6 @@ document.addEventListener("DOMContentLoaded", () => {
     return { bg: "#f3f4f6", text: "#374151" };
   }
 
-  // Format Rupiah Utilitas
   const formatRupiah = (angka) => {
     return new Intl.NumberFormat("id-ID", {
       style: "currency",
@@ -79,7 +83,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }).format(angka || 0);
   };
 
-  // Format waktu dari LocalDateTime (ISO String) menjadi YYYY-MM-DD HH:MM
   const formatWaktuRealtime = (tanggalStr) => {
     if (!tanggalStr) return "-";
     if (tanggalStr.includes("T")) {
@@ -90,24 +93,20 @@ document.addEventListener("DOMContentLoaded", () => {
     return tanggalStr;
   };
 
-  // 2. FUNGSI OUTPUT UTAMA ASLI KELOMPOK
   async function muatRiwayatTabel() {
     const tbody = document.getElementById("tabelTransaksiBody");
     if (!tbody) return;
 
     try {
       tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-gray-500">Memuat data transaksi...</td></tr>`;
-
       const dataRiwayat = isPemasukan
         ? await getRiwayatPemasukan()
         : await getRiwayatPengeluaran();
       tbody.innerHTML = "";
 
-      // ====== LOGIKA HITUNG SALDO KARTU ATAS SECARA DINAMIS ======
       let akumulasiTotal = 0;
       let rataRata = 0;
       let jumlahItem = dataRiwayat ? dataRiwayat.length : 0;
-
       const mapKategoriDinamis = {};
       const trenMingguan = Array(4).fill(0);
 
@@ -115,7 +114,6 @@ document.addEventListener("DOMContentLoaded", () => {
         dataRiwayat.forEach((item) => {
           const nominalNilai = item.nominal || 0;
           akumulasiTotal += nominalNilai;
-
           const namaKategoriBersih = item.kategori
             ? item.kategori.trim().toUpperCase()
             : "LAINNYA";
@@ -130,37 +128,22 @@ document.addEventListener("DOMContentLoaded", () => {
             else trenMingguan[3] += nominalNilai;
           }
         });
-
         rataRata = Math.round(akumulasiTotal / jumlahItem);
       }
 
       if (isPemasukan) {
-        const elTotal = document.getElementById("txtTotalPemasukanBulanIni");
-        const elAvg = document.getElementById("txtRataRataPemasukan");
-        if (elTotal) elTotal.innerText = formatRupiah(akumulasiTotal);
-        if (elAvg)
-          elAvg.innerText = formatRupiah(Math.round(akumulasiTotal / 30));
+        if (document.getElementById("txtTotalPemasukanBulanIni"))
+          document.getElementById("txtTotalPemasukanBulanIni").innerText =
+            formatRupiah(akumulasiTotal);
+        if (document.getElementById("txtRataRataPemasukan"))
+          document.getElementById("txtRataRataPemasukan").innerText =
+            formatRupiah(Math.round(akumulasiTotal / 30));
 
-        let targetTabungan = parseInt(
-          localStorage.getItem("target_tabungan"),
-          10,
-        );
-        if (!targetTabungan || isNaN(targetTabungan) || targetTabungan <= 0) {
-          targetTabungan = 500000;
-          try {
-            const profilData = await getProfil();
-            if (
-              profilData &&
-              profilData.targetTabungan &&
-              profilData.targetTabungan > 0
-            ) {
-              targetTabungan = profilData.targetTabungan;
-              localStorage.setItem("target_tabungan", targetTabungan);
-            }
-          } catch (err) {
-            console.error(err);
-          }
-        }
+        // 💡 FIX SINKRONISASI: Cek key userPrefix dulu, kalau belum ke-load jalankan key global backup
+        const targetTabungan =
+          parseInt(localStorage.getItem(`${userPrefix}_target_tabungan`), 10) ||
+          parseInt(localStorage.getItem("fb_current_target_tabungan"), 10) ||
+          500000;
 
         const elTargetVal = document.getElementById("lblTargetValue");
         const elTargetPct = document.getElementById("lblTargetPercent");
@@ -181,25 +164,25 @@ document.addEventListener("DOMContentLoaded", () => {
               : `Sisa ${formatRupiah(targetTabungan - akumulasiTotal)} untuk mencapai target`;
         }
       } else {
-        const elTotal = document.getElementById("txtTotalPengeluaranBulanIni");
-        const elAvg = document.getElementById("txtRataRataPengeluaran");
-        const elCount = document.getElementById("txtJumlahItemPengeluaran");
-        if (elTotal) elTotal.innerText = formatRupiah(akumulasiTotal);
-        if (elAvg) elAvg.innerText = formatRupiah(rataRata);
-        if (elCount) elCount.innerText = jumlahItem;
+        if (document.getElementById("txtTotalPengeluaranBulanIni"))
+          document.getElementById("txtTotalPengeluaranBulanIni").innerText =
+            formatRupiah(akumulasiTotal);
+        if (document.getElementById("txtRataRataPengeluaran"))
+          document.getElementById("txtRataRataPengeluaran").innerText =
+            formatRupiah(rataRata);
+        if (document.getElementById("txtJumlahItemPengeluaran"))
+          document.getElementById("txtJumlahItemPengeluaran").innerText =
+            jumlahItem;
 
         const elBudget = document.getElementById("lblRemainingBudget");
         const elBar = document.getElementById("barBudget");
         const txtPct = document.getElementById("txtBudgetPercent");
 
-        let limitAnggaran = parseInt(
-          localStorage.getItem("limit_anggaran"),
-          10,
-        );
-        if (!limitAnggaran || isNaN(limitAnggaran) || limitAnggaran <= 0) {
-          limitAnggaran = 1000000;
-        }
-
+        // 💡 FIX SINKRONISASI: Cek key userPrefix dulu, kalau belum ke-load jalankan key global backup
+        const limitAnggaran =
+          parseInt(localStorage.getItem(`${userPrefix}_limit_anggaran`), 10) ||
+          parseInt(localStorage.getItem("fb_current_limit_anggaran"), 10) ||
+          1000000;
         const sisaBudget = limitAnggaran - akumulasiTotal;
 
         if (elBudget)
@@ -229,31 +212,22 @@ document.addEventListener("DOMContentLoaded", () => {
         const gayaWarna = ambilGayaWarnaKategori(item.kategori);
 
         tbody.innerHTML += `
-                    <tr class="border-b hover:bg-gray-50/50 transition-colors bg-white">
-                        <td class="py-3.5 px-6 text-gray-400 font-mono">${formatWaktuRealtime(item.tanggal)}</td>
-                        <td class="py-3.5 px-6">
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wide" style="background-color: ${gayaWarna.bg}; color: ${gayaWarna.text}">
-                                ${item.kategori}
-                            </span>
-                        </td>
-                        <!-- 💡 FIX WRAP: Kolom deskripsi dipasang kelas pembatas murni -->
-                        <td class="py-3.5 px-6 font-semibold text-gray-800 break-all whitespace-normal">${renderDeskripsiDenganToggle(item.keterangan, idx)}</td>
-                        <td class="py-3.5 px-6 text-gray-400 font-semibold uppercase">${item.akun || "-"}</td>
-                        <td class="py-3.5 px-6 text-right ${warnaTeksJumlah}">
-                            ${simbolMataUang}${formatRupiah(item.nominal)}
-                        </td>
-                    </tr>
-                `;
+          <tr class="border-b hover:bg-gray-50/50 transition-colors bg-white">
+              <td class="py-3.5 px-6 text-gray-400 font-mono">${formatWaktuRealtime(item.tanggal)}</td>
+              <td class="py-3.5 px-6"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wide" style="background-color: ${gayaWarna.bg}; color: ${gayaWarna.text}">${item.kategori}</span></td>
+              <td class="py-3.5 px-6 font-semibold text-gray-800 break-all whitespace-normal">${renderDeskripsiDenganToggle(item.keterangan, idx)}</td>
+              <td class="py-3.5 px-6 text-gray-400 font-semibold uppercase">${item.akun || "-"}</td>
+              <td class="py-3.5 px-6 text-right ${warnaTeksJumlah}">${simbolMataUang}${formatRupiah(item.nominal)}</td>
+          </tr>`;
       });
 
       renderChartsHalaman(trenMingguan, mapKategoriDinamis);
     } catch (error) {
-      console.error("Gagal memuat tabel:", error);
+      console.error(error);
       tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-red-500">Gagal mengambil data dari server.</td></tr>`;
     }
   }
 
-  // 💡 FIX TOGGLE: Membaca ID short_ dan full_ secara akurat demi kelancaran eksekusi klik
   function renderDeskripsiDenganToggle(keteranganText, idUnik) {
     const ket = keteranganText || "-";
     if (ket.length > 25) {
@@ -262,13 +236,11 @@ document.addEventListener("DOMContentLoaded", () => {
           <span id="short_${idUnik}">${ket.substring(0, 25)}...</span>
           <span id="full_${idUnik}" class="hidden">${ket}</span>
           <button type="button" class="text-[#366758] font-bold hover:underline block mt-0.5 text-[10px] uppercase tracking-wider" onclick="const s=document.getElementById('short_${idUnik}'); const f=document.getElementById('full_${idUnik}'); if(f.classList.contains('hidden')){ f.classList.remove('hidden'); s.classList.add('hidden'); this.innerText='Sembunyikan'; }else{ f.classList.add('hidden'); s.classList.remove('hidden'); this.innerText='Baca Selengkapnya'; }">Baca Selengkapnya</button>
-        </div>
-      `;
+        </div>`;
     }
     return `<div class="break-all whitespace-normal font-semibold text-gray-800">${ket}</div>`;
   }
 
-  // GRAPH ENGINE GENERATOR
   function renderChartsHalaman(arrMingguan, objekKategori) {
     const canvasLine =
       document.getElementById("chartLineIn") ||
@@ -314,7 +286,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (canvasDonut) {
       if (donutChartInst) donutChartInst.destroy();
-
       const labelsArray = Object.keys(objekKategori);
       const dataArray = Object.values(objekKategori);
       const warnaArray = labelsArray.map(
@@ -368,27 +339,22 @@ document.addEventListener("DOMContentLoaded", () => {
   if (formTransaksi) {
     formTransaksi.addEventListener("submit", async (e) => {
       e.preventDefault();
-
+      const tglIsoStr = new Date().toISOString().substring(0, 10) + "T12:00:00";
       const payload = {
         nominal: parseFloat(inputNominal.value),
         kategori: selectKategori.value,
         keterangan: inputDeskripsi.value.trim(),
         akun: selectAkun.value,
+        tanggal: tglIsoStr,
         forceSave: false,
       };
 
       try {
         btnSimpan.disabled = true;
         btnSimpan.innerText = "Menyimpan...";
-
-        if (isPemasukan) {
-          await tambahPemasukan(payload);
-          alert("🎉 Pemasukan berhasil dicatat!");
-        } else {
-          await tambahPengeluaran(payload);
-          alert("🎉 Pengeluaran berhasil dicatat!");
-        }
-
+        if (isPemasukan) await tambahPemasukan(payload);
+        else await tambahPengeluaran(payload);
+        alert("🎉 Transaksi berhasil dicatat!");
         formTransaksi.reset();
         await muatRiwayatTabel();
       } catch (error) {
@@ -403,11 +369,10 @@ document.addEventListener("DOMContentLoaded", () => {
   if (btnLogout) {
     btnLogout.addEventListener("click", (e) => {
       e.preventDefault();
-      if (confirm("Apakah Anda yakin ingin keluar dari FinanceBuddy?")) {
+      if (confirm("Apakah Anda yakin ingin keluar dari FinanceBuddy?"))
         logout();
-      }
     });
   }
 
-  muatRiwayatTabel();
+  await muatRiwayatTabel();
 });

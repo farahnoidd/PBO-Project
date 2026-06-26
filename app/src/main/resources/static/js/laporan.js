@@ -12,7 +12,15 @@ import {
 
 requireAuth();
 
-document.getElementById("btnLogout").addEventListener("click", logout);
+const btnLogout = document.getElementById("btnLogout");
+if (btnLogout) {
+  btnLogout.addEventListener("click", (e) => {
+    e.preventDefault();
+    if (confirm("Apakah Anda yakin ingin keluar dari FinanceBuddy?")) {
+      logout();
+    }
+  });
+}
 
 const btnCetak = document.getElementById("btnCetakLaporan");
 if (btnCetak) {

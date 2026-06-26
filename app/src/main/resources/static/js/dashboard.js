@@ -1,18 +1,27 @@
 /**
  * File: js/dashboard.js
- * 💡 FIX: Menggabungkan Urutan Saldo Terbesar-Terkecil + Fitur Baca Selengkapnya (Anti-Bentrok)
+ * 💡 FIX: Sinkronisasi pemanggilan parameter .data.email (Anti-Bocor / Anti-Macet Budget)
  */
 import {
   getDashboardData,
   getRiwayatPemasukan,
   getRiwayatPengeluaran,
+  getProfil,
   logout,
   requireAuth,
 } from "./api.js";
 
 requireAuth();
 
-document.getElementById("btnLogout").addEventListener("click", logout);
+const btnLogout = document.getElementById("btnLogout");
+if (btnLogout) {
+  btnLogout.addEventListener("click", (e) => {
+    e.preventDefault();
+    if (confirm("Apakah Anda yakin ingin keluar dari FinanceBuddy?")) {
+      logout();
+    }
+  });
+}
 
 const formatRp = (v) =>
   new Intl.NumberFormat("id-ID", {
@@ -49,7 +58,6 @@ function ambilGayaWarnaKategori(namaKat) {
   return mapWarnaKategori[keys[hash % keys.length]];
 }
 
-// Fitur memotong deskripsi panjang, wrap kebawah, dan membuat tombol Baca Selengkapnya di Dashboard
 function renderDeskripsiDinamis(ket, index, pagePrefix) {
   if (!ket) return "-";
   if (ket.length > 25) {
@@ -69,18 +77,25 @@ function getSanitizedText(text) {
   return text.replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 }
 
+let userPrefix = "guest";
 function dapatkanDaftarAkunAplikasi() {
   const defaultAkun = ["BCA", "MANDIRI", "GOPAY", "DANA", "CASH"];
-  const lokalData = localStorage.getItem("fb_daftar_akun_user");
+  const lokalData = localStorage.getItem(`${userPrefix}_fb_daftar_akun_user`);
   if (!lokalData) {
-    localStorage.setItem("fb_daftar_akun_user", JSON.stringify(defaultAkun));
+    localStorage.setItem(
+      `${userPrefix}_fb_daftar_akun_user`,
+      JSON.stringify(defaultAkun),
+    );
     return defaultAkun;
   }
   return JSON.parse(lokalData);
 }
 
 function simpanDaftarAkunAplikasi(arrayAkun) {
-  localStorage.setItem("fb_daftar_akun_user", JSON.stringify(arrayAkun));
+  localStorage.setItem(
+    `${userPrefix}_fb_daftar_akun_user`,
+    JSON.stringify(arrayAkun),
+  );
 }
 
 let cacheSemuaTransaksi = [];
@@ -88,6 +103,13 @@ let statusEkspansiPenuh = false;
 
 async function initDashboard() {
   try {
+    // 💡 FIX SINKRON: Mengikat p.data.email dengan akurat
+    try {
+      const p = await getProfil();
+      if (p && p.data && p.data.email)
+        userPrefix = p.data.email.replace(/[^a-zA-Z0-9]/g, "_");
+    } catch (e) {}
+
     const summary = await getDashboardData();
     document.getElementById("txtTotalSaldo").innerText = formatRp(
       summary.saldo,
@@ -103,6 +125,7 @@ async function initDashboard() {
     setupDropdownFilterAkun();
     await ambilDanProsesDataTransaksi();
     setupDashboardEventBindings();
+    setupModalAkunManagerLogic();
   } catch (err) {
     console.error(err);
   }
@@ -205,7 +228,6 @@ function setupDropdownFilterAkun() {
   const selectFilter = document.getElementById("filterDompetAkun");
   if (!selectFilter) return;
   const listAkun = dapatkanDaftarAkunAplikasi();
-
   selectFilter.innerHTML = `<option value="ALL">Semua Dompet</option>`;
   listAkun.forEach((acc) => {
     selectFilter.innerHTML += `<option value="${acc.toUpperCase()}">${acc.toUpperCase()}</option>`;
@@ -236,27 +258,16 @@ async function ambilDanProsesDataTransaksi() {
       }
     });
 
-    // 💡 FIX SORTING DI SINI: Mapping ulang & urutkan saldo terbesar ke terkecil
     let listAkunTerurut = listAkunAktif
       .map((acc) => {
-        return {
-          nama: acc,
-          saldo: dompetAkun[acc.toUpperCase()] || 0,
-        };
+        return { nama: acc, saldo: dompetAkun[acc.toUpperCase()] || 0 };
       })
       .sort((a, b) => b.saldo - a.saldo);
 
     const containerAkun = document.getElementById("containerAkunDinamis");
     if (containerAkun) {
       containerAkun.innerHTML = "";
-      containerAkun.className = `grid gap-3 text-center text-[10px] text-gray-400 font-semibold uppercase ${
-        listAkunTerurut.length <= 3
-          ? "grid-cols-3"
-          : listAkunTerurut.length === 4
-            ? "grid-cols-4"
-            : "grid-cols-2 sm:grid-cols-5"
-      }`;
-
+      containerAkun.className = `grid gap-3 text-center text-[10px] text-gray-400 font-semibold uppercase ${listAkunTerurut.length <= 3 ? "grid-cols-3" : listAkunTerurut.length === 4 ? "grid-cols-4" : "grid-cols-2 sm:grid-cols-5"}`;
       listAkunTerurut.forEach((item) => {
         containerAkun.innerHTML += `
           <div class="bg-gray-50/50 p-2 rounded-xl border border-gray-100 shadow-sm flex flex-col justify-center min-h-[50px]">
@@ -308,17 +319,11 @@ function renderTabelDinamisDashboard() {
 
     tbody.innerHTML += `
       <tr class="border-b hover:bg-gray-50/50 transition-colors bg-white">
-          <td class="py-3.5 px-6 text-gray-400 font-mono">${formatWaktuRealtime(t.tanggal)}</td>
+          <td class="py-3.5 px-6 text-gray-400 font-mono truncate">${formatWaktuRealtime(t.tanggal)}</td>
           <td class="py-3.5 px-6 font-semibold text-gray-800">${renderDeskripsiDinamis(t.keterangan, idx, "dash")}</td>
-          <td>
-              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wide" style="background-color: ${gayaWarna.bg}; color: ${gayaWarna.text}">
-                  ${t.kategori}
-              </span>
-          </td>
-          <td class="py-3.5 px-6 text-gray-400 font-semibold uppercase">${t.akun || "-"}</td>
-          <td class="py-3.5 px-6 text-right ${warnaTeksJumlah}">
-              ${simbolMataUang}${formatRp(t.nominal)}
-          </td>
+          <td><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wide" style="background-color: ${gayaWarna.bg}; color: ${gayaWarna.text}">${t.kategori}</span></td>
+          <td class="py-3.5 px-6 text-gray-400 font-semibold uppercase truncate">${t.akun || "-"}</td>
+          <td class="py-3.5 px-6 text-right ${warnaTeksJumlah} truncate">${simbolMataUang}${formatRp(t.nominal)}</td>
       </tr>`;
   });
 
@@ -340,7 +345,6 @@ function setupDashboardEventBindings() {
     renderTabelDinamisDashboard();
   document.getElementById("filterDompetAkun").onchange = () =>
     renderTabelDinamisDashboard();
-
   const btnEkspansi = document.getElementById("btnEkspansiTransaksi");
   if (btnEkspansi) {
     btnEkspansi.onclick = () => {
@@ -402,11 +406,8 @@ function setupModalAkunManagerLogic() {
   };
   formTambah.onsubmit = function (e) {
     e.preventDefault();
-    const input = document.getElementById("txtNamaAccBaru");
-    const inputVal = input
-      ? input.value
-      : document.getElementById("txtNamaAkunBaru").value;
-    const namaBaru = inputVal
+    const input = document.getElementById("txtNamaAkunBaru");
+    const namaBaru = input.value
       .trim()
       .toUpperCase()
       .replace(/[^A-Z0-9]/g, "");
@@ -417,8 +418,7 @@ function setupModalAkunManagerLogic() {
     }
     listSekarang.push(namaBaru);
     simpanDaftarAkunAplikasi(listSekarang);
-    if (input) input.value = "";
-    else document.getElementById("txtNamaAkunBaru").value = "";
+    input.value = "";
     renderListAkunDiModal();
     setupDropdownFilterAkun();
     ambilDanProsesDataTransaksi();
@@ -426,4 +426,3 @@ function setupModalAkunManagerLogic() {
 }
 
 initDashboard();
-setupModalAkunManagerLogic();

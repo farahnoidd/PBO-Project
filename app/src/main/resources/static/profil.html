@@ -260,5 +260,78 @@
     </div>
 
     <script type="module" src="js/profil.js"></script>
+
+    <div
+      id="modalOtpEmail"
+      class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4"
+    >
+      <div
+        class="bg-white rounded-[28px] max-w-sm w-full p-6 shadow-xl border border-gray-100 text-center space-y-4"
+      >
+        <div
+          class="w-12 h-12 rounded-xl bg-[#b5ead7]/50 text-[#1c4f41] flex items-center justify-center mx-auto"
+        >
+          <span class="material-symbols-outlined text-[24px]"
+            >mark_email_read</span
+          >
+        </div>
+        <div>
+          <h4 class="font-bold text-base text-gray-800 tracking-tight">
+            Verifikasi Email Baru Anda
+          </h4>
+          <p class="text-[11px] text-gray-400 mt-1 leading-relaxed">
+            Kami telah mengirimkan 6 digit kode OTP ke alamat email baru Anda.
+            Silakan periksa kotak masuk atau folder spam.
+          </p>
+        </div>
+
+        <form id="formVerifikasiOtpEmail" class="space-y-3">
+          <div>
+            <label
+              class="block text-left text-[10px] font-bold text-gray-400 uppercase mb-1"
+              >Konfirmasi Password Anda</label
+            >
+            <input
+              type="password"
+              id="txtPasswordVerify"
+              placeholder="Masukkan Password Akun"
+              class="w-full text-xs px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-[#366758] focus:ring-1 focus:ring-[#366758]"
+              required
+            />
+          </div>
+          <div>
+            <label
+              class="block text-left text-[10px] font-bold text-gray-400 uppercase mb-1"
+              >Kode OTP Email Baru</label
+            >
+            <input
+              type="text"
+              id="txtOtpProfil"
+              placeholder="000000"
+              class="w-full text-center tracking-[6px] font-mono font-bold text-sm px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-[#366758] focus:ring-1 focus:ring-[#366758]"
+              required
+              maxlength="6"
+              pattern="[0-9]{6}"
+            />
+          </div>
+          <div class="flex gap-2 pt-2">
+            <button
+              type="button"
+              id="btnBatalOtp"
+              class="flex-1 py-2 bg-gray-100 hover:bg-gray-200 text-gray-600 font-semibold text-xs rounded-xl transition-all"
+            >
+              Batal
+            </button>
+            <button
+              type="submit"
+              id="btnKonfirmasiOtp"
+              class="flex-1 py-2 bg-[#366758] hover:bg-[#1c4f41] text-white font-semibold text-xs rounded-xl shadow-sm transition-all"
+            >
+              Verifikasi & Simpan
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
   </body>
 </html>

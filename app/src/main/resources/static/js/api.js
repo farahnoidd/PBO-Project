@@ -149,9 +149,36 @@ export async function resetPassword(username, otp, newPassword) {
  * @returns {Promise<{ id, username, email, namaLengkap, role, tervalidasi }>}
  */
 export async function getProfil() {
-  return request("/user/profil", {
+  return request("/api/user/profil", {
     method: "GET",
     headers: buildHeaders(),
+  });
+}
+
+/**
+ * Memperbarui data profil (Nama & Email) langsung ke database MySQL.
+ * @param {{ namaLengkap: string, email: string }} payload
+ */
+export async function updateProfil(payload) {
+  return request("/api/user/profil", {
+    method: "PUT",
+    headers: buildHeaders(),
+    body: JSON.stringify(payload),
+  });
+}
+
+/**
+ * Memverifikasi OTP profil menggunakan DTO asli VerifyOtpRequest kelompokmu
+ */
+export async function verifyProfileOtp(usernameStr, passwordStr, otpStr) {
+  return request("/api/user/profil/verify-otp", {
+    method: "POST",
+    headers: buildHeaders(),
+    body: JSON.stringify({
+      username: usernameStr,
+      password: passwordStr,
+      otp: otpStr,
+    }),
   });
 }
 

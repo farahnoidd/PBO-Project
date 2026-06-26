@@ -130,4 +130,17 @@ public class UserDto {
         public Object  getData()            { return data; }
         public void    setData(Object d)    { this.data = d; }
     }
+
+    // Tambahkan class ini di dalam public class UserDto kalian, bro
+    public static class UpdateProfileRequest {
+        private String email;
+        private String namaLengkap;
+
+        // Getters & Setters
+        public String getEmail() { return email; }
+        public void setEmail(String email) { this.email = email; }
+
+        public String getNamaLengkap() { return namaLengkap; }
+        public void setNamaLengkap(String namaLengkap) { this.namaLengkap = namaLengkap; }
+    }
 }
