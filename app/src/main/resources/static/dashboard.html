@@ -1,108 +1,198 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Keuangan</title>
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Dashboard - FinanceBuddy</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f6f9;
-            margin: 0;
-            padding: 20px;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        h1 {
-            color: #333;
-            margin-bottom: 20px;
-        }
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
-        .card {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        }
-        .card h3 {
-            margin-top: 0;
-            color: #555;
-            border-bottom: 2px solid #eee;
-            padding-bottom: 10px;
-        }
-        .chart-container {
-            position: relative;
-            width: 100%;
-            height: 300px;
-        }
-    </style>
-</head>
-<body>
-
-    <div class="container">
-        <h1>Dashboard Keuangan</h1>
-        
-        <div class="grid-container">
-            <div class="card">
-                <h3>Visualisasi Alokasi Pengeluaran (Donut Chart)</h3>
-                <div class="chart-container">
-                    <canvas id="donutChart"></canvas>
-                </div>
-            </div>
-
-            <div class="card">
-                <h3>Laporan Tren Keuangan (Bar Chart)</h3>
-                <div class="chart-container">
-                    <canvas id="barChart"></canvas>
-                </div>
-            </div>
+  </head>
+  <body class="bg-[#faf9f8] text-[#1a1c1c] font-sans antialiased">
+    <div class="relative flex min-h-screen w-full flex-col lg:flex-row">
+      <!-- Sidebar Navigation -->
+      <nav
+        class="hidden md:flex flex-col py-6 px-4 bg-white shadow-sm h-screen w-64 fixed left-0 top-0 z-20"
+      >
+        <div class="flex items-center gap-3 px-2 py-2 mb-2">
+          <div
+            class="w-10 h-10 rounded-xl bg-[#b5ead7] flex items-center justify-center"
+          >
+            <span class="material-symbols-outlined text-xl text-[#1c4f41]"
+              >account_balance_wallet</span
+            >
+          </div>
+          <div>
+            <h1
+              class="text-[20px] font-bold text-[#366758] tracking-tight leading-none"
+            >
+              FinanceBuddy
+            </h1>
+            <p class="text-[12px] text-[#404945] mt-1">Student Edition</p>
+          </div>
         </div>
+        <div class="flex-1 space-y-1 mt-6">
+          <!-- Dashboard Aktif (Hijau Khas) -->
+          <a
+            class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#366758] font-bold bg-[#b5ead7]/20 border-r-4 border-[#366758] transition-colors"
+            href="dashboard.html"
+          >
+            <span class="material-symbols-outlined text-[20px]">dashboard</span>
+            Dashboard
+          </a>
+          <a
+            class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#404945] hover:bg-gray-100 transition-colors"
+            href="pemasukan.html"
+          >
+            <span class="material-symbols-outlined text-[20px]"
+              >account_balance_wallet</span
+            >
+            Pemasukan
+          </a>
+          <a
+            class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#404945] hover:bg-gray-100 transition-colors"
+            href="pengeluaran.html"
+          >
+            <span class="material-symbols-outlined text-[20px]">payments</span>
+            Pengeluaran
+          </a>
+          <a
+            class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#404945] hover:bg-gray-100 transition-colors"
+            href="laporan.html"
+          >
+            <span class="material-symbols-outlined text-[20px]"
+              >assessment</span
+            >
+            Laporan
+          </a>
+          <a
+            class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#404945] hover:bg-gray-100 transition-colors"
+            href="profil.html"
+          >
+            <span class="material-symbols-outlined text-[20px]">person</span>
+            Profil
+          </a>
+        </div>
+        <button
+          id="btnLogout"
+          class="text-left flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg font-medium transition-colors"
+        >
+          <span class="material-symbols-outlined text-[20px]">logout</span>
+          Logout
+        </button>
+      </nav>
+
+      <!-- Main Content -->
+      <main class="flex-1 md:ml-64 p-6 space-y-6">
+        <header class="flex items-center justify-between border-b pb-4">
+          <h2 class="text-[24px] font-semibold">Dashboard Utama</h2>
+        </header>
+
+        <!-- 3 Rangkuman Kartu Atas -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div
+            class="bg-white p-6 rounded-[24px] shadow-sm border border-gray-100"
+          >
+            <p class="text-xs font-medium text-gray-500">Total Saldo</p>
+            <h3 id="txtTotalSaldo" class="text-[28px] font-bold mt-2">Rp 0</h3>
+          </div>
+          <div
+            class="bg-white p-6 rounded-[24px] shadow-sm border border-gray-100"
+          >
+            <p class="text-xs font-medium text-gray-500">Pemasukan Bulan Ini</p>
+            <h3
+              id="txtTotalPemasukan"
+              class="text-[24px] font-bold text-green-600 mt-2"
+            >
+              Rp 0
+            </h3>
+          </div>
+          <div
+            class="bg-white p-6 rounded-[24px] shadow-sm border border-gray-100"
+          >
+            <p class="text-xs font-medium text-gray-500">
+              Pengeluaran Bulan Ini
+            </p>
+            <h3
+              id="txtTotalPengeluaran"
+              class="text-[24px] font-bold text-red-600 mt-2"
+            >
+              Rp 0
+            </h3>
+          </div>
+        </div>
+
+        <!-- Tombol Aksi Cepat -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <button
+            onclick="window.location.href = 'pemasukan.html'"
+            class="py-3 bg-[#366758] text-white rounded-xl font-semibold shadow-sm hover:bg-[#1c4f41] transition-colors"
+          >
+            + Tambah Pemasukan
+          </button>
+          <button
+            onclick="window.location.href = 'pengeluaran.html'"
+            class="py-3 bg-[#b5ead7]/40 text-[#1c4f41] rounded-xl font-semibold shadow-sm hover:bg-[#b5ead7]/60 transition-colors"
+          >
+            + Tambah Pengeluaran
+          </button>
+        </div>
+
+        <!-- Section Grafik Kontainer -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div
+            class="bg-white p-6 rounded-[24px] border border-gray-100 shadow-sm"
+          >
+            <h4 class="font-semibold text-sm mb-4">Pengeluaran per Kategori</h4>
+            <div class="h-56"><canvas id="chartKategori"></canvas></div>
+          </div>
+          <div
+            class="bg-white p-6 rounded-[24px] border border-gray-100 shadow-sm"
+          >
+            <h4 class="font-semibold text-sm mb-4">Pemasukan vs Pengeluaran</h4>
+            <div class="h-56"><canvas id="chartTren"></canvas></div>
+          </div>
+        </div>
+
+        <!-- Tabel Riwayat Terakhir -->
+        <div
+          class="bg-white rounded-[24px] border border-gray-100 shadow-sm overflow-hidden"
+        >
+          <div class="p-6 border-b flex justify-between items-center">
+            <h3 class="font-semibold">Riwayat Transaksi Terakhir</h3>
+            <a
+              href="laporan.html"
+              class="text-xs text-[#366758] font-semibold hover:underline"
+              >Lihat Semua</a
+            >
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left">
+              <thead>
+                <tr class="bg-gray-50 text-gray-500 text-[12px] border-b">
+                  <th class="py-3 px-6">Tanggal</th>
+                  <th class="py-3 px-6">Deskripsi</th>
+                  <th class="py-3 px-6">Kategori</th>
+                  <th class="py-3 px-6">Akun</th>
+                  <th class="py-3 px-6">Jumlah</th>
+                </tr>
+              </thead>
+              <tbody id="listTransaksiTerakhir" class="text-[14px]"></tbody>
+            </table>
+          </div>
+        </div>
+      </main>
     </div>
 
-    <script>
-        async function fetchDashboardData() {
-            try {
-                const token = localStorage.getItem('token') || localStorage.getItem('jwt') || localStorage.getItem('accessToken'); 
-
-                if (!token) {
-                    console.warn("Token tidak ditemukan, silahkan login terlebih dahulu.");
-                    return;
-                }
-
-                const response = await fetch('/api/report/dashboard', {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': 'Bearer ' + token,
-                        'Content-Type': 'application/json'
-                    }
-                });
-                
-                if (!response.ok) {
-                    throw new Error('Gagal mengambil data riil dari backend. Status: ' + response.status);
-                }
-
-                const data = await response.json(); 
-                
-                barChart.data.datasets[0].data = [data.totalIncome];
-                barChart.data.datasets[1].data = [data.totalExpense];
-                
-                barChart.update();
-
-                console.log("Data riil database sukses masuk ke grafik:", data);
-            } catch (error) {
-                console.error("Error saat fetch data riil:", error);
-            }
-        }
-
-        window.onload = fetchDashboardData;
-    </script>
-</body>
+    <script type="module" src="js/dashboard.js"></script>
+  </body>
 </html>

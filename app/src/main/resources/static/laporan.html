@@ -1,187 +1,185 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Laporan Keuangan Bulanan</title>
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Laporan - FinanceBuddy</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f6f9;
-            margin: 0;
-            padding: 20px;
-        }
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-        }
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        h1 {
-            color: #333;
-            margin: 0;
-        }
-        .btn-kembali {
-            background-color: #36a2eb;
-            color: white;
-            text-decoration: none;
-            padding: 10px 15px;
-            border-radius: 5px;
-            font-weight: bold;
-        }
-        .card {
-            background: white;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            margin-bottom: 25px;
-        }
-        .card h3 {
-            margin-top: 0;
-            color: #555;
-            border-bottom: 2px solid #eee;
-            padding-bottom: 10px;
-        }
-        .chart-container {
-            position: relative;
-            width: 100%;
-            height: 350px;
-        }
-        /* Style Tabel Laporan */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-        }
-        th, td {
-            padding: 12px 15px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-        th {
-            background-color: #f8f9fa;
-            color: #555;
-        }
-        .badge-pemasukan {
-            background-color: #2ecc71;
-            color: white;
-            padding: 5px 10px;
-            border-radius: 15px;
-            font-size: 12px;
-        }
-        .badge-pengeluaran {
-            background-color: #e74c3c;
-            color: white;
-            padding: 5px 10px;
-            border-radius: 15px;
-            font-size: 12px;
-        }
-    </style>
-</head>
-<body>
-
-    <div class="container">
-        <div class="header">
-            <h1>Laporan Detail Keuangan</h1>
-            <a href="dashboard.html" class="btn-kembali">← Kembali ke Dashboard</a>
+  </head>
+  <body class="bg-[#faf9f8] text-[#1a1c1c] font-sans antialiased">
+    <div class="relative flex min-h-screen w-full flex-col lg:flex-row">
+      <!-- Sidebar Navigation -->
+      <nav
+        class="hidden md:flex flex-col py-6 px-4 bg-white shadow-sm h-screen w-64 fixed left-0 top-0 z-20"
+      >
+        <div class="flex items-center gap-3 px-2 py-2 mb-2">
+          <div
+            class="w-10 h-10 rounded-xl bg-[#b5ead7] flex items-center justify-center"
+          >
+            <span class="material-symbols-outlined text-xl text-[#1c4f41]"
+              >account_balance_wallet</span
+            >
+          </div>
+          <div>
+            <h1
+              class="text-[20px] font-bold text-[#366758] tracking-tight leading-none"
+            >
+              FinanceBuddy
+            </h1>
+            <p class="text-[12px] text-[#404945] mt-1">Student Edition</p>
+          </div>
         </div>
-        
-        <div class="card">
-            <h3>Grafik Perbandingan Bulanan (Bar Chart)</h3>
-            <div class="chart-container">
-                <canvas id="laporanBarChart"></canvas>
+        <div class="flex-1 space-y-1 mt-6">
+          <a
+            class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#404945] hover:bg-gray-100 transition-colors"
+            href="dashboard.html"
+          >
+            <span class="material-symbols-outlined text-[20px]">dashboard</span>
+            Dashboard
+          </a>
+          <a
+            class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#404945] hover:bg-gray-100 transition-colors"
+            href="pemasukan.html"
+          >
+            <span class="material-symbols-outlined text-[20px]"
+              >account_balance_wallet</span
+            >
+            Pemasukan
+          </a>
+          <a
+            class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#404945] hover:bg-gray-100 transition-colors"
+            href="pengeluaran.html"
+          >
+            <span class="material-symbols-outlined text-[20px]">payments</span>
+            Pengeluaran
+          </a>
+          <!-- Laporan Aktif (Hijau Khas) -->
+          <a
+            class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#366758] font-bold bg-[#b5ead7]/20 border-r-4 border-[#366758] transition-colors"
+            href="laporan.html"
+          >
+            <span class="material-symbols-outlined text-[20px]"
+              >assessment</span
+            >
+            Laporan
+          </a>
+          <a
+            class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#404945] hover:bg-gray-100 transition-colors"
+            href="profil.html"
+          >
+            <span class="material-symbols-outlined text-[20px]">person</span>
+            Profil
+          </a>
+        </div>
+        <button
+          id="btnLogout"
+          class="text-left flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg font-medium transition-colors"
+        >
+          <span class="material-symbols-outlined text-[20px]">logout</span>
+          Logout
+        </button>
+      </nav>
+
+      <!-- Main Content -->
+      <main class="flex-1 md:ml-64 p-6 space-y-6">
+        <header class="flex items-center justify-between border-b pb-4">
+          <h2 class="text-[24px] font-semibold">Laporan Tahunan</h2>
+        </header>
+
+        <!-- 3 Kartu Akumulasi Tahunan -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div
+            class="bg-white p-6 rounded-[24px] border border-gray-100 shadow-sm"
+          >
+            <p class="text-xs text-gray-500">Total Pemasukan Tahunan</p>
+            <h3 id="lblTotalIncome" class="text-[24px] font-bold mt-2">Rp 0</h3>
+          </div>
+          <div
+            class="bg-white p-6 rounded-[24px] border border-gray-100 shadow-sm"
+          >
+            <p class="text-xs text-gray-500">Total Pengeluaran Tahunan</p>
+            <h3 id="lblTotalExpense" class="text-[24px] font-bold mt-2">
+              Rp 0
+            </h3>
+          </div>
+          <div
+            class="bg-white p-6 rounded-[24px] border border-gray-100 shadow-sm"
+          >
+            <p class="text-xs text-gray-500">Tabungan Bersih</p>
+            <h3
+              id="lblNetSavings"
+              class="text-[24px] font-bold text-[#366758] mt-2"
+            >
+              Rp 0
+            </h3>
+          </div>
+        </div>
+
+        <!-- Grafik Histogram Batang -->
+        <div
+          class="bg-white p-6 rounded-[24px] border border-gray-100 shadow-sm"
+        >
+          <h4 class="font-semibold text-sm mb-4">
+            Perbandingan Pemasukan vs Pengeluaran
+          </h4>
+          <div class="h-64"><canvas id="chartBatangLaporan"></canvas></div>
+        </div>
+
+        <!-- Distribusi & Tombol Cetak Dokumen -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div
+            class="bg-white p-6 rounded-[24px] border border-gray-100 shadow-sm"
+          >
+            <h4 class="font-semibold text-sm mb-4">
+              Distribusi Pengeluaran Tahunan
+            </h4>
+            <div class="h-56"><canvas id="chartDonatTahunan"></canvas></div>
+          </div>
+          <div
+            class="bg-white p-6 rounded-[24px] border border-gray-100 shadow-sm flex flex-col justify-between"
+          >
+            <h4 class="font-semibold text-sm mb-4">Ringkasan Statistik</h4>
+            <div class="space-y-4 flex-1 flex flex-col justify-center">
+              <div class="flex justify-between border-b pb-2 text-sm">
+                <span>Kategori Terbesar</span
+                ><span class="font-bold text-[#366758]">Makanan</span>
+              </div>
+              <div class="flex justify-between border-b pb-2 text-sm">
+                <span>Rata-rata Pemasukan Bulanan</span
+                ><span class="font-bold text-gray-700" id="lblAvgIncome"
+                  >Rp 0</span
+                >
+              </div>
             </div>
+            <button
+              onclick="window.print()"
+              class="w-full py-2.5 mt-4 bg-[#366758] text-white font-semibold rounded-xl hover:bg-[#1c4f41] transition-colors shadow-sm flex items-center justify-center gap-2"
+            >
+              <span class="material-symbols-outlined text-[18px]"
+                >download</span
+              >
+              Download Laporan (PDF)
+            </button>
+          </div>
         </div>
-
-        <div class="card">
-            <h3>Detail Riwayat Transaksi</h3>
-            <table>
-                <thead>
-                    /* Kolom disesuaikan dengan struktur database kamu (Categories, Transactions, Users) */
-                    <tr>
-                        <th>Tanggal</th>
-                        <th>Kategori</th>
-                        <th>Keterangan</th>
-                        <th>Tipe</th>
-                        <th>Jumlah (Rp)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>15 Juni 2026</td>
-                        <td>Makanan & Minuman</td>
-                        <td>Beli Makan Siang Ayam Geprek</td>
-                        <td><span class="badge-pengeluaran">Pengeluaran</span></td>
-                        <td><strong>Rp 25.000</strong></td>
-                    </tr>
-                    <tr>
-                        <td>14 Juni 2026</td>
-                        <td>Lain-lain</td>
-                        <td>Transfer Bulanan Orang Tua</td>
-                        <td><span class="badge-pemasukan">Pemasukan</span></td>
-                        <td><strong>Rp 1.5000.000</strong></td>
-                    </tr>
-                    <tr>
-                        <td>12 Juni 2026</td>
-                        <td>Kuliah/Edukasi</td>
-                        <td>Beli Buku Coding Java PBO</td>
-                        <td><span class="badge-pengeluaran">Pengeluaran</span></td>
-                        <td><strong>Rp 120.000</strong></td>
-                    </tr>
-                    <tr>
-                        <td>10 Juni 2026</td>
-                        <td>Transportasi</td>
-                        <td>Isi Bensin Motor</td>
-                        <td><span class="badge-pengeluaran">Pengeluaran</span></td>
-                        <td><strong>Rp 30.000</strong></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+      </main>
     </div>
 
-    <script>
-        // Konfigurasi Chart Batang untuk Halaman Laporan
-        const ctxLaporanBar = document.getElementById('laporanBarChart').getContext('2d');
-        const laporanBarChart = new Chart(ctxLaporanBar, {
-            type: 'bar',
-            data: {
-                labels: ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni'],
-                datasets: [
-                    {
-                        label: 'Total Pemasukan',
-                        data: [1500000, 1700000, 1600000, 2000000, 1850000, 1900000],
-                        backgroundColor: '#2ecc71',
-                        borderRadius: 5
-                    },
-                    {
-                        label: 'Total Pengeluaran',
-                        data: [1200000, 1400000, 1100000, 1500000, 1300000, 1250000],
-                        backgroundColor: '#e74c3c',
-                        borderRadius: 5
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            callback: function(value) {
-                                return 'Rp ' + value.toLocaleString('id-ID');
-                            }
-                        }
-                    }
-                }
-            }
-        });
+    <script type="module" src="js/laporan.js"></script>
+    <script type="module">
+      import { logout } from "./js/api.js";
+      document.getElementById("btnLogout").addEventListener("click", logout);
     </script>
-</body>
+  </body>
 </html>
