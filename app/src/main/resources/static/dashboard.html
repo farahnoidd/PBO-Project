@@ -7,11 +7,11 @@
     <link href="https://fonts.googleapis.com" rel="preconnect" />
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700&display=swap"
       rel="stylesheet"
     />
     <link
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1"
       rel="stylesheet"
     />
     <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
@@ -19,7 +19,6 @@
   </head>
   <body class="bg-[#faf9f8] text-[#1a1c1c] font-sans antialiased">
     <div class="relative flex min-h-screen w-full flex-col lg:flex-row">
-      <!-- Sidebar Navigation -->
       <nav
         class="hidden md:flex flex-col py-6 px-4 bg-white shadow-sm h-screen w-64 fixed left-0 top-0 z-20"
       >
@@ -41,9 +40,8 @@
           </div>
         </div>
         <div class="flex-1 space-y-1 mt-6">
-          <!-- Dashboard Aktif (Hijau Khas) -->
           <a
-            class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#366758] font-bold bg-[#b5ead7]/20 border-r-4 border-[#366758] transition-colors"
+            class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#366758] font-bold bg-[#b5ead7]/20 border-r-4 border-[#366758]"
             href="dashboard.html"
           >
             <span class="material-symbols-outlined text-[20px]">dashboard</span>
@@ -84,113 +82,269 @@
         </div>
         <button
           id="btnLogout"
-          class="text-left flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg font-medium transition-colors"
+          class="w-full text-left flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg font-medium transition-colors"
         >
           <span class="material-symbols-outlined text-[20px]">logout</span>
           Logout
         </button>
       </nav>
 
-      <!-- Main Content -->
       <main class="flex-1 md:ml-64 p-6 space-y-6">
         <header class="flex items-center justify-between border-b pb-4">
-          <h2 class="text-[24px] font-semibold">Dashboard Utama</h2>
+          <h2 class="text-[24px] font-bold text-gray-800">Dashboard Utama</h2>
         </header>
 
-        <!-- 3 Rangkuman Kartu Atas -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div
-            class="bg-white p-6 rounded-[24px] shadow-sm border border-gray-100"
+            class="bg-white p-6 rounded-[24px] border border-gray-100 shadow-sm lg:col-span-2 relative overflow-hidden flex flex-col justify-between min-h-[180px]"
           >
-            <p class="text-xs font-medium text-gray-500">Total Saldo</p>
-            <h3 id="txtTotalSaldo" class="text-[28px] font-bold mt-2">Rp 0</h3>
-          </div>
-          <div
-            class="bg-white p-6 rounded-[24px] shadow-sm border border-gray-100"
-          >
-            <p class="text-xs font-medium text-gray-500">Pemasukan Bulan Ini</p>
-            <h3
-              id="txtTotalPemasukan"
-              class="text-[24px] font-bold text-green-600 mt-2"
+            <div>
+              <p class="text-xs font-medium text-gray-400">Total Saldo</p>
+              <h2
+                id="txtTotalSaldo"
+                class="text-[36px] font-bold mt-1 tracking-tight text-gray-900"
+              >
+                Rp 0
+              </h2>
+              <span
+                class="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full mt-2"
+              >
+                <span class="material-symbols-outlined text-[14px]"
+                  >trending_up</span
+                >
+                +5% vs bulan lalu
+              </span>
+            </div>
+
+            <div class="border-t pt-4 mt-4">
+              <div class="flex items-center justify-between mb-2">
+                <p
+                  class="text-[10px] text-gray-400 uppercase font-bold tracking-wider"
+                >
+                  Saldo Per Akun
+                </p>
+                <button
+                  id="btnBukaModalAkun"
+                  class="text-[11px] font-bold text-[#366758] hover:text-[#1c4f41] flex items-center gap-0.5 border border-gray-200 px-2.5 py-1 bg-gray-50 hover:bg-gray-100 rounded-lg shadow-sm transition-all"
+                >
+                  <span class="material-symbols-outlined text-[14px]"
+                    >settings_accessibility</span
+                  >
+                  Kelola Dompet
+                </button>
+              </div>
+              <div
+                id="containerAkunDinamis"
+                class="grid gap-3 text-center text-[10px] text-gray-400 font-semibold uppercase"
+              ></div>
+            </div>
+            <span
+              class="material-symbols-outlined text-[90px] text-gray-100/70 absolute right-6 top-6 select-none fill-none"
+              >savings</span
             >
-              Rp 0
-            </h3>
           </div>
-          <div
-            class="bg-white p-6 rounded-[24px] shadow-sm border border-gray-100"
-          >
-            <p class="text-xs font-medium text-gray-500">
-              Pengeluaran Bulan Ini
-            </p>
-            <h3
-              id="txtTotalPengeluaran"
-              class="text-[24px] font-bold text-red-600 mt-2"
+
+          <div class="flex flex-col gap-4">
+            <div
+              class="bg-white p-5 rounded-[22px] border border-gray-100 shadow-sm flex items-center gap-4 flex-1"
             >
-              Rp 0
-            </h3>
+              <div
+                class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600"
+              >
+                <span class="material-symbols-outlined">arrow_downward</span>
+              </div>
+              <div>
+                <p class="text-[11px] text-gray-400 font-medium">
+                  Pemasukan Bulan Ini
+                </p>
+                <h4
+                  id="txtTotalPemasukan"
+                  class="text-[20px] font-bold text-emerald-600 mt-0.5"
+                >
+                  Rp 0
+                </h4>
+              </div>
+            </div>
+            <div
+              class="bg-white p-5 rounded-[22px] border border-gray-100 shadow-sm flex items-center gap-4 flex-1"
+            >
+              <div
+                class="w-10 h-10 rounded-xl bg-rose-50 flex items-center justify-center text-rose-500"
+              >
+                <span class="material-symbols-outlined">arrow_upward</span>
+              </div>
+              <div>
+                <p class="text-[11px] text-gray-400 font-medium">
+                  Pengeluaran Bulan Ini
+                </p>
+                <h4
+                  id="txtTotalPengeluaran"
+                  class="text-[20px] font-bold text-rose-600 mt-0.5"
+                >
+                  Rp 0
+                </h4>
+              </div>
+            </div>
           </div>
         </div>
 
-        <!-- Tombol Aksi Cepat -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <button
-            onclick="window.location.href = 'pemasukan.html'"
-            class="py-3 bg-[#366758] text-white rounded-xl font-semibold shadow-sm hover:bg-[#1c4f41] transition-colors"
+        <div class="flex items-center gap-4">
+          <a
+            href="pemasukan.html"
+            class="px-5 py-3 bg-[#366758] hover:bg-[#1c4f41] text-white font-semibold rounded-xl text-xs flex items-center gap-2 shadow-sm transition-all"
           >
-            + Tambah Pemasukan
-          </button>
-          <button
-            onclick="window.location.href = 'pengeluaran.html'"
-            class="py-3 bg-[#b5ead7]/40 text-[#1c4f41] rounded-xl font-semibold shadow-sm hover:bg-[#b5ead7]/60 transition-colors"
+            <span class="material-symbols-outlined text-[16px]">add</span>
+            Tambah Pemasukan
+          </a>
+          <a
+            href="pengeluaran.html"
+            class="px-5 py-3 bg-[#c7ebd9] hover:bg-[#b5ead7] text-[#1c4f41] font-semibold rounded-xl text-xs flex items-center gap-2 shadow-sm transition-all"
           >
-            + Tambah Pengeluaran
-          </button>
+            <span class="material-symbols-outlined text-[16px]">add</span>
+            Tambah Pengeluaran
+          </a>
         </div>
 
-        <!-- Section Grafik Kontainer -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div
             class="bg-white p-6 rounded-[24px] border border-gray-100 shadow-sm"
           >
-            <h4 class="font-semibold text-sm mb-4">Pengeluaran per Kategori</h4>
-            <div class="h-56"><canvas id="chartKategori"></canvas></div>
+            <h4 class="font-bold text-sm text-gray-800 mb-4">
+              Pengeluaran per Kategori
+            </h4>
+            <div class="h-56 relative flex items-center justify-center">
+              <canvas id="chartKategori"></canvas>
+            </div>
           </div>
           <div
             class="bg-white p-6 rounded-[24px] border border-gray-100 shadow-sm"
           >
-            <h4 class="font-semibold text-sm mb-4">Pemasukan vs Pengeluaran</h4>
+            <h4 class="font-bold text-sm text-gray-800 mb-4">
+              Pemasukan vs Pengeluaran
+            </h4>
             <div class="h-56"><canvas id="chartTren"></canvas></div>
           </div>
         </div>
 
-        <!-- Tabel Riwayat Terakhir -->
         <div
           class="bg-white rounded-[24px] border border-gray-100 shadow-sm overflow-hidden"
         >
-          <div class="p-6 border-b flex justify-between items-center">
-            <h3 class="font-semibold">Riwayat Transaksi Terakhir</h3>
-            <a
-              href="laporan.html"
-              class="text-xs text-[#366758] font-semibold hover:underline"
-              >Lihat Semua</a
-            >
+          <div
+            class="p-5 border-b border-gray-50 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+          >
+            <div>
+              <h4 class="font-bold text-sm text-gray-800">Riwayat Transaksi</h4>
+              <p class="text-[11px] text-gray-400 mt-0.5">
+                Memantau seluruh arus kas keluar masuk finansial Anda.
+              </p>
+            </div>
+
+            <div class="flex items-center gap-2 self-end">
+              <select
+                id="filterJenisKas"
+                class="px-3 py-1.5 bg-gray-50 border border-gray-200 rounded-xl text-[11px] font-semibold text-gray-600 focus:ring-[#366758] focus:border-[#366758]"
+              >
+                <option value="ALL">Semua Tipe</option>
+                <option value="INCOME">Pemasukan</option>
+                <option value="EXPENSE">Pengeluaran</option>
+              </select>
+              <select
+                id="filterDompetAkun"
+                class="px-3 py-1.5 bg-gray-50 border border-gray-200 rounded-xl text-[11px] font-semibold text-gray-600 focus:ring-[#366758] focus:border-[#366758]"
+              ></select>
+            </div>
           </div>
+
           <div class="overflow-x-auto">
-            <table class="w-full text-left">
+            <table
+              class="w-full text-left text-xs border-collapse table-fixed min-w-[600px]"
+            >
               <thead>
-                <tr class="bg-gray-50 text-gray-500 text-[12px] border-b">
-                  <th class="py-3 px-6">Tanggal</th>
-                  <th class="py-3 px-6">Deskripsi</th>
-                  <th class="py-3 px-6">Kategori</th>
-                  <th class="py-3 px-6">Akun</th>
-                  <th class="py-3 px-6">Jumlah</th>
+                <tr
+                  class="bg-gray-50 text-gray-400 font-semibold uppercase tracking-wider border-b border-gray-100"
+                >
+                  <th class="px-6 py-3.5 w-[20%]">Tanggal</th>
+                  <th class="px-6 py-3.5 w-[35%]">Deskripsi</th>
+                  <th class="px-6 py-3.5 w-[18%]">Kategori</th>
+                  <th class="px-6 py-3.5 w-[12%]">Akun</th>
+                  <th class="px-6 py-3.5 text-right w-[15%]">Jumlah</th>
                 </tr>
               </thead>
-              <tbody id="listTransaksiTerakhir" class="text-[14px]"></tbody>
+              <tbody
+                id="listTransaksiTerakhir"
+                class="divide-y divide-gray-50 bg-white text-gray-700"
+              ></tbody>
             </table>
+          </div>
+
+          <div class="p-4 bg-gray-50/50 border-t border-gray-50 text-center">
+            <button
+              id="btnEkspansiTransaksi"
+              class="px-4 py-2 bg-white hover:bg-gray-50 text-gray-700 hover:text-gray-900 border border-gray-200 rounded-xl text-xs font-semibold shadow-sm inline-flex items-center gap-1 transition-all"
+            >
+              <span id="txtBtnEkspansi">Tampilkan Lebih Banyak</span>
+              <span
+                id="iconBtnEkspansi"
+                class="material-symbols-outlined text-[16px] transition-transform duration-200"
+                >keyboard_arrow_down</span
+              >
+            </button>
           </div>
         </div>
       </main>
+    </div>
+
+    <div
+      id="modalKelolaAkun"
+      class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4"
+    >
+      <div
+        class="bg-white rounded-[28px] max-w-sm w-full p-6 shadow-xl border border-gray-100 space-y-4"
+      >
+        <div class="flex items-center justify-between border-b pb-3">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-[#366758] text-xl"
+              >account_balance_wallet</span
+            >
+            <h4 class="font-bold text-sm text-gray-800">
+              Manajemen Dompet Akun
+            </h4>
+          </div>
+          <button
+            id="btnTutupModalAkun"
+            class="text-gray-400 hover:text-gray-600 font-bold text-xl leading-none"
+          >
+            &times;
+          </button>
+        </div>
+        <form id="formTambahAkunBaru" class="flex gap-2">
+          <input
+            type="text"
+            id="txtNamaAkunBaru"
+            placeholder="Nama wallet baru (cth: OVO)"
+            class="flex-1 px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs outline-none focus:border-[#366758] focus:ring-1 focus:ring-[#366758]"
+            required
+            maxlength="12"
+          />
+          <button
+            type="submit"
+            class="px-4 py-2 bg-[#366758] text-white text-xs font-semibold rounded-xl"
+          >
+            Tambah
+          </button>
+        </form>
+        <div class="space-y-1">
+          <p
+            class="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-2"
+          >
+            Daftar Akun Aktif:
+          </p>
+          <div
+            id="listAkunManager"
+            class="space-y-2 max-h-48 overflow-y-auto pr-1 divide-y divide-gray-50"
+          ></div>
+        </div>
+      </div>
     </div>
 
     <script type="module" src="js/dashboard.js"></script>

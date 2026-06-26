@@ -50,6 +50,8 @@ public class DataInitializer implements CommandLineRunner {
 
         ensureCategoryExists(allCategories, "MAKANAN", "EXPENSE");
         ensureCategoryExists(allCategories, "TRANSPORTASI", "EXPENSE");
+        ensureCategoryExists(allCategories, "BELAJAR", "EXPENSE");
+        ensureCategoryExists(allCategories, "KOST", "EXPENSE");
         ensureCategoryExists(allCategories, "HIBURAN", "EXPENSE");
         ensureCategoryExists(allCategories, "TAGIHAN", "EXPENSE");
         ensureCategoryExists(allCategories, "LAINNYA_PENGELUARAN", "EXPENSE");

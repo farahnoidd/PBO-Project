@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="id">
   <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
@@ -7,18 +7,17 @@
     <link href="https://fonts.googleapis.com" rel="preconnect" />
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700&display=swap"
       rel="stylesheet"
     />
     <link
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1"
       rel="stylesheet"
     />
     <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
   </head>
   <body class="bg-[#faf9f8] text-[#1a1c1c] font-sans antialiased">
     <div class="relative flex min-h-screen w-full flex-col lg:flex-row">
-      <!-- Sidebar Navigation -->
       <nav
         class="hidden md:flex flex-col py-6 px-4 bg-white shadow-sm h-screen w-64 fixed left-0 top-0 z-20"
       >
@@ -72,9 +71,8 @@
             >
             Laporan
           </a>
-          <!-- Profil Aktif (Hijau Khas) -->
           <a
-            class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#366758] font-bold bg-[#b5ead7]/20 border-r-4 border-[#366758] transition-colors"
+            class="flex items-center gap-3 px-4 py-3 rounded-lg text-[#366758] font-bold bg-[#b5ead7]/20 border-r-4 border-[#366758]"
             href="profil.html"
           >
             <span class="material-symbols-outlined text-[20px]">person</span>
@@ -83,98 +81,184 @@
         </div>
         <button
           id="btnLogout"
-          class="text-left flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg font-medium transition-colors"
+          class="w-full text-left flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg font-medium transition-colors"
         >
           <span class="material-symbols-outlined text-[20px]">logout</span>
           Logout
         </button>
       </nav>
 
-      <!-- Main Content -->
-      <main class="flex-1 md:ml-64 p-6 flex flex-col lg:flex-row gap-6">
-        <!-- Form Pengolahan Data Profil -->
-        <div
-          class="flex-1 bg-white p-8 rounded-[24px] border border-gray-100 shadow-sm space-y-6"
-        >
-          <div>
-            <h2 class="text-xl font-bold" id="lblNamaUser">Memuat nama...</h2>
-            <p class="text-sm text-gray-500" id="lblEmailUser">
-              loading@universitas.edu
-            </p>
+      <main class="flex-1 md:ml-64 p-6 space-y-6">
+        <header class="border-b pb-4">
+          <h2 class="text-[24px] font-bold text-gray-800">Profil</h2>
+          <p class="text-xs text-gray-400 mt-1">
+            Kelola informasi pribadi dan pengaturan akun Anda.
+          </p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+          <div
+            class="bg-white p-6 rounded-[24px] border border-gray-100 shadow-sm lg:col-span-2 space-y-6"
+          >
+            <div class="flex items-center gap-5 border-b border-gray-50 pb-5">
+              <div
+                class="relative w-20 h-20 bg-gray-100 rounded-full border border-gray-200 group overflow-hidden"
+              >
+                <img
+                  src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150"
+                  alt="avatar"
+                  class="w-full h-full object-cover"
+                />
+                <div
+                  class="absolute bottom-0 right-0 w-6 h-6 bg-[#366758] rounded-full flex items-center justify-center text-white border-2 border-white shadow"
+                >
+                  <span class="material-symbols-outlined text-[14px]"
+                    >photo_camera</span
+                  >
+                </div>
+              </div>
+              <div class="space-y-0.5">
+                <h4
+                  id="lblNamaUser"
+                  class="font-bold text-lg text-gray-900 leading-tight"
+                >
+                  Memuat nama...
+                </h4>
+                <p id="lblEmailUser" class="text-xs text-gray-400 font-medium">
+                  Memuat email...
+                </p>
+                <button
+                  type="button"
+                  class="px-3 py-1.5 bg-gray-50 hover:bg-gray-100 text-gray-600 text-[11px] font-bold rounded-lg border border-gray-200 mt-2 shadow-sm transition-colors"
+                >
+                  Ubah Foto
+                </button>
+              </div>
+            </div>
+
+            <form id="formProfil" class="space-y-4">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs font-semibold text-gray-500 mb-1"
+                    >Nama Lengkap</label
+                  >
+                  <div class="relative rounded-xl shadow-sm">
+                    <span
+                      class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400 select-none"
+                    >
+                      <span class="material-symbols-outlined text-[18px]"
+                        >person</span
+                      >
+                    </span>
+                    <input
+                      type="text"
+                      id="txtNamaLengkap"
+                      class="w-full pl-9 pr-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs outline-none focus:border-[#366758] focus:ring-1 focus:ring-[#366758]"
+                      required
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-gray-500 mb-1"
+                    >Email</label
+                  >
+                  <div class="relative rounded-xl shadow-sm">
+                    <span
+                      class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400 select-none"
+                    >
+                      <span class="material-symbols-outlined text-[18px]"
+                        >mail</span
+                      >
+                    </span>
+                    <input
+                      type="email"
+                      id="txtEmail"
+                      class="w-full pl-9 pr-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs outline-none focus:border-[#366758] focus:ring-1 focus:ring-[#366758]"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                <div>
+                  <label class="block text-xs font-semibold text-gray-500 mb-1"
+                    >Target Tabungan Bulanan (Rp)</label
+                  >
+                  <input
+                    type="number"
+                    id="txtTargetTabungan"
+                    class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs outline-none focus:border-[#366758] focus:ring-1 focus:ring-[#366758]"
+                    required
+                  />
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-gray-500 mb-1"
+                    >Batas Pengeluaran Bulanan / Limit Budget (Rp)</label
+                  >
+                  <input
+                    type="number"
+                    id="txtBatasBudget"
+                    class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs outline-none focus:border-[#366758] focus:ring-1 focus:ring-[#366758]"
+                    required
+                  />
+                </div>
+              </div>
+
+              <p class="text-[11px] text-gray-400 font-medium">
+                Target ini membantu kami menyesuaikan rekomendasi dan batasan
+                anggaran Anda di halaman rincian.
+              </p>
+
+              <div class="flex justify-end border-t border-gray-50 pt-4">
+                <button
+                  type="submit"
+                  class="px-6 py-2.5 bg-[#366758] hover:bg-[#1c4f41] text-white font-semibold rounded-xl text-xs shadow-sm transition-all"
+                >
+                  Simpan Perubahan
+                </button>
+              </div>
+            </form>
           </div>
 
-          <form id="formProfil" class="space-y-4">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div class="flex flex-col gap-1.5">
-                <label class="text-xs font-medium text-gray-600"
-                  >Nama Lengkap</label
-                >
-                <input
-                  type="text"
-                  id="txtNamaLengkap"
-                  class="w-full px-4 py-2 border rounded-xl bg-gray-50 focus:border-[#366758] outline-none"
-                />
-              </div>
-              <div class="flex flex-col gap-1.5">
-                <label class="text-xs font-medium text-gray-600"
-                  >Email Akademik</label
-                >
-                <input
-                  type="email"
-                  id="txtEmail"
-                  class="w-full px-4 py-2 border rounded-xl bg-gray-50 focus:border-[#366758] outline-none"
-                />
-              </div>
-            </div>
-            <div class="flex flex-col gap-1.5">
-              <label class="text-xs font-medium text-gray-600"
-                >Target Tabungan Bulanan (Rp)</label
+          <div class="space-y-4">
+            <div
+              class="bg-white p-5 rounded-[24px] border border-gray-100 shadow-sm text-center space-y-4 flex flex-col justify-center min-h-[220px]"
+            >
+              <div
+                class="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mx-auto"
               >
-              <input
-                type="number"
-                id="txtTargetTabungan"
-                class="w-full px-4 py-2 border rounded-xl bg-gray-50 focus:border-[#366758] outline-none"
-              />
-              <p class="text-[11px] text-gray-400">
-                Target ini digunakan instrumen dashboard untuk memantau
-                pencapaian target keuangan.
-              </p>
+                <span class="material-symbols-outlined text-[20px]"
+                  >chat_bubble</span
+                >
+              </div>
+              <div class="space-y-1">
+                <h4 class="font-bold text-sm text-gray-800">Pusat Bantuan</h4>
+                <p class="text-xs text-gray-400 px-2">
+                  Mengalami masalah dengan aplikasi atau ada pertanyaan seputar
+                  fitur?
+                </p>
+              </div>
+              <button
+                type="button"
+                class="w-full py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold text-xs rounded-xl border border-gray-200/50 shadow-sm transition-all flex items-center justify-center gap-1"
+              >
+                <span class="material-symbols-outlined text-[16px]">forum</span>
+                Hubungi Admin
+              </button>
             </div>
-            <button
-              type="submit"
-              class="px-6 py-2 bg-[#366758] text-white font-semibold rounded-xl hover:bg-[#1c4f41] transition-colors shadow-sm"
-            >
-              Simpan Perubahan
-            </button>
-          </form>
-        </div>
 
-        <!-- Hubungi Admin Sekunder Card -->
-        <div
-          class="w-full lg:w-80 bg-white p-6 rounded-[24px] border border-gray-100 shadow-sm h-fit"
-        >
-          <h4 class="font-semibold text-sm mb-2">Pusat Bantuan</h4>
-          <p class="text-xs text-gray-500 mb-4">
-            Mengalami kendala sinkronisasi data atau token tidak tervalidasi
-            oleh sistem?
-          </p>
-          <button
-            onclick="alert('Hubungi Admin Kelompok IT Universitas')"
-            class="w-full py-2.5 bg-gray-100 hover:bg-gray-200 font-semibold rounded-xl text-sm transition-colors flex items-center justify-center gap-2"
-          >
-            <span class="material-symbols-outlined text-[18px]"
-              >support_agent</span
+            <div
+              class="text-center text-[11px] text-gray-300 font-mono tracking-tight leading-relaxed"
             >
-            Hubungi Admin
-          </button>
+              FinanceBuddy v1.0.4 (Student Edition)<br />Dibuat dengan 💖 untuk
+              mahasiswa.
+            </div>
+          </div>
         </div>
       </main>
     </div>
 
     <script type="module" src="js/profil.js"></script>
-    <script type="module">
-      import { logout } from "./js/api.js";
-      document.getElementById("btnLogout").addEventListener("click", logout);
-    </script>
   </body>
 </html>
