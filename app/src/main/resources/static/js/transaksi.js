@@ -370,7 +370,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     btnLogout.addEventListener("click", (e) => {
       e.preventDefault();
       if (confirm("Apakah Anda yakin ingin keluar dari FinanceBuddy?"))
-        logout();
+        localStorage.removeItem("fb_current_limit_anggaran");
+      localStorage.removeItem("fb_current_target_tabungan");
+      logout();
     });
   }
 
