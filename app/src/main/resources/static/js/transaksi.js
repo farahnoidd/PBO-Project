@@ -1,6 +1,6 @@
 /**
  * File: js/transaksi.js
- * 💡 FITUR TERBARU: Kalender Dinamis + Integrasi Kategori Custom dari Database
+ * 💡 FITUR TERBARU: Kalender Dinamis + Kategori Custom DB + Tren vs Bulan Lalu Dinamis
  */
 import {
   tambahPemasukan,
@@ -8,7 +8,7 @@ import {
   tambahPengeluaran,
   getRiwayatPengeluaran,
   getProfil,
-  getKategori, // 💡 TAMBAHAN: Import fungsi tarik API kategori
+  getKategori,
   tambahKategori,
   updateKategori,
   deleteKategori,
@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.error(e);
   }
 
-  // 💡 3. INTEGRASI KATEGORI DINAMIS DARI MYSQL
+  // 3. INTEGRASI KATEGORI DINAMIS DARI MYSQL
   try {
     if (selectKategori) {
       const dbKategori = await getKategori();
@@ -94,7 +94,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  // 💡 5. GENERATOR WARNA DINAMIS UNTUK KATEGORI BARU
+  // 5. GENERATOR WARNA DINAMIS UNTUK KATEGORI BARU
   const mapWarnaKategori = {
     BONUS: { bg: "#c7ebd9", text: "#133a2e" },
     UANG_SAKU: { bg: "#b5ead7", text: "#164436" },
@@ -123,10 +123,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       .trim()
       .replace(/\s+/g, "_");
 
-    // Cek kalau warna udah ada di template default
     if (mapWarnaKategori[key]) return mapWarnaKategori[key];
 
-    // Kalau ini kategori buatan user baru, hasilkan warna konsisten pakai rumus algoritma Hash
     let hash = 0;
     for (let i = 0; i < key.length; i++) {
       hash = key.charCodeAt(i) + ((hash << 5) - hash);
@@ -153,6 +151,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     return tanggalStr;
   };
 
+  // 💡 JURUS INTI: Memuat riwayat tabel dengan filter bulan berjalan + MoM Trend Analisis
   async function muatRiwayatTabel() {
     const tbody = document.getElementById("tabelTransaksiBody");
     if (!tbody) return;
@@ -164,40 +163,104 @@ document.addEventListener("DOMContentLoaded", async () => {
         : await getRiwayatPengeluaran();
       tbody.innerHTML = "";
 
-      let akumulasiTotal = 0;
-      let rataRata = 0;
-      let jumlahItem = dataRiwayat ? dataRiwayat.length : 0;
+      let totalBulanIni = 0;
+      let totalBulanLalu = 0;
+      let jumlahItemBulanIni = 0;
       const mapKategoriDinamis = {};
       const trenMingguan = Array(4).fill(0);
 
-      if (dataRiwayat && jumlahItem > 0) {
+      const sekarang = new Date();
+      const bulanIni = sekarang.getMonth();
+      const tahunIni = sekarang.getFullYear();
+
+      let bulanLalu = bulanIni - 1;
+      let tahunLalu = tahunIni;
+      if (bulanLalu < 0) {
+        bulanLalu = 11;
+        tahunLalu--;
+      }
+
+      if (dataRiwayat && dataRiwayat.length > 0) {
         dataRiwayat.forEach((item) => {
           const nominalNilai = item.nominal || 0;
-          akumulasiTotal += nominalNilai;
-          const namaKategoriBersih = item.kategori
-            ? item.kategori.trim().toUpperCase()
-            : "LAINNYA";
-          mapKategoriDinamis[namaKategoriBersih] =
-            (mapKategoriDinamis[namaKategoriBersih] || 0) + nominalNilai;
+          const tglItem = new Date(item.tanggal);
+          const itemBulan = tglItem.getMonth();
+          const itemTahun = tglItem.getFullYear();
 
-          if (item.tanggal) {
-            const hari = new Date(item.tanggal).getDate();
+          // Filter data khusus Bulan INI
+          if (itemBulan === bulanIni && itemTahun === tahunIni) {
+            totalBulanIni += nominalNilai;
+            jumlahItemBulanIni++;
+            const namaKategoriBersih = item.kategori
+              ? item.kategori.trim().toUpperCase()
+              : "LAINNYA";
+            mapKategoriDinamis[namaKategoriBersih] =
+              (mapKategoriDinamis[namaKategoriBersih] || 0) + nominalNilai;
+
+            const hari = tglItem.getDate();
             if (hari <= 7) trenMingguan[0] += nominalNilai;
             else if (hari <= 14) trenMingguan[1] += nominalNilai;
             else if (hari <= 21) trenMingguan[2] += nominalNilai;
             else trenMingguan[3] += nominalNilai;
           }
+          // Filter data khusus Bulan LALU
+          else if (itemBulan === bulanLalu && itemTahun === tahunLalu) {
+            totalBulanLalu += nominalNilai;
+          }
         });
-        rataRata = Math.round(akumulasiTotal / jumlahItem);
       }
+
+      // RUMUS KALKULASI PERSENTASE TREN "VS BULAN LALU"
+      let persenTren = 0;
+      if (totalBulanLalu > 0) {
+        persenTren = ((totalBulanIni - totalBulanLalu) / totalBulanLalu) * 100;
+      } else if (totalBulanIni > 0) {
+        persenTren = 100;
+      }
+
+      const trenDibulatkan = Math.abs(Math.round(persenTren));
+      const wadahTren = isPemasukan
+        ? document.getElementById("wadahTrenPemasukan")
+        : document.getElementById("wadahTrenPengeluaran");
+      const ikonTren = isPemasukan
+        ? document.getElementById("ikonTrenPemasukan")
+        : document.getElementById("ikonTrenPengeluaran");
+      const teksTren = isPemasukan
+        ? document.getElementById("teksTrenPemasukan")
+        : document.getElementById("teksTrenPengeluaran");
+
+      if (wadahTren && ikonTren && teksTren) {
+        wadahTren.classList.remove("hidden");
+        let warnaKelas = "text-gray-400";
+
+        if (persenTren > 0) {
+          teksTren.innerText = `+${trenDibulatkan}%`;
+          ikonTren.innerText = "trending_up";
+          warnaKelas = isPemasukan ? "text-emerald-500" : "text-rose-500";
+        } else if (persenTren < 0) {
+          teksTren.innerText = `-${trenDibulatkan}%`;
+          ikonTren.innerText = "trending_down";
+          warnaKelas = isPemasukan ? "text-rose-500" : "text-emerald-500";
+        } else {
+          teksTren.innerText = `0%`;
+          ikonTren.innerText = "trending_flat";
+        }
+        ikonTren.className = `material-symbols-outlined text-[16px] ${warnaKelas}`;
+        teksTren.className = `text-xs font-bold ${warnaKelas}`;
+      }
+
+      const rataRata =
+        jumlahItemBulanIni > 0
+          ? Math.round(totalBulanIni / jumlahItemBulanIni)
+          : 0;
 
       if (isPemasukan) {
         if (document.getElementById("txtTotalPemasukanBulanIni"))
           document.getElementById("txtTotalPemasukanBulanIni").innerText =
-            formatRupiah(akumulasiTotal);
+            formatRupiah(totalBulanIni);
         if (document.getElementById("txtRataRataPemasukan"))
           document.getElementById("txtRataRataPemasukan").innerText =
-            formatRupiah(Math.round(akumulasiTotal / 30));
+            formatRupiah(Math.round(totalBulanIni / 30));
 
         const targetTabungan =
           parseInt(localStorage.getItem(`${userPrefix}_target_tabungan`), 10) ||
@@ -211,26 +274,26 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (elTargetVal) elTargetVal.innerText = formatRupiah(targetTabungan);
         const persenPencapaian = Math.min(
           100,
-          Math.round((akumulasiTotal / targetTabungan) * 100),
+          Math.round((totalBulanIni / targetTabungan) * 100),
         );
         if (elTargetPct) elTargetPct.innerText = `${persenPencapaian}%`;
         if (elTargetBar) elTargetBar.style.width = `${persenPencapaian}%`;
         if (elTargetRemains) {
           elTargetRemains.innerText =
-            akumulasiTotal >= targetTabungan
+            totalBulanIni >= targetTabungan
               ? "Target tabungan sukses tercapai! 🎉"
-              : `Sisa ${formatRupiah(targetTabungan - akumulasiTotal)} untuk mencapai target`;
+              : `Sisa ${formatRupiah(targetTabungan - totalBulanIni)} untuk mencapai target`;
         }
       } else {
         if (document.getElementById("txtTotalPengeluaranBulanIni"))
           document.getElementById("txtTotalPengeluaranBulanIni").innerText =
-            formatRupiah(akumulasiTotal);
+            formatRupiah(totalBulanIni);
         if (document.getElementById("txtRataRataPengeluaran"))
           document.getElementById("txtRataRataPengeluaran").innerText =
             formatRupiah(rataRata);
         if (document.getElementById("txtJumlahItemPengeluaran"))
           document.getElementById("txtJumlahItemPengeluaran").innerText =
-            jumlahItem;
+            jumlahItemBulanIni;
 
         const elBudget = document.getElementById("lblRemainingBudget");
         const elBar = document.getElementById("barBudget");
@@ -240,21 +303,21 @@ document.addEventListener("DOMContentLoaded", async () => {
           parseInt(localStorage.getItem(`${userPrefix}_limit_anggaran`), 10) ||
           parseInt(localStorage.getItem("fb_current_limit_anggaran"), 10) ||
           1000000;
-        const sisaBudget = limitAnggaran - akumulasiTotal;
+        const sisaBudget = limitAnggaran - totalBulanIni;
 
         if (elBudget)
           elBudget.innerText = formatRupiah(Math.max(0, sisaBudget));
         if (elBar) {
           const usedPct = Math.min(
             100,
-            Math.round((akumulasiTotal / limitAnggaran) * 100),
+            Math.round((totalBulanIni / limitAnggaran) * 100),
           );
           elBar.style.width = `${usedPct}%`;
           if (txtPct) txtPct.innerText = `${usedPct}% Used`;
         }
       }
 
-      if (!dataRiwayat || jumlahItem === 0) {
+      if (!dataRiwayat || dataRiwayat.length === 0) {
         tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-gray-400">Belum ada riwayat catatan transaksi.</td></tr>`;
         renderChartsHalaman(trenMingguan, mapKategoriDinamis);
         return;
@@ -266,8 +329,6 @@ document.addEventListener("DOMContentLoaded", async () => {
           ? "text-emerald-600 font-bold"
           : "text-rose-600 font-bold";
         const simbolMataUang = isPemasukan ? "+" : "-";
-
-        // Memakai warna Hash algorima untuk kategori custom
         const gayaWarna = ambilGayaWarnaKategori(item.kategori);
 
         tbody.innerHTML += `
@@ -347,7 +408,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       const labelsArray = Object.keys(objekKategori);
       const dataArray = Object.values(objekKategori);
 
-      // Warnai donut chart pakai fungsi hash dinamis juga
       const warnaArray = labelsArray.map(
         (lbl) => ambilGayaWarnaKategori(lbl).bg,
       );
@@ -414,7 +474,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         tglIsoStr = new Date().toISOString().substring(0, 19);
       }
 
-      // Validasi Kategori Kosong
       if (!selectKategori.value) {
         alert("❌ Harap buat atau pilih kategori terlebih dahulu!");
         return;
@@ -467,7 +526,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  // 💡 2. SISTEM MANAJER KATEGORI (MODAL POP-UP)
+  // 6. SISTEM MANAJER KATEGORI (MODAL POP-UP)
   const modalKategori = document.getElementById("modalKelolaKategori");
   const btnBukaModalKat = document.getElementById("btnBukaModalKategori");
   const btnTutupModalKat = document.getElementById("btnTutupModalKategori");
@@ -477,7 +536,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   let cacheKategoriBawaan = [];
 
-  // Fungsi memuat ulang Dropdown dan List di dalam Modal
   async function renderKategoriManager() {
     try {
       if (!selectKategori || !listKategoriModal) return;
@@ -486,7 +544,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       const tipeAktif = isPemasukan ? "INCOME" : "EXPENSE";
       cacheKategoriBawaan = dbKategori.filter((k) => k.type === tipeAktif);
 
-      // 1. Render Dropdown Utama
       selectKategori.innerHTML = "";
       if (cacheKategoriBawaan.length === 0) {
         selectKategori.innerHTML = `<option value="">-- Buat Kategori Dulu --</option>`;
@@ -496,10 +553,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
       }
 
-      // 2. Render List di Modal
       listKategoriModal.innerHTML = "";
       cacheKategoriBawaan.forEach((kat) => {
-        // Tandai apakah ini milik admin (Global) atau custom
         const isBawaanSistem =
           kat.userId === "admin" || kat.userId === "SYSTEM";
 
@@ -521,7 +576,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         `;
       });
 
-      // Binding aksi tombol Hapus
       document.querySelectorAll(".btn-hapus-kat").forEach((btn) => {
         btn.onclick = async function () {
           if (
@@ -531,7 +585,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           ) {
             try {
               await deleteKategori(this.getAttribute("data-id"));
-              await renderKategoriManager(); // Refresh instan
+              await renderKategoriManager();
             } catch (e) {
               alert("❌ " + e.message);
             }
@@ -539,7 +593,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         };
       });
 
-      // Binding aksi tombol Edit
       document.querySelectorAll(".btn-edit-kat").forEach((btn) => {
         btn.onclick = function () {
           document.getElementById("txtIdKategoriModal").value =
@@ -554,7 +607,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  // Binding Event Buka/Tutup Modal Kategori
   if (btnBukaModalKat && modalKategori) {
     btnBukaModalKat.onclick = () => {
       modalKategori.classList.remove("hidden");
@@ -573,7 +625,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     };
   }
 
-  // Binding Event Submit Form Kategori (Tambah/Edit)
   if (formKategoriModal) {
     formKategoriModal.addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -594,15 +645,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         document.getElementById("txtIdKategoriModal").value = "";
         btnBatalKat.classList.add("hidden");
 
-        await renderKategoriManager(); // Refresh data kategori secara instan!
+        await renderKategoriManager();
       } catch (err) {
         alert("❌ " + err.message);
       }
     });
   }
 
-  // 💡 PANGGIL FUNGSI INI SAAT HALAMAN DIBUKA (Gantikan getKategori yang kemarin)
   await renderKategoriManager();
-
   await muatRiwayatTabel();
 });

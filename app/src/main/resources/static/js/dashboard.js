@@ -1,6 +1,6 @@
 /**
  * File: js/dashboard.js
- * 💡 FIX: Sinkronisasi pemanggilan parameter .data.email (Anti-Bocor / Anti-Macet Budget)
+ * 💡 FITUR: Sinkronisasi Akun, Warna Kategori Dinamis & Kalkulasi Tren (MoM)
  */
 import {
   getDashboardData,
@@ -32,11 +32,15 @@ const formatRp = (v) =>
 
 const formatWaktuRealtime = (tanggalStr) => {
   if (!tanggalStr) return "-";
-  const [tgl, jamFull] = tanggalStr.split("T");
-  const jamMenit = jamFull ? jamFull.substring(0, 5) : "";
-  return jamMenit ? `${tgl} ${jamMenit}` : tgl;
+  if (tanggalStr.includes("T")) {
+    const [tgl, jamFull] = tanggalStr.split("T");
+    const jamMenit = jamFull ? jamFull.substring(0, 5) : "";
+    return jamMenit ? `${tgl} ${jamMenit}` : tgl;
+  }
+  return tanggalStr;
 };
 
+// 💡 1. PENGHASIL WARNA DINAMIS
 const mapWarnaKategori = {
   BONUS: { bg: "#c7ebd9", text: "#133a2e" },
   UANG_SAKU: { bg: "#b5ead7", text: "#164436" },
@@ -50,12 +54,25 @@ const mapWarnaKategori = {
   HIBURAN: { bg: "#fef3c7", text: "#6b4e00" },
 };
 
+const warnaCadangan = [
+  { bg: "#fef3c7", text: "#6b4e00" },
+  { bg: "#e0e7ff", text: "#3730a3" },
+  { bg: "#fce7f3", text: "#9d174d" },
+  { bg: "#dcfce7", text: "#166534" },
+  { bg: "#f3e8ff", text: "#6b21a8" },
+  { bg: "#ffedd5", text: "#9a3412" },
+];
+
 function ambilGayaWarnaKategori(namaKat) {
   const key = (namaKat || "LAINNYA").toUpperCase().trim().replace(/\s+/g, "_");
   if (mapWarnaKategori[key]) return mapWarnaKategori[key];
-  const hash = key.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0);
-  const keys = Object.keys(mapWarnaKategori);
-  return mapWarnaKategori[keys[hash % keys.length]];
+
+  let hash = 0;
+  for (let i = 0; i < key.length; i++) {
+    hash = key.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const indexWarna = Math.abs(hash) % warnaCadangan.length;
+  return warnaCadangan[indexWarna];
 }
 
 function renderDeskripsiDinamis(ket, index, pagePrefix) {
@@ -101,29 +118,108 @@ function simpanDaftarAkunAplikasi(arrayAkun) {
 let cacheSemuaTransaksi = [];
 let statusEkspansiPenuh = false;
 
+// 💡 2. Inisialisasi dan Kalkulasi Ulang Saldo Tren
 async function initDashboard() {
   try {
-    // 💡 FIX SINKRON: Mengikat p.data.email dengan akurat
     try {
       const p = await getProfil();
       if (p && p.data && p.data.email)
         userPrefix = p.data.email.replace(/[^a-zA-Z0-9]/g, "_");
     } catch (e) {}
 
+    // Tarik raw data untuk kalkulasi MoM Saldo Bulanan
+    const inc = (await getRiwayatPemasukan()) || [];
+    const exp = (await getRiwayatPengeluaran()) || [];
+
+    let saldoBulanIni = 0;
+    let saldoBulanLalu = 0;
+    let masukBulanIni = 0;
+    let keluarBulanIni = 0;
+
+    const sekarang = new Date();
+    const blnIni = sekarang.getMonth();
+    const thnIni = sekarang.getFullYear();
+    let blnLalu = blnIni - 1;
+    let thnLalu = thnIni;
+    if (blnLalu < 0) {
+      blnLalu = 11;
+      thnLalu--;
+    }
+
+    const kalkulasiData = (arrData, isIncome) => {
+      arrData.forEach((item) => {
+        const nominal = item.nominal || 0;
+        const dt = new Date(item.tanggal);
+        const itemBln = dt.getMonth();
+        const itemThn = dt.getFullYear();
+
+        if (itemBln === blnIni && itemThn === thnIni) {
+          if (isIncome) masukBulanIni += nominal;
+          else keluarBulanIni += nominal;
+          saldoBulanIni += isIncome ? nominal : -nominal;
+        } else if (itemBln === blnLalu && itemThn === thnLalu) {
+          saldoBulanLalu += isIncome ? nominal : -nominal;
+        }
+      });
+    };
+
+    kalkulasiData(inc, true);
+    kalkulasiData(exp, false);
+
+    // Render Data Ringkasan ke UI
+    document.getElementById("txtTotalPemasukan").innerText =
+      formatRp(masukBulanIni);
+    document.getElementById("txtTotalPengeluaran").innerText =
+      formatRp(keluarBulanIni);
+
+    // Tampilkan Total Saldo Keseluruhan Server
     const summary = await getDashboardData();
     document.getElementById("txtTotalSaldo").innerText = formatRp(
       summary.saldo,
     );
-    document.getElementById("txtTotalPemasukan").innerText = formatRp(
-      summary.totalPemasukan,
-    );
-    document.getElementById("txtTotalPengeluaran").innerText = formatRp(
-      summary.totalPengeluaran,
-    );
+
+    // Tampilkan Tren "vs Bulan Lalu"
+    const badgeTren = document.getElementById("badgeTrenDashboard");
+    const ikonTren = document.getElementById("ikonTrenDashboard");
+    const teksTren = document.getElementById("teksTrenDashboard");
+
+    if (badgeTren && ikonTren && teksTren) {
+      badgeTren.classList.remove("hidden");
+      badgeTren.classList.add("inline-flex");
+
+      let persenTren = 0;
+      if (saldoBulanLalu !== 0) {
+        persenTren =
+          ((saldoBulanIni - saldoBulanLalu) / Math.abs(saldoBulanLalu)) * 100;
+      } else if (saldoBulanIni !== 0) {
+        persenTren = 100;
+      }
+
+      const trenBulat = Math.abs(Math.round(persenTren));
+
+      if (persenTren > 0) {
+        teksTren.innerText = `+${trenBulat}% vs bulan lalu`;
+        ikonTren.innerText = "trending_up";
+        badgeTren.className =
+          "inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full mt-2";
+      } else if (persenTren < 0) {
+        teksTren.innerText = `-${trenBulat}% vs bulan lalu`;
+        ikonTren.innerText = "trending_down";
+        badgeTren.className =
+          "inline-flex items-center gap-1 text-[11px] font-bold text-rose-600 bg-rose-50 px-2 py-0.5 rounded-full mt-2";
+      } else {
+        teksTren.innerText = `Sama dengan bulan lalu`;
+        ikonTren.innerText = "trending_flat";
+        badgeTren.className =
+          "inline-flex items-center gap-1 text-[11px] font-bold text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full mt-2";
+      }
+    }
 
     renderCharts(summary);
     setupDropdownFilterAkun();
-    await ambilDanProsesDataTransaksi();
+
+    // Pass raw data ke fungsi proses tabel biar gak narik API dua kali
+    await ambilDanProsesDataTransaksi(inc, exp);
     setupDashboardEventBindings();
     setupModalAkunManagerLogic();
   } catch (err) {
@@ -138,6 +234,8 @@ function renderCharts(summary) {
   const dataValues = summary.grafikKategori
     ? summary.grafikKategori.map((i) => i.jumlah)
     : [];
+
+  // Memanfaatkan hash generator untuk warna
   const listWarnaDonat = listLabelDonat.map(
     (kat) => ambilGayaWarnaKategori(kat).bg,
   );
@@ -151,77 +249,83 @@ function renderCharts(summary) {
     return `${lbl.toUpperCase()} (${persen}%)`;
   });
 
-  new Chart(document.getElementById("chartKategori"), {
-    type: "doughnut",
-    data: {
-      labels:
-        labelsWithPercent.length > 0 ? labelsWithPercent : ["Belum ada data"],
-      datasets: [
-        {
-          data: dataValues.length > 0 ? dataValues : [1],
-          backgroundColor:
-            listWarnaDonat.length > 0 ? listWarnaDonat : ["#e5e7eb"],
-        },
-      ],
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: {
-          position: "bottom",
-          labels: {
-            usePointStyle: true,
-            pointStyle: "rectRounded",
-            boxWidth: 8,
-            boxHeight: 8,
-            padding: 14,
+  const domChartKat = document.getElementById("chartKategori");
+  if (domChartKat) {
+    new Chart(domChartKat, {
+      type: "doughnut",
+      data: {
+        labels:
+          labelsWithPercent.length > 0 ? labelsWithPercent : ["Belum ada data"],
+        datasets: [
+          {
+            data: dataValues.length > 0 ? dataValues : [1],
+            backgroundColor:
+              listWarnaDonat.length > 0 ? listWarnaDonat : ["#e5e7eb"],
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: "bottom",
+            labels: {
+              usePointStyle: true,
+              pointStyle: "rectRounded",
+              boxWidth: 8,
+              boxHeight: 8,
+              padding: 14,
+            },
           },
         },
       },
-    },
-  });
+    });
+  }
 
-  new Chart(document.getElementById("chartTren"), {
-    type: "bar",
-    data: {
-      labels: summary.grafikBulanan
-        ? summary.grafikBulanan.map((i) => i.bulan)
-        : ["Sep", "Okt", "Nov"],
-      datasets: [
-        {
-          label: "Pemasukan",
-          data: summary.grafikBulanan
-            ? summary.grafikBulanan.map((i) => i.pemasukan)
-            : [0, 0, 0],
-          backgroundColor: "#b5ead7",
-          borderRadius: 4,
-        },
-        {
-          label: "Pengeluaran",
-          data: summary.grafikBulanan
-            ? summary.grafikBulanan.map((i) => i.pengeluaran)
-            : [0, 0, 0],
-          backgroundColor: "#ffb7b2",
-          borderRadius: 4,
-        },
-      ],
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: {
-          labels: {
-            usePointStyle: true,
-            pointStyle: "rectRounded",
-            boxWidth: 8,
-            boxHeight: 8,
+  const domChartTren = document.getElementById("chartTren");
+  if (domChartTren) {
+    new Chart(domChartTren, {
+      type: "bar",
+      data: {
+        labels: summary.grafikBulanan
+          ? summary.grafikBulanan.map((i) => i.bulan)
+          : ["Sep", "Okt", "Nov"],
+        datasets: [
+          {
+            label: "Pemasukan",
+            data: summary.grafikBulanan
+              ? summary.grafikBulanan.map((i) => i.pemasukan)
+              : [0, 0, 0],
+            backgroundColor: "#b5ead7",
+            borderRadius: 4,
+          },
+          {
+            label: "Pengeluaran",
+            data: summary.grafikBulanan
+              ? summary.grafikBulanan.map((i) => i.pengeluaran)
+              : [0, 0, 0],
+            backgroundColor: "#ffb7b2",
+            borderRadius: 4,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            labels: {
+              usePointStyle: true,
+              pointStyle: "rectRounded",
+              boxWidth: 8,
+              boxHeight: 8,
+            },
           },
         },
       },
-    },
-  });
+    });
+  }
 }
 
 function setupDropdownFilterAkun() {
@@ -234,10 +338,11 @@ function setupDropdownFilterAkun() {
   });
 }
 
-async function ambilDanProsesDataTransaksi() {
+// 💡 3. Terima raw data langsung dari atas biar hemat request
+async function ambilDanProsesDataTransaksi(incData, expData) {
   try {
-    const inc = (await getRiwayatPemasukan()) || [];
-    const exp = (await getRiwayatPengeluaran()) || [];
+    const inc = incData || (await getRiwayatPemasukan()) || [];
+    const exp = expData || (await getRiwayatPengeluaran()) || [];
 
     const listAkunAktif = dapatkanDaftarAkunAplikasi();
     const dompetAkun = {};
