@@ -48,7 +48,6 @@ public class DataInitializer implements CommandLineRunner {
         
         List<Category> allCategories = categoryRepository.findAll();
 
-        // 💡 FIX: Semuanya diseragamkan pakai parameter ke-4 yaitu "admin"
         ensureCategoryExists(allCategories, "MAKANAN", "EXPENSE", "admin");
         ensureCategoryExists(allCategories, "TRANSPORTASI", "EXPENSE", "admin");
         ensureCategoryExists(allCategories, "BELAJAR", "EXPENSE", "admin");
@@ -64,17 +63,39 @@ public class DataInitializer implements CommandLineRunner {
         System.out.println("Data master kategori aman terkendali!");
     }
 
-    // 💡 FIX: Tambahkan parameter `String userId` di sini
     private void ensureCategoryExists(List<Category> existingCategories, String name, String type, String userId) {
-        boolean exists = existingCategories.stream()
-                .anyMatch(c -> c.getName() != null && c.getName().equalsIgnoreCase(name) 
-                            && c.getType() != null && c.getType().equalsIgnoreCase(type)
-                            && c.getUserId() != null && c.getUserId().equals(userId));
+        Category existing = existingCategories.stream()
+                .filter(c -> c.getName() != null && c.getName().equalsIgnoreCase(name))
+                .findFirst()
+                .orElse(null);
 
-        if (!exists) {
-            // 💡 FIX: Gunakan constructor yang butuh 3 variabel (Nama, Tipe, UserId)
+        if (existing == null) {
+            // Kondisi A: Jika benar-benar belum ada di database, lakukan INSERT baru
             categoryRepository.save(new Category(name, type, userId));
             System.out.println("Kategori baru berhasil ditambahkan: " + name + " (" + type + ")");
+        } else {
+            // Kondisi B: Jika namanya sudah ada, lakukan DATA HEALING jika isinya belum standar admin
+            boolean perluUpdate = false;
+
+            // Perbaiki userId jika masih null atau bukan "admin"
+            if (existing.getUserId() == null || !existing.getUserId().equals(userId)) {
+                existing.setUserId(userId);
+                perluUpdate = true;
+            }
+
+            // Perbaiki type jika masih null atau tidak sesuai (misal INCOME/EXPENSE tertukar)
+            if (existing.getType() == null || !existing.getType().equalsIgnoreCase(type)) {
+                existing.setType(type);
+                perluUpdate = true;
+            }
+
+            // Eksekusi update ke database jika ada data yang diperbaiki
+            if (perluUpdate) {
+                categoryRepository.save(existing);
+                System.out.println("Data lama disinkronisasi (UserId/Type di-update): " + name);
+            } else {
+                System.out.println("Kategori dilewati (Sudah sesuai standar): " + name);
+            }
         }
     }
 }
