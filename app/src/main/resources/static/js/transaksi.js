@@ -1,6 +1,6 @@
 /**
  * File: js/transaksi.js
- * 💡 FITUR TERBARU: Kalender Dinamis + Kategori Custom DB + Tren MoM + IMMUTABLE LEDGER 24 JAM 🔒 + WARNA HSL HIGH CONTRAST 🎨
+ * 💡 FITUR TERBARU: Kalender Dinamis + Kategori Custom DB + Tren MoM + IMMUTABLE LEDGER 24 JAM 🔒 + WARNA HSL HIGH CONTRAST 🎨 + VALIDASI UPFRONT OPSI PAKSA ⚠️
  */
 import {
   tambahPemasukan,
@@ -168,9 +168,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       const mapKategoriDinamis = {};
       const trenMingguan = Array(4).fill(0);
 
-      const sekarang = new Date();
-      const bulanIni = sekarang.getMonth();
-      const tahunIni = sekarang.getFullYear();
+      const roller = new Date();
+      const bulanIni = roller.getMonth();
+      const tahunIni = roller.getFullYear();
 
       let bulanLalu = bulanIni - 1;
       let tahunLalu = tahunIni;
@@ -548,6 +548,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
       }
 
+      // 💡 SINKRONISASI PAYLOAD: Kirim CamelCase & SnakeCase sekaligus demi kestabilan Jackson DTO
       const payload = {
         nominal: parseFloat(inputNominal.value),
         kategori: selectKategori.value,
@@ -555,7 +556,55 @@ document.addEventListener("DOMContentLoaded", async () => {
         akun: selectAkun.value,
         tanggal: tglIsoStr,
         forceSave: false,
+        force_save: false,
       };
+
+      // 🚨 ── FITUR VALIDASI SALDO MINUS DENGAN OPSI INPUT PAKSA ──────────────────
+      if (!isPemasukan) {
+        try {
+          const incRaw = (await getRiwayatPemasukan()) || [];
+          const expRaw = (await getRiwayatPengeluaran()) || [];
+
+          const inc = Array.isArray(incRaw)
+            ? incRaw
+            : incRaw.data || incRaw.content || [];
+          const exp = Array.isArray(expRaw)
+            ? expRaw
+            : expRaw.data || expRaw.content || [];
+
+          const totalMasuk = inc.reduce(
+            (sum, item) => sum + Number(item.nominal || item.amount || 0),
+            0,
+          );
+          const totalKeluar = exp.reduce(
+            (sum, item) => sum + Number(item.nominal || item.amount || 0),
+            0,
+          );
+          const saldoSaatIni = totalMasuk - totalKeluar;
+
+          // Jika pengeluaran saat ini bikin tabungan jebol di bawah nol, langsung todong dialog konfirmasi
+          if (saldoSaatIni - payload.nominal < 0) {
+            const konfirmasiPaksa = confirm(
+              "❌ Gagal menyimpan:\nPeringatan: Saldo Anda tidak mencukupi/Minus!\n\nApakah Anda ingin tetap menyimpan secara PAKSA?",
+            );
+
+            // Jika user memilih Cancel, hentikan submit form detik ini juga
+            if (!konfirmasiPaksa) {
+              return;
+            }
+
+            // Jika user menyetujui, ubah kedua switch saklar boolean menjadi true
+            payload.forceSave = true;
+            payload.force_save = true;
+          }
+        } catch (err) {
+          console.error(
+            "Gagal melakukan kalkulasi pre-check saldo upfront:",
+            err,
+          );
+        }
+      }
+      // ─────────────────────────────────────────────────────────────────────────
 
       try {
         btnSimpan.disabled = true;
@@ -657,7 +706,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
 
         listKategoriModal.innerHTML += `
-          <div class="flex items-center justify-between p-3 bg-white">
+          <div class="flex items-center justify-between p-3 bg-white border-b border-gray-50">
             <span class="text-xs font-bold text-gray-700 tracking-wide">${kat.name}</span>
             <div class="flex gap-1 items-center">${aksiTombol}</div>
           </div>
