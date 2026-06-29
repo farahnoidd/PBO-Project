@@ -9,9 +9,9 @@
  */
 
 // 1. NAIKKAN VERSI CACHE (Wajib setiap ada perubahan file HTML/CSS/JS)
-const CACHE_VERSION = "v1.1.0"; 
+const CACHE_VERSION = "v1.1.1";
 const STATIC_CACHE = `static-${CACHE_VERSION}`;
-const API_CACHE    = `api-${CACHE_VERSION}`;
+const API_CACHE = `api-${CACHE_VERSION}`;
 
 // 2. TAMBAHKAN SEMUA FILE JS DAN CSS BARU KE SINI
 const STATIC_ASSETS = [
@@ -24,14 +24,14 @@ const STATIC_ASSETS = [
   "/profil.html",
   "/admin.html",
   "/offline.html",
-  "/css/component.css",     // <--- CSS Global yang baru kita buat
-  "/css/style.css",         // (Biarkan jika masih ada file lama yang pakai ini)
+  "/css/component.css", // <--- CSS Global yang baru kita buat
+  "/css/style.css", // (Biarkan jika masih ada file lama yang pakai ini)
   "/js/api.js",
-  "/js/auth.js",            // <--- Tambahan
-  "/js/dashboard.js",       // <--- Tambahan
-  "/js/laporan.js",         // <--- Tambahan
-  "/js/profil.js",          // <--- Tambahan
-  "/js/transaksi.js",       // <--- Tambahan
+  "/js/auth.js", // <--- Tambahan
+  "/js/dashboard.js", // <--- Tambahan
+  "/js/laporan.js", // <--- Tambahan
+  "/js/profil.js", // <--- Tambahan
+  "/js/transaksi.js", // <--- Tambahan
   "/js/pwa.js",
   "/manifest.json",
   "/assets/icons/icon-192.png", // Pastikan folder assets ini benar-benar ada di proyek Anda
@@ -51,7 +51,7 @@ self.addEventListener("install", (event) => {
         // Langsung aktif — tidak menunggu tab lama ditutup
         return self.skipWaiting();
       })
-      .catch((err) => console.error("[SW] Pre-cache gagal:", err))
+      .catch((err) => console.error("[SW] Pre-cache gagal:", err)),
   );
 });
 
@@ -65,16 +65,14 @@ self.addEventListener("activate", (event) => {
       .then((keys) =>
         Promise.all(
           keys
-            .filter(
-              (key) => key !== STATIC_CACHE && key !== API_CACHE
-            )
+            .filter((key) => key !== STATIC_CACHE && key !== API_CACHE)
             .map((key) => {
               console.log("[SW] Menghapus cache lama:", key);
               return caches.delete(key);
-            })
-        )
+            }),
+        ),
       )
-      .then(() => self.clients.claim()) // ambil alih semua tab yang terbuka
+      .then(() => self.clients.claim()), // ambil alih semua tab yang terbuka
   );
 });
 
@@ -157,11 +155,13 @@ async function networkFirstStrategy(request, cacheName) {
 
     // Tidak ada cache sama sekali — kembalikan JSON error agar api.js bisa tangani
     return new Response(
-      JSON.stringify({ message: "Tidak ada koneksi internet dan data belum tersimpan." }),
+      JSON.stringify({
+        message: "Tidak ada koneksi internet dan data belum tersimpan.",
+      }),
       {
         status: 503,
         headers: { "Content-Type": "application/json; charset=utf-8" },
-      }
+      },
     );
   }
 }
