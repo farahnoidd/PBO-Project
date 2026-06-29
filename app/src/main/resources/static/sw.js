@@ -9,7 +9,7 @@
  */
 
 // 1. NAIKKAN VERSI CACHE (Wajib setiap ada perubahan file HTML/CSS/JS)
-const CACHE_VERSION = "v1.0.1"; 
+const CACHE_VERSION = "v1.1.0"; 
 const STATIC_CACHE = `static-${CACHE_VERSION}`;
 const API_CACHE    = `api-${CACHE_VERSION}`;
 
@@ -23,7 +23,7 @@ const STATIC_ASSETS = [
   "/laporan.html",
   "/profil.html",
   "/admin.html",
-  "/offline.html",          
+  "/offline.html",
   "/css/component.css",     // <--- CSS Global yang baru kita buat
   "/css/style.css",         // (Biarkan jika masih ada file lama yang pakai ini)
   "/js/api.js",

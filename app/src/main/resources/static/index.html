@@ -54,6 +54,10 @@
   <script type="module">
     import { login } from "./js/api.js";
 
+    // Bersihkan token lama saat halaman login dibuka
+    // Ini mencegah error 401 akibat token kadaluarsa / tidak valid
+    localStorage.removeItem("token");
+
     document.getElementById("loginForm").addEventListener("submit", async (e) => {
       e.preventDefault();
       const btn = document.getElementById("btnLogin");

@@ -15,6 +15,9 @@
       rel="stylesheet"
     />
     <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#366758" />
+    <link rel="apple-touch-icon" href="/assets/icons/icon-1.png" />
   </head>
   <body class="bg-[#faf9f8] text-[#1a1c1c] font-sans antialiased">
     <div class="relative flex min-h-screen w-full flex-col lg:flex-row">
@@ -88,7 +91,7 @@
         </button>
       </nav>
 
-      <main class="flex-1 md:ml-64 p-6 space-y-6">
+      <main class="flex-1 md:ml-64 p-6 pb-24 md:pb-6 space-y-6">
         <header class="border-b pb-4">
           <h2 class="text-[24px] font-bold text-gray-800">Profil</h2>
           <p class="text-xs text-gray-400 mt-1">
@@ -334,4 +337,73 @@
       </div>
     </div>
   </body>
+
+    <script src="js/pwa.js" defer></script>
+
+    <!-- ── Mobile Bottom Navbar ────────────────────────────────────────── -->
+    <nav id="mobileBottomNav" class="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-100 shadow-[0_-4px_24px_rgba(0,0,0,0.08)]">
+      <div class="flex items-stretch h-16">
+        <a href="dashboard.html" class="mob-nav-item" title="Dashboard">
+          <span class="material-symbols-outlined">dashboard</span>
+          <span>Beranda</span>
+        </a>
+        <a href="pemasukan.html" class="mob-nav-item" title="Pemasukan">
+          <span class="material-symbols-outlined">savings</span>
+          <span>Masuk</span>
+        </a>
+        <a href="pengeluaran.html" class="mob-nav-item" title="Pengeluaran">
+          <span class="material-symbols-outlined">payments</span>
+          <span>Keluar</span>
+        </a>
+        <a href="laporan.html" class="mob-nav-item" title="Laporan">
+          <span class="material-symbols-outlined">bar_chart</span>
+          <span>Laporan</span>
+        </a>
+        <a href="profil.html" class="mob-nav-item active" title="Profil">
+          <span class="material-symbols-outlined">person</span>
+          <span>Profil</span>
+        </a>
+      </div>
+    </nav>
+
+    <style>
+      .mob-nav-item {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 2px;
+        text-decoration: none;
+        color: #9ca3af;
+        font-size: 10px;
+        font-weight: 500;
+        font-family: 'Inter', sans-serif;
+        transition: color 0.18s;
+        padding: 6px 4px;
+        position: relative;
+      }
+      .mob-nav-item .material-symbols-outlined {
+        font-size: 22px;
+        transition: transform 0.18s, color 0.18s;
+      }
+      .mob-nav-item:hover,
+      .mob-nav-item.active {
+        color: #366758;
+      }
+      .mob-nav-item.active .material-symbols-outlined {
+        font-variation-settings: 'FILL' 1;
+        transform: translateY(-2px);
+      }
+      .mob-nav-item.active::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 20%;
+        right: 20%;
+        height: 2.5px;
+        background: #366758;
+        border-radius: 0 0 4px 4px;
+      }
+    </style>
 </html>
