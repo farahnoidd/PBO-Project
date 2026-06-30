@@ -3,4 +3,4 @@ builder = "nixpacks"
 buildCommand = "cd app && ./mvnw clean package -DskipTests"
 
 [deploy]
-startCommand = "java -jar app/target/*.jar"
+startCommand = "cd app && java -jar target/app-0.0.1-SNAPSHOT.jar"
