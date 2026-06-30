@@ -34,8 +34,8 @@ const STATIC_ASSETS = [
   "/js/transaksi.js", // <--- Tambahan
   "/js/pwa.js",
   "/manifest.json",
-  "/assets/icons/icon-192.png", // Pastikan folder assets ini benar-benar ada di proyek Anda
-  "/assets/icons/icon-512.png",
+  "/assets/icons/icon-1.png", // Pastikan folder assets ini benar-benar ada di proyek Anda
+  "/assets/icons/icon-2.png",
 ];
 
 // ── INSTALL: pre-cache semua static assets ───────────────────────────────────
