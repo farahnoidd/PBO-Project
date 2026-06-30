@@ -88,6 +88,7 @@ public class SecurityConfig {
                 .requestMatchers("/", "/*.html", "/css/**", "/js/**", "/assets/**",
                                 "/manifest.json", "/sw.js").permitAll()
                 .requestMatchers("/h2-console/**").permitAll()
+                .requestMatchers("/error").permitAll()
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
             )
