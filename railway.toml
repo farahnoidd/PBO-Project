@@ -1,6 +1,2 @@
 [build]
-builder = "nixpacks"
-buildCommand = "./mvnw clean package -DskipTests"
-
-[deploy]
-startCommand = "java -jar target/app-0.0.1-SNAPSHOT.jar"
+builder = "dockerfile"
