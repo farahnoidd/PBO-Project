@@ -178,6 +178,18 @@ export async function updateProfil(payload) {
 }
 
 /**
+ * Memperbarui foto profil pengguna.
+ * @param {string} fotoBase64 - base64 data URL gambar
+ */
+export async function updateFotoProfil(fotoBase64) {
+  return request("/api/user/profil/foto", {
+    method: "PUT",
+    headers: buildHeaders(),
+    body: JSON.stringify({ foto: fotoBase64 }),
+  });
+}
+
+/**
  * Memverifikasi OTP profil menggunakan DTO asli VerifyOtpRequest kelompokmu
  */
 export async function verifyProfileOtp(usernameStr, passwordStr, otpStr) {

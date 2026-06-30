@@ -280,6 +280,13 @@ public class UserService {
         return toResponse(userTersimpan);
     }
 
+    public void updateFoto(String username, String fotoBase64) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("User '" + username + "' tidak ditemukan."));
+        user.setFoto(fotoBase64);
+        userRepository.save(user);
+    }
+
     // ─────────────────────────────────────────────────────────────────────────
     // HELPER
     // ─────────────────────────────────────────────────────────────────────────
@@ -297,6 +304,7 @@ public class UserService {
                 ? user.getCreatedAt().format(FORMATTER) : null);
         resp.setValidatedAt(user.getValidatedAt() != null
                 ? user.getValidatedAt().format(FORMATTER) : null);
+        resp.setFoto(user.getFoto());
         return resp;
     }
 

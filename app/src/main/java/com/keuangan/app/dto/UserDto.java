@@ -76,6 +76,7 @@ public class UserDto {
         private String status;
         private String createdAt;
         private String validatedAt;
+        private String foto;
 
         public UserResponse() {}
 
@@ -102,6 +103,9 @@ public class UserDto {
 
         public String getValidatedAt()              { return validatedAt; }
         public void   setValidatedAt(String d)      { this.validatedAt = d; }
+
+        public String getFoto()                     { return foto; }
+        public void   setFoto(String f)             { this.foto = f; }
     }
 
     // ── Respons generik untuk pesan sukses/gagal ──────────────────────────────
@@ -142,5 +146,14 @@ public class UserDto {
 
         public String getNamaLengkap() { return namaLengkap; }
         public void setNamaLengkap(String namaLengkap) { this.namaLengkap = namaLengkap; }
+    }
+
+    public static class UpdateFotoRequest {
+        private String foto;
+
+        public UpdateFotoRequest() {}
+
+        public String getFoto() { return foto; }
+        public void setFoto(String foto) { this.foto = foto; }
     }
 }

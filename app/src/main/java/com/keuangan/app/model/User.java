@@ -39,6 +39,10 @@ public class User {
     @Column(name = "validated_at")
     private LocalDateTime validatedAt;
 
+    @Lob
+    @Column(name = "foto", columnDefinition = "LONGTEXT")
+    private String foto;
+
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
@@ -85,4 +89,7 @@ public class User {
 
     public LocalDateTime getValidatedAt()   { return validatedAt; }
     public void setValidatedAt(LocalDateTime d) { this.validatedAt = d; }
+
+    public String getFoto()                 { return foto; }
+    public void setFoto(String foto)        { this.foto = foto; }
 }

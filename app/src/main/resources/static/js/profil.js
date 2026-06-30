@@ -1,6 +1,7 @@
 import {
   getProfil,
   updateProfil,
+  updateFotoProfil,
   verifyProfileOtp,
   requireAuth,
   logout,
@@ -33,6 +34,9 @@ async function muatDataProfil() {
           user.namaLengkap || "User";
       if (document.getElementById("lblEmailUser"))
         document.getElementById("lblEmailUser").innerText = user.email || "";
+      if (document.getElementById("imgAvatar")) {
+        document.getElementById("imgAvatar").src = user.foto || "/assets/images/avatar-default-1.png";
+      }
     }
 
     const targetLokal =
@@ -148,14 +152,63 @@ document.addEventListener("DOMContentLoaded", () => {
     };
   }
 
-  const btnLogout = document.getElementById("btnLogout");
-  if (btnLogout) {
-    btnLogout.addEventListener("click", (e) => {
-      e.preventDefault();
-      if (confirm("Apakah Anda yakin ingin keluar dari FinanceBuddy?"))
-        localStorage.removeItem("fb_current_limit_anggaran");
+  const btnUbahFoto = document.getElementById("btnUbahFoto");
+  const fileFoto = document.getElementById("fileFoto");
+  const imgAvatar = document.getElementById("imgAvatar");
+
+  if (btnUbahFoto && fileFoto) {
+    btnUbahFoto.addEventListener("click", () => {
+      fileFoto.click();
+    });
+  }
+
+  if (fileFoto) {
+    fileFoto.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        if (file.size > 2 * 1024 * 1024) {
+          alert("❌ Ukuran foto terlalu besar. Maksimal 2MB.");
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = async (event) => {
+          const base64Url = event.target.result;
+          const oldSrc = imgAvatar ? imgAvatar.src : "";
+          if (imgAvatar) {
+            imgAvatar.src = base64Url;
+          }
+          try {
+            await updateFotoProfil(base64Url);
+            alert("🎉 Foto profil berhasil diperbarui!");
+          } catch (err) {
+            alert("❌ Gagal mengunggah foto: " + err.message);
+            if (imgAvatar) {
+              imgAvatar.src = oldSrc;
+            }
+          }
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  }
+
+  const handleLogout = (e) => {
+    e.preventDefault();
+    if (confirm("Apakah Anda yakin ingin keluar dari FinanceBuddy?")) {
+      localStorage.removeItem("fb_current_limit_anggaran");
       localStorage.removeItem("fb_current_target_tabungan");
       logout();
-    });
+    }
+  };
+
+  const btnLogout = document.getElementById("btnLogout");
+  if (btnLogout) {
+    btnLogout.addEventListener("click", handleLogout);
+  }
+
+  const btnMobileLogout = document.getElementById("btnMobileLogout");
+  if (btnMobileLogout) {
+    btnMobileLogout.addEventListener("click", handleLogout);
   }
 });

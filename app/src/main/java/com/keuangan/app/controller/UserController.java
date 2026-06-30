@@ -165,6 +165,23 @@ public class UserController {
         }
     }
 
+    /**
+     * PUT /api/user/profil/foto
+     * Langkah 3: Update foto profil pengguna.
+     */
+    @PutMapping("/api/user/profil/foto")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public ResponseEntity<UserDto.ApiResponse> updateFotoProfil(
+            Authentication auth,
+            @RequestBody UserDto.UpdateFotoRequest request) {
+        try {
+            userService.updateFoto(auth.getName(), request.getFoto());
+            return ResponseEntity.ok(new UserDto.ApiResponse(true, "Foto profil berhasil diperbarui."));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(new UserDto.ApiResponse(false, e.getMessage()));
+        }
+    }
+
     // ─────────────────────────────────────────────────────────────────────────
     // ADMIN – MANAJEMEN USER
     // ─────────────────────────────────────────────────────────────────────────
