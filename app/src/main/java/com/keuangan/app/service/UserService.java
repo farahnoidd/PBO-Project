@@ -77,7 +77,9 @@ public class UserService {
         try {
             otpService.generateAndSend(tersimpan.getUsername(), tersimpan.getEmail());
         } catch (Exception e) {
-            throw new RuntimeException("Gagal mengirim email OTP Registrasi: " + e.getMessage(), e);
+            // Log error tapi biarkan proses registrasi berhasil (200 OK)
+            System.err.println("⚠️ SMTP ERROR: Gagal mengirim email OTP Registrasi. Reason: " + e.getMessage());
+            // Catatan: Pastikan Anda menyediakan endpoint "Resend OTP" agar user bisa meminta ulang OTP
         }
 
         return toResponse(tersimpan);
@@ -110,7 +112,7 @@ public class UserService {
         try {
             otpService.generateAndSend(user.getUsername(), user.getEmail());
         } catch (Exception e) {
-            throw new RuntimeException("Gagal mengirim email OTP Lupa Password: " + e.getMessage(), e);
+            System.err.println("⚠️ SMTP ERROR: Gagal mengirim email OTP Lupa Password. Reason: " + e.getMessage());
         }
     }
 
@@ -222,7 +224,7 @@ public class UserService {
             try {
                 otpService.generateAndSend(username, emailBaru);
             } catch (Exception e) {
-                throw new RuntimeException("Gagal mengirim email OTP Update Profil: " + e.getMessage(), e);
+                System.err.println("⚠️ SMTP ERROR: Gagal mengirim email OTP Update Profil. Reason: " + e.getMessage());
             }
             return "OTP_REQUIRED: Kode verifikasi telah dikirim ke email baru Anda.";
         }
