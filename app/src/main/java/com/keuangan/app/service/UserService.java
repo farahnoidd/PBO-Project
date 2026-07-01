@@ -74,12 +74,10 @@ public class UserService {
 
         User tersimpan = userRepository.save(user);
 
-        // Aman: Dibungkus try-catch agar jika SMTP Brevo gagal/gantung, registrasi
-        // tetap sukses
         try {
             otpService.generateAndSend(tersimpan.getUsername(), tersimpan.getEmail());
         } catch (Exception e) {
-            System.err.println("⚠️ Gagal mengirim email OTP Registrasi via SMTP Brevo: " + e.getMessage());
+            throw new RuntimeException("Gagal mengirim email OTP Registrasi: " + e.getMessage(), e);
         }
 
         return toResponse(tersimpan);
@@ -109,12 +107,10 @@ public class UserService {
                             () -> new IllegalArgumentException("User tidak ditemukan dengan identifier tersebut."));
         }
 
-        // Aman: Dibungkus try-catch agar tidak menyebabkan error 500 / timeout saat
-        // lupa password
         try {
             otpService.generateAndSend(user.getUsername(), user.getEmail());
         } catch (Exception e) {
-            System.err.println("⚠️ Gagal mengirim email OTP Lupa Password via SMTP Brevo: " + e.getMessage());
+            throw new RuntimeException("Gagal mengirim email OTP Lupa Password: " + e.getMessage(), e);
         }
     }
 
@@ -223,12 +219,10 @@ public class UserService {
 
             pendingProfilStore.put(username, dto);
 
-            // Aman: Dibungkus try-catch agar update nama/email di frontend tidak macet
-            // total
             try {
                 otpService.generateAndSend(username, emailBaru);
             } catch (Exception e) {
-                System.err.println("⚠️ Gagal mengirim email OTP Update Profil via SMTP Brevo: " + e.getMessage());
+                throw new RuntimeException("Gagal mengirim email OTP Update Profil: " + e.getMessage(), e);
             }
             return "OTP_REQUIRED: Kode verifikasi telah dikirim ke email baru Anda.";
         }

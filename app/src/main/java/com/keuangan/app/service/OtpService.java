@@ -16,7 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class OtpService {
 
-    @Value("${spring.mail.username}")
+    @Value("${app.mail.sender}")
     private String fromEmail;
 
     private final JavaMailSender mailSender;
@@ -56,7 +56,8 @@ public class OtpService {
             mailSender.send(message);
             log.info("OTP email terkirim ke {}", toEmail);
         } catch (Exception e) {
-            log.error("Gagal mengirim OTP: {}", e.getMessage());
+            log.error("Gagal mengirim OTP ke {}: {}", toEmail, e.getMessage(), e);
+            throw new RuntimeException("Gagal mengirim email OTP. Error SMTP: " + e.getMessage(), e);
         }
     }
 
