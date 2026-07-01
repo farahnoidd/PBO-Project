@@ -77,7 +77,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/report/dashboard").permitAll()
                         .requestMatchers("/", "/*.html", "/css/**", "/js/**", "/assets/**",
-                                "/manifest.json", "/sw.js")
+                                "/manifest.json", "/sw.js", "/favicon.ico")
                         .permitAll()
                         .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers("/error").permitAll()
