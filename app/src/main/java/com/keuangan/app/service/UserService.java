@@ -1,5 +1,6 @@
 package com.keuangan.app.service;
 
+import com.keuangan.app.dto.RegisterRequest;
 import com.keuangan.app.dto.UserDto;
 import com.keuangan.app.dto.VerifyOtpRequest;
 import com.keuangan.app.enums.UserStatus;
@@ -18,17 +19,16 @@ import java.util.stream.Collectors;
 @Transactional
 public class UserService {
 
-    private static final DateTimeFormatter FORMATTER =
-            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-    private final UserRepository  userRepository;
+    private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final OtpService otpService;
 
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, OtpService otpService) {
-        this.userRepository  = userRepository;
+        this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-        this.otpService      = otpService;
+        this.otpService = otpService;
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -40,7 +40,7 @@ public class UserService {
      * Status awal selalu BELUM_TERVALIDASI — user tidak bisa login
      * sebelum Admin mengubah statusnya menjadi TERVALIDASI.
      */
-    public UserDto.UserResponse daftarAkun(UserDto.RegisterRequest req) {
+    public UserDto.UserResponse daftarAkun(RegisterRequest req) {
 
         // Validasi input tidak boleh kosong
         if (isBlank(req.getUsername()) || isBlank(req.getEmail())
@@ -65,13 +65,16 @@ public class UserService {
             throw new IllegalArgumentException("Password minimal 8 karakter.");
         }
 
-        // Buat entitas user baru — status otomatis BELUM_TERVALIDASI
-        User user = new User(
-                req.getUsername().trim(),
-                req.getEmail().trim().toLowerCase(),
-                passwordEncoder.encode(req.getPassword()),
-                req.getNamaLengkap().trim()
-        );
+        // Buat entitas user baru
+        User user = new User();
+        user.setUsername(req.getUsername().trim());
+        user.setEmail(req.getEmail().trim().toLowerCase());
+        user.setPassword(passwordEncoder.encode(req.getPassword()));
+        user.setNamaLengkap(req.getNamaLengkap().trim());
+
+        // WAJIB SET MANUAL BIAR GA NULL DI DATABASE
+        user.setRole(com.keuangan.app.enums.UserRole.USER);
+        user.setStatus(UserStatus.BELUM_TERVALIDASI);
 
         User tersimpan = userRepository.save(user);
 
@@ -102,9 +105,10 @@ public class UserService {
         User user = userRepository.findByUsername(usernameOrEmail).orElse(null);
         if (user == null) {
             user = userRepository.findByEmail(usernameOrEmail)
-                    .orElseThrow(() -> new IllegalArgumentException("User tidak ditemukan dengan identifier tersebut."));
+                    .orElseThrow(
+                            () -> new IllegalArgumentException("User tidak ditemukan dengan identifier tersebut."));
         }
-        
+
         otpService.generateAndSend(user.getUsername(), user.getEmail());
     }
 
@@ -215,14 +219,17 @@ public class UserService {
     }
 
     /**
-     * Memproses request awal profil. Jika ganti email, trigger OtpService kelompokmu.
+     * Memproses request awal profil. Jika ganti email, trigger OtpService
+     * kelompokmu.
      */
     public String prosesRequestProfil(String username, UserDto.UpdateProfileRequest dto) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new IllegalArgumentException("User tidak ditemukan."));
 
-        if (isBlank(dto.getNamaLengkap())) throw new IllegalArgumentException("Nama lengkap wajib diisi.");
-        if (isBlank(dto.getEmail())) throw new IllegalArgumentException("Email wajib diisi.");
+        if (isBlank(dto.getNamaLengkap()))
+            throw new IllegalArgumentException("Nama lengkap wajib diisi.");
+        if (isBlank(dto.getEmail()))
+            throw new IllegalArgumentException("Email wajib diisi.");
 
         String emailBaru = dto.getEmail().trim().toLowerCase();
 
@@ -231,23 +238,26 @@ public class UserService {
             if (userRepository.existsByEmail(emailBaru)) {
                 throw new IllegalArgumentException("Email sudah terdaftar oleh pengguna lain.");
             }
-            
-            // Tahan perubahan di memori sementara agar tidak langsung bocor/terganti ke MySQL
+
+            // Tahan perubahan di memori sementara agar tidak langsung bocor/terganti ke
+            // MySQL
             pendingProfilStore.put(username, dto);
-            
+
             // Panggil OtpService asli milik kelompokmu!
             otpService.generateAndSend(username, emailBaru);
             return "OTP_REQUIRED: Kode verifikasi telah dikirim ke email baru Anda.";
         }
 
-        // Skenario B: Email sama (cuma ganti nama), langsung bypass write ke MySQL tanpa OTP
+        // Skenario B: Email sama (cuma ganti nama), langsung bypass write ke MySQL
+        // tanpa OTP
         user.setNamaLengkap(dto.getNamaLengkap().trim());
         userRepository.save(user);
         return "Profil Anda berhasil diperbarui.";
     }
 
     /**
-     * Validasi OTP + Password menggunakan DTO asli milik kelompokmu, lalu tulis ke MySQL.
+     * Validasi OTP + Password menggunakan DTO asli milik kelompokmu, lalu tulis ke
+     * MySQL.
      */
     public UserDto.UserResponse verifikasiDanSaveProfil(com.keuangan.app.dto.VerifyOtpRequest req) {
         // 1. Validasi kecocokan OTP via OtpService kalian
@@ -273,7 +283,7 @@ public class UserService {
         // 5. Tulis permanen data baru ke MySQL
         user.setNamaLengkap(dataPending.getNamaLengkap().trim());
         user.setEmail(dataPending.getEmail().trim().toLowerCase());
-        
+
         User userTersimpan = userRepository.save(user);
         pendingProfilStore.remove(req.getUsername()); // Bersihkan ram memori
 
@@ -301,9 +311,11 @@ public class UserService {
         resp.setRole(user.getRole().name());
         resp.setStatus(user.getStatus().name());
         resp.setCreatedAt(user.getCreatedAt() != null
-                ? user.getCreatedAt().format(FORMATTER) : null);
+                ? user.getCreatedAt().format(FORMATTER)
+                : null);
         resp.setValidatedAt(user.getValidatedAt() != null
-                ? user.getValidatedAt().format(FORMATTER) : null);
+                ? user.getValidatedAt().format(FORMATTER)
+                : null);
         resp.setFoto(user.getFoto());
         return resp;
     }

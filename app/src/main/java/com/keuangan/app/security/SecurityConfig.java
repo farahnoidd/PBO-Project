@@ -1,4 +1,5 @@
 package com.keuangan.app.security;
+
 import com.keuangan.app.security.UserDetailsImpl;
 import com.keuangan.app.security.AuthEntryPointJwt;
 import com.keuangan.app.security.JwtAuthFilter;
@@ -53,10 +54,9 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(List.of(
-            "https://pbo-project-production-4f8e.up.railway.app",
-            "http://localhost:3000",
-            "http://localhost:5173"
-        ));
+                "https://pbo-project-production-4f8e.up.railway.app",
+                "http://localhost:3000",
+                "http://localhost:5173"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
@@ -69,27 +69,21 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .cors(Customizer.withDefaults())
-            .csrf(AbstractHttpConfigurer::disable)
-            .exceptionHandling(ex ->
-                ex.authenticationEntryPoint(unauthorizedHandler)
-            )
-            .sessionManagement(session ->
-                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            )
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers("/api/report/dashboard").permitAll()
-                .requestMatchers("/", "/*.html", "/css/**", "/js/**", "/assets/**",
-                                "/manifest.json", "/sw.js").permitAll()
-                .requestMatchers("/h2-console/**").permitAll()
-                .requestMatchers("/error").permitAll()
-                .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                .anyRequest().authenticated()
-            )
-            .headers(headers ->
-                headers.frameOptions(frame -> frame.disable())
-            );
+                .cors(Customizer.withDefaults())
+                .csrf(AbstractHttpConfigurer::disable)
+                .exceptionHandling(ex -> ex.authenticationEntryPoint(unauthorizedHandler))
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/report/dashboard").permitAll()
+                        .requestMatchers("/", "/*.html", "/css/**", "/js/**", "/assets/**",
+                                "/manifest.json", "/sw.js")
+                        .permitAll()
+                        .requestMatchers("/h2-console/**").permitAll()
+                        .requestMatchers("/error").permitAll()
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .anyRequest().authenticated())
+                .headers(headers -> headers.frameOptions(frame -> frame.disable()));
 
         http.authenticationProvider(authenticationProvider());
         http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

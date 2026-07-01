@@ -1,5 +1,6 @@
 package com.keuangan.app.controller;
 
+import com.keuangan.app.dto.RegisterRequest;
 import com.keuangan.app.dto.UserDto;
 import com.keuangan.app.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -52,23 +53,7 @@ public class UserController {
      *   "namaLengkap": "Budi Santoso"
      * }
      */
-    @PostMapping("/api/auth/register")
-    public ResponseEntity<UserDto.ApiResponse> register(
-            @RequestBody UserDto.RegisterRequest request) {
 
-        try {
-            UserDto.UserResponse data = userService.daftarAkun(request);
-            return ResponseEntity
-                    .status(HttpStatus.CREATED)
-                    .body(new UserDto.ApiResponse(true,
-                            "Pendaftaran berhasil. Akun Anda sedang menunggu validasi Admin.",
-                            data));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body(new UserDto.ApiResponse(false, e.getMessage()));
-        }
-    }
 
     @PostMapping("/api/auth/register/verify-otp")
     public ResponseEntity<UserDto.ApiResponse> verifyRegisterOtp(
