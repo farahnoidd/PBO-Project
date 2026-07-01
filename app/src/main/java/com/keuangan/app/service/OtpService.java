@@ -1,52 +1,33 @@
 package com.keuangan.app.service;
 
+import com.resend.Resend;
+import com.resend.core.exception.ResendException;
+import com.resend.services.emails.model.CreateEmailOptions;
+import com.resend.services.emails.model.CreateEmailResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
-import jakarta.mail.internet.MimeMessage;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * OtpService
- * ----------
- * - Generate OTP 6 digit
- * - Simpan OTP + expiry di memori (ConcurrentHashMap)
- * - Kirim OTP ke Email user via Spring Mail (Gmail SMTP)
- * - Verifikasi OTP yang diinput user
- */
+@Slf4j
 @Service
 public class OtpService {
 
-    @Value("${spring.mail.username}")
-    private String fromEmail;
+    @Value("${resend.api.key}")
+    private String resendApiKey;
 
-    private final JavaMailSender mailSender;
     private final Map<String, OtpEntry> otpStore = new ConcurrentHashMap<>();
     private final SecureRandom random = new SecureRandom();
 
-    public OtpService(JavaMailSender mailSender) {
-        this.mailSender = mailSender;
-    }
-
-    // ── Generate & Send ───────────────────────────────────────────────────────
-
-    /**
-     * Generate OTP 6 digit, simpan, lalu kirim ke email user.
-     * @param username  dipakai sebagai key penyimpanan
-     * @param email     alamat email tujuan
-     */
     public void generateAndSend(String username, String email) {
         String otp = String.format("%06d", random.nextInt(999999));
         otpStore.put(username, new OtpEntry(otp, LocalDateTime.now().plusMinutes(5)));
         sendEmail(email, otp);
     }
-
-    // ── Verify ────────────────────────────────────────────────────────────────
 
     public boolean verify(String username, String inputOtp) {
         OtpEntry entry = otpStore.get(username);
@@ -60,21 +41,19 @@ public class OtpService {
         return valid;
     }
 
-    // ── Send Email ────────────────────────────────────────────────────────────
-
     private void sendEmail(String toEmail, String otp) {
         try {
-            MimeMessage message = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-
-            helper.setFrom(fromEmail);
-            helper.setTo(toEmail);
-            helper.setSubject("Kode OTP FinanceBuddy");
-            helper.setText(buildEmailHtml(otp), true); // true = HTML
-
-            mailSender.send(message);
-        } catch (Exception e) {
-            throw new RuntimeException("Gagal mengirim OTP ke email: " + e.getMessage());
+            Resend resend = new Resend(resendApiKey);
+            CreateEmailOptions params = CreateEmailOptions.builder()
+                .from("FinanceBuddy <onboarding@resend.dev>")
+                .to(toEmail)
+                .subject("Kode OTP FinanceBuddy")
+                .html(buildEmailHtml(otp))
+                .build();
+            CreateEmailResponse response = resend.emails().send(params);
+            log.info("OTP email terkirim, id: {}", response.getId());
+        } catch (ResendException e) {
+            log.error("Gagal mengirim OTP via Resend: {}", e.getMessage());
         }
     }
 
@@ -102,8 +81,6 @@ public class OtpService {
             </div>
             """.formatted(otp);
     }
-
-    // ── Inner record ──────────────────────────────────────────────────────────
 
     private record OtpEntry(String otp, LocalDateTime expiry) {}
 }
