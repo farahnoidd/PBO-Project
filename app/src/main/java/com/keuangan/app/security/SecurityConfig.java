@@ -24,20 +24,18 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity   // ← aktifkan @PreAuthorize di controller
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final UserDetailsServiceImpl userDetailsService;
     private final AuthEntryPointJwt unauthorizedHandler;
     private final JwtAuthFilter jwtAuthFilter;
 
-    // Bean PasswordEncoder — dipakai Mahasiswa 5 untuk hash password saat register
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    // Menghubungkan UserDetailsService + PasswordEncoder
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
@@ -46,18 +44,16 @@ public class SecurityConfig {
         return provider;
     }
 
-    // AuthenticationManager — dipakai di AuthController untuk proses authenticate()
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 
-    // CORS Configuration — biar frontend production bisa akses backend
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(List.of(
-            "https://<url-frontend-kamu>",
+            "https://pbo-project-production-4f8e.up.railway.app",
             "http://localhost:3000",
             "http://localhost:5173"
         ));
@@ -73,18 +69,17 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .cors(Customizer.withDefaults())  // ← aktifkan CORS pakai bean di atas
-            .csrf(AbstractHttpConfigurer::disable)  // ← disable CSRF, kita pakai JWT
+            .cors(Customizer.withDefaults())
+            .csrf(AbstractHttpConfigurer::disable)
             .exceptionHandling(ex ->
-                ex.authenticationEntryPoint(unauthorizedHandler)  // ← pakai handler JSON kita
+                ex.authenticationEntryPoint(unauthorizedHandler)
             )
             .sessionManagement(session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                // STATELESS = tidak ada session di server, semua info ada di token
             )
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers("/api/report/dashboard").permitAll() // ← Tambahkan yang ini ya!
+                .requestMatchers("/api/report/dashboard").permitAll()
                 .requestMatchers("/", "/*.html", "/css/**", "/js/**", "/assets/**",
                                 "/manifest.json", "/sw.js").permitAll()
                 .requestMatchers("/h2-console/**").permitAll()
@@ -97,8 +92,6 @@ public class SecurityConfig {
             );
 
         http.authenticationProvider(authenticationProvider());
-
-        // Pasang JwtAuthFilter sebelum filter bawaan Spring
         http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
