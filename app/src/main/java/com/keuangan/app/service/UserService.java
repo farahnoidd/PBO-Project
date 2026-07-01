@@ -74,12 +74,20 @@ public class UserService {
 
         // WAJIB SET MANUAL BIAR GA NULL DI DATABASE
         user.setRole(com.keuangan.app.enums.UserRole.USER);
-        user.setStatus(UserStatus.BELUM_TERVALIDASI);
+        user.setStatus(com.keuangan.app.enums.UserStatus.BELUM_TERVALIDASI);
+
+        // Jaga-jaga agar createdAt tidak null sebelum @PrePersist dipanggil
+        user.setCreatedAt(java.time.LocalDateTime.now());
 
         User tersimpan = userRepository.save(user);
 
-        // Kirim OTP
-        otpService.generateAndSend(tersimpan.getUsername(), tersimpan.getEmail());
+        // Bungkus pengiriman OTP agar kalau Resend-nya error, tidak melempar HTTP 500
+        try {
+            otpService.generateAndSend(tersimpan.getUsername(), tersimpan.getEmail());
+        } catch (Exception e) {
+            System.err.println("⚠️ Gagal mengirim email OTP via Resend: " + e.getMessage());
+            // Aplikasi dibiarkan terus berjalan tanpa crash
+        }
 
         return toResponse(tersimpan);
     }
