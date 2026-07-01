@@ -64,16 +64,6 @@ async function request(endpoint, options = {}) {
   }
 
   if (!response.ok) {
-    // FIX: PROTEKSI AUTO-LOGOUT JIKA TOKEN EXPIRED (401 UNAUTHORIZED)
-    if (response.status === 401) {
-      alert(
-        "⚠️ Sesi Anda telah berakhir atau token tidak valid. Silakan login kembali.",
-      );
-      clearToken();
-      window.location.href = "/index.html";
-      return;
-    }
-
     // Spring Boot sering mengembalikan { message: "..." } pada error
     const message =
       (body && (body.message || body.error)) ||
