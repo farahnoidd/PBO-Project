@@ -1,6 +1,7 @@
 /**
  * File: js/dashboard.js
  * 💡 FITUR: Sinkronisasi Akun, Warna Kategori Dinamis HSL & Kalkulasi Tren (MoM)
+ * 🚀 PERFORMANCE: Dioptimasi menggunakan Promise.all untuk mencegah API Waterfall
  */
 import {
   getDashboardData,
@@ -117,15 +118,25 @@ let statusEkspansiPenuh = false;
 // 💡 2. Inisialisasi dan Kalkulasi Ulang Saldo Tren
 async function initDashboard() {
   try {
-    try {
-      const p = await getProfil();
-      if (p && p.data && p.data.email)
-        userPrefix = p.data.email.replace(/[^a-zA-Z0-9]/g, "_");
-    } catch (e) {}
+    // ── 💡 OPTIMASI UTAMA: TEMBAK SEMUA REQUEST SECARA PARALEL (BARENGAN) ──
+    const [p, incData, expData, summary] = await Promise.all([
+      getProfil().catch(() => null),
+      getRiwayatPemasukan().catch(() => []),
+      getRiwayatPengeluaran().catch(() => []),
+      getDashboardData().catch(() => ({
+        saldo: 0,
+        grafikKategori: [],
+        grafikBulanan: [],
+      })),
+    ]);
 
-    // Tarik raw data untuk kalkulasi MoM Saldo Bulanan
-    const inc = (await getRiwayatPemasukan()) || [];
-    const exp = (await getRiwayatPengeluaran()) || [];
+    if (p && p.data && p.data.email) {
+      userPrefix = p.data.email.replace(/[^a-zA-Z0-9]/g, "_");
+    }
+
+    // Tarik raw data yang sudah di-fetch paralel untuk kalkulasi MoM Saldo Bulanan
+    const inc = incData || [];
+    const exp = expData || [];
 
     let saldoBulanIni = 0;
     let saldoBulanLalu = 0;
@@ -168,8 +179,7 @@ async function initDashboard() {
     document.getElementById("txtTotalPengeluaran").innerText =
       formatRp(keluarBulanIni);
 
-    // Tampilkan Total Saldo Keseluruhan Server
-    const summary = await getDashboardData();
+    // Tampilkan Total Saldo Keseluruhan Server dari summary hasil Promise.all
     document.getElementById("txtTotalSaldo").innerText = formatRp(
       summary.saldo,
     );
@@ -231,7 +241,6 @@ function renderCharts(summary) {
     ? summary.grafikKategori.map((i) => i.jumlah)
     : [];
 
-  // Memanfaatkan hash generator untuk warna
   const listWarnaDonat = listLabelDonat.map(
     (kat) => ambilGayaWarnaKategori(kat).bg,
   );

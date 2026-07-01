@@ -2,6 +2,7 @@
  * File: js/laporan.js
  * Engine Pengolah Jurnal Laporan Gabungan & Statistik Keuangan
  * 💡 FITUR TERBARU: Filter Rentang Tanggal, Filter Tahun Dinamis, Data Caching, HSL Golden Angle
+ * 🚀 PERFORMANCE: Dioptimasi menggunakan Promise.all untuk mencegah API Waterfall
  */
 import {
   getRiwayatPemasukan,
@@ -68,12 +69,18 @@ function ambilGayaWarnaKategori(namaKat) {
   return { bg: `hsl(${hue}, 75%, 45%)`, text: "#ffffff" };
 }
 
-// 💡 INIT HALAMAN & FETCH DATA (CUMA 1 KALI API CALL)
+// 💡 INIT HALAMAN & FETCH DATA VIA PROMISE.ALL (PARALEL)
 async function initHalamanLaporan() {
   try {
-    // Tarik data API dan simpan ke Cache Memory
-    cachePemasukan = (await getRiwayatPemasukan()) || [];
-    cachePengeluaran = (await getRiwayatPengeluaran()) || [];
+    // ── 💡 OPTIMASI UTAMA: TARIK DATA TRANSAKSI SEPARALEL / SEKALIGUS ──
+    const [pemasukanData, pengeluaranData] = await Promise.all([
+      getRiwayatPemasukan().catch(() => []),
+      getRiwayatPengeluaran().catch(() => []),
+    ]);
+
+    // Simpan ke Cache Memory
+    cachePemasukan = pemasukanData || [];
+    cachePengeluaran = pengeluaranData || [];
 
     setupFilterDinamis();
 

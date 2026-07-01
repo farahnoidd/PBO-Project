@@ -48,47 +48,35 @@ document.addEventListener("DOMContentLoaded", async () => {
     inputTanggal.value = `${yyyy}-${mm}-${dd}`;
   }
 
-  // 2. Muat Profil User & Simpan Role untuk Proteksi Komponen
   let userPrefix = "guest";
   let currentUserRole = "USER"; // 💡 SAKLAR UTAMA ROLE (USER / ADMIN)
+
+  // ── 💡 OPTIMASI 1: JALANKAN INITIAL FETCH SECARA PARALEL (PROMISE.ALL) ──
+  let dbKategori = [];
+  let dataRiwayatInitial = [];
+
   try {
-    const pData = await getProfil();
+    const [pData, kData, rData] = await Promise.all([
+      getProfil().catch(() => null),
+      getKategori().catch(() => []),
+      isPemasukan
+        ? getRiwayatPemasukan().catch(() => [])
+        : getRiwayatPengeluaran().catch(() => []),
+    ]);
+
     if (pData && pData.data) {
-      if (pData.data.email) {
+      if (pData.data.email)
         userPrefix = pData.data.email.replace(/[^a-zA-Z0-9]/g, "_");
-      }
-      if (pData.data.role) {
-        currentUserRole = pData.data.role.toUpperCase(); // Ambil role dinamis dari DB
-      }
+      if (pData.data.role) currentUserRole = pData.data.role.toUpperCase();
     }
+
+    dbKategori = kData;
+    dataRiwayatInitial = rData;
   } catch (e) {
-    console.error(e);
+    console.error("Gagal melakukan paralel fetch di awal:", e);
   }
 
-  // 3. INTEGRASI KATEGORI DINAMIS DARI MYSQL
-  try {
-    if (selectKategori) {
-      const dbKategori = await getKategori();
-
-      const listKategoriAktif = isPemasukan
-        ? dbKategori.filter((k) => k.type === "INCOME")
-        : dbKategori.filter((k) => k.type === "EXPENSE");
-
-      selectKategori.innerHTML = "";
-
-      if (listKategoriAktif.length === 0) {
-        selectKategori.innerHTML = `<option value="">-- Buat Kategori Dulu --</option>`;
-      } else {
-        listKategoriAktif.forEach((kat) => {
-          selectKategori.innerHTML += `<option value="${kat.name}">${kat.name}</option>`;
-        });
-      }
-    }
-  } catch (err) {
-    console.error("Gagal memuat data kategori: ", err);
-  }
-
-  // 4. Sinkronisasi Pilihan Akun Aktif
+  // Sinkronisasi Pilihan Akun Aktif
   if (selectAkun) {
     const defaultAkun = ["BCA", "MANDIRI", "GOPAY", "DANA", "CASH"];
     const listAkunAktif = JSON.parse(
@@ -152,15 +140,20 @@ document.addEventListener("DOMContentLoaded", async () => {
     return tanggalStr;
   };
 
-  async function muatRiwayatTabel() {
+  // ── 💡 OPTIMASI 2: MENERIMA DATA RAW AGAR TIDAK TEMBAK API BERULANG ──
+  async function muatRiwayatTabel(rawLoadedData) {
     const tbody = document.getElementById("tabelTransaksiBody");
     if (!tbody) return;
 
     try {
       tbody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-gray-500">Memuat data transaksi...</td></tr>`;
-      const dataRiwayat = isPemasukan
-        ? await getRiwayatPemasukan()
-        : await getRiwayatPengeluaran();
+
+      // Gunakan data yang sudah ada, jika tidak ada baru ambil dari server
+      const dataRiwayat =
+        rawLoadedData ||
+        (isPemasukan
+          ? await getRiwayatPemasukan()
+          : await getRiwayatPengeluaran());
       tbody.innerHTML = "";
 
       let totalBulanIni = 0;
@@ -343,6 +336,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           </tr>`;
       });
 
+      // Bind event listener untuk tombol hapus & edit
       document.querySelectorAll(".btn-hapus-trx").forEach((btn) => {
         btn.onclick = async function () {
           if (confirm("Yakin ingin menghapus transaksi ini?")) {
@@ -532,8 +526,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       if (!isPemasukan) {
         try {
-          const incRaw = (await getRiwayatPemasukan()) || [];
-          const expRaw = (await getRiwayatPengeluaran()) || [];
+          // ── 💡 OPTIMASI 3: PROMISE.ALL PADA SAAT CEK SALDO UPFRONT ──
+          const [incRaw, expRaw] = await Promise.all([
+            getRiwayatPemasukan().catch(() => []),
+            getRiwayatPengeluaran().catch(() => []),
+          ]);
+
           const inc = Array.isArray(incRaw)
             ? incRaw
             : incRaw.data || incRaw.content || [];
@@ -627,15 +625,16 @@ document.addEventListener("DOMContentLoaded", async () => {
   const listKategoriModal = document.getElementById("listKategoriModal");
   const btnBatalKat = document.getElementById("btnBatalKategoriModal");
 
-  let cacheKategoriBawaan = [];
-
-  async function renderKategoriManager() {
+  // ── 💡 OPTIMASI 4: KATEGORI DISUPLAI LANGSUNG DARI MEMORI ──
+  async function renderKategoriManager(rawKategoriData) {
     try {
       if (!selectKategori || !listKategoriModal) return;
 
-      const dbKategori = await getKategori();
+      const dbKategoriList = rawKategoriData || (await getKategori());
       const tipeAktif = isPemasukan ? "INCOME" : "EXPENSE";
-      cacheKategoriBawaan = dbKategori.filter((k) => k.type === tipeAktif);
+      const cacheKategoriBawaan = dbKategoriList.filter(
+        (k) => k.type === tipeAktif,
+      );
 
       selectKategori.innerHTML = "";
       if (cacheKategoriBawaan.length === 0) {
@@ -650,14 +649,12 @@ document.addEventListener("DOMContentLoaded", async () => {
       cacheKategoriBawaan.forEach((kat) => {
         const isBawaanSistem =
           kat.userId === "admin" || kat.userId === "SYSTEM";
-        // 💡 SMART OVERRIDE FRONTEND: Jika dia beneran ADMIN, bypass gembok!
         const isUserAdmin = currentUserRole === "ADMIN";
 
         let aksiTombol = "";
         if (isBawaanSistem && !isUserAdmin) {
           aksiTombol = `<span class="text-[10px] text-gray-400 italic bg-gray-100 px-2 py-0.5 rounded-md">Bawaan</span>`;
         } else {
-          // Tombol muncul kalau kategori buatan sendiri ATAU akun lu adalah ADMIN kelompok
           aksiTombol = `
             <button type="button" class="btn-edit-kat text-blue-500 hover:text-blue-700 p-1" data-id="${kat.id}" data-name="${kat.name}"><span class="material-symbols-outlined text-[16px] block">edit</span></button>
             <button type="button" class="btn-hapus-kat text-rose-500 hover:text-rose-700 p-1" data-id="${kat.id}"><span class="material-symbols-outlined text-[16px] block">delete</span></button>
@@ -680,7 +677,8 @@ document.addEventListener("DOMContentLoaded", async () => {
           ) {
             try {
               await deleteKategori(this.getAttribute("data-id"));
-              await renderKategoriManager();
+              const freshKategori = await getKategori();
+              await renderKategoriManager(freshKategori);
             } catch (e) {
               alert("❌ " + e.message);
             }
@@ -711,7 +709,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       modalKategori.classList.add("hidden");
       formKategoriModal.reset();
       document.getElementById("txtIdKategoriModal").value = "";
-      btnBatalKat.add("hidden");
+      btnBatalKat.classList.add("hidden");
     };
     btnBatalKat.onclick = () => {
       formKategoriModal.reset();
@@ -736,13 +734,15 @@ document.addEventListener("DOMContentLoaded", async () => {
         formKategoriModal.reset();
         document.getElementById("txtIdKategoriModal").value = "";
         btnBatalKat.classList.add("hidden");
-        await renderKategoriManager();
+        const freshKategori = await getKategori();
+        await renderKategoriManager(freshKategori);
       } catch (err) {
         alert("❌ " + err.message);
       }
     });
   }
 
-  await renderKategoriManager();
-  await muatRiwayatTabel();
+  // ── PANGGIL EKSEKUSI AKHIR DENGAN DATA YANG SUDAH TERSEDIA ──
+  await renderKategoriManager(dbKategori);
+  await muatRiwayatTabel(dataRiwayatInitial);
 });
