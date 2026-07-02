@@ -1,12 +1,13 @@
 package com.keuangan.app.service;
 
+import com.resend.Resend;
+import com.resend.core.exception.ResendException;
+import com.resend.services.emails.model.CreateEmailOptions;
+import com.resend.services.emails.model.CreateEmailResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
-import jakarta.mail.internet.MimeMessage;
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -16,16 +17,14 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class OtpService {
 
+    @Value("${resend.api.key}")
+    private String resendApiKey;
+
     @Value("${app.mail.sender}")
     private String fromEmail;
 
-    private final JavaMailSender mailSender;
     private final Map<String, OtpEntry> otpStore = new ConcurrentHashMap<>();
     private final SecureRandom random = new SecureRandom();
-
-    public OtpService(JavaMailSender mailSender) {
-        this.mailSender = mailSender;
-    }
 
     public void generateAndSend(String username, String email) {
         String otp = String.format("%06d", random.nextInt(999999));
@@ -47,17 +46,28 @@ public class OtpService {
 
     private void sendEmail(String toEmail, String otp) {
         try {
-            MimeMessage message = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-            helper.setFrom(fromEmail);
-            helper.setTo(toEmail);
-            helper.setSubject("Kode OTP FinanceBuddy");
-            helper.setText(buildEmailHtml(otp), true);
-            mailSender.send(message);
-            log.info("OTP email terkirim ke {}", toEmail);
+            Resend resend = new Resend(resendApiKey);
+
+            CreateEmailOptions params = CreateEmailOptions.builder()
+                    .from(fromEmail)
+                    .to(toEmail)
+                    .subject("Kode OTP FinanceBuddy")
+                    .html(buildEmailHtml(otp))
+                    .build();
+
+            CreateEmailResponse response = resend.emails().send(params);
+            log.info("OTP email terkirim ke {} | Resend ID: {}", toEmail, response.getId());
+
+        } catch (ResendException e) {
+            System.err.println("[OtpService] Gagal mengirim OTP via Resend ke " + toEmail
+                    + " | ResendException: " + e.getMessage());
+            log.error("[OtpService] Gagal mengirim OTP via Resend ke {}: {}", toEmail, e.getMessage(), e);
+            throw new RuntimeException("Gagal mengirim email OTP via Resend: " + e.getMessage(), e);
         } catch (Exception e) {
-            log.error("Gagal mengirim OTP ke {}: {}", toEmail, e.getMessage(), e);
-            throw new RuntimeException("Gagal mengirim email OTP. Error SMTP: " + e.getMessage(), e);
+            System.err.println("[OtpService] Unexpected error saat kirim OTP ke " + toEmail
+                    + " | " + e.getClass().getSimpleName() + ": " + e.getMessage());
+            log.error("[OtpService] Unexpected error saat kirim OTP ke {}: {}", toEmail, e.getMessage(), e);
+            throw new RuntimeException("Gagal mengirim email OTP: " + e.getMessage(), e);
         }
     }
 
